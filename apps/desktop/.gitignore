@@ -1,0 +1,5 @@
+build/
+views/
+# Staged PGlite native assets (WASM/data/tarballs) — build artifact produced
+# by scripts/stage-native-assets.mjs, shipped into the bundle via electrobun.config copy.
+native-assets/

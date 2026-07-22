@@ -1,0 +1,6 @@
+/**
+ * Schema barrel — re-export every table so `drizzle(pglite, { schema })` and
+ * the type `typeof schema` in db.ts see them all. Add new schema files here.
+ */
+export * from "./schema/auth";
+export * from "./schema/games";

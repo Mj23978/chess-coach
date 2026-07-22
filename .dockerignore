@@ -1,0 +1,9 @@
+README.md
+*.md
+Dockerfile*
+.env*
+.turbo
+.medusa
+node_modules
+docker-*.yaml
+docker-*.yml

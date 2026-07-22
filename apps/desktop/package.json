@@ -1,0 +1,39 @@
+{
+  "name": "@chess-coach/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/stage-native-assets.mjs && electrobun dev",
+    "dev:web": "vite",
+    "build:web": "vite build",
+    "stage-assets": "node scripts/stage-native-assets.mjs",
+    "build": "vite build && node scripts/stage-native-assets.mjs && electrobun build",
+    "typecheck": "tsc --noEmit",
+    "clean": "git clean -xdf .cache .turbo dist node_modules views"
+  },
+  "dependencies": {
+    "@elysiajs/eden": "catalog:",
+    "@repo/api": "workspace:*",
+    "@repo/db": "workspace:*",
+    "@repo/env": "workspace:*",
+    "@repo/storage": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "electrobun": "^1.18.1",
+    "elysia": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^4.3.0",
+    "bun-types": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^6.0.0"
+  }
+}
