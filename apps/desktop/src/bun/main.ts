@@ -17,7 +17,7 @@
  * preventable (it fires after the OS has already destroyed the window).
  * With `exitOnLastWindowClosed: false` (electrobun.config.ts), closing the
  * window leaves the process — and the in-process backend — running. The
- * tray's "Show Aksam" action builds a fresh BrowserWindow (the old native
+ * tray's "Show Chess Coach" action builds a fresh BrowserWindow (the old native
  * handle is gone). "Quit" is the only way to fully exit.
  */
 import { BrowserWindow, Tray, Utils } from "electrobun/bun";
@@ -38,7 +38,7 @@ const { storageDir } = (globalThis as any).__CHESS_COACH_DESKTOP__ as {
 // ---------------------------------------------------------------------------
 // initDB() (in @repo/db) reads process.env.DATABASE_URL LIVE and logs the
 // resolved path itself — we don't log it here to avoid a misleading duplicate.
-// The preload shim (index.ts) sets DATABASE_URL to ${APP_DATA_DIR}/aksam.db
+// The preload shim (index.ts) sets DATABASE_URL to ${APP_DATA_DIR}/chess-coach.db
 // before this file is even imported.
 await initDB();
 
@@ -123,7 +123,7 @@ function createWindow(): BrowserWindow {
 
   // Inject the API base URL into the webview's global scope before the SPA's
   // first render. The SPA reads this from `window.__CHESS_COACH_API_BASE__`.
-  win.webview.executeJavaScript(
+  win.webview.executeJavascript(
     `window.__CHESS_COACH_API_BASE__ = ${JSON.stringify(apiBase)};`,
   );
 

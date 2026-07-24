@@ -20,6 +20,7 @@
       "zod": "^4.3.6",
       "elysia": "^1.4.28",
       "@elysiajs/cors": "^1.4.2",
+      "@elysiajs/eden": "^1.4.9",
       "drizzle-orm": "0.45.1",
       "better-auth": "^1.4.18",
       "bun-types": "^1.3.0",
@@ -32,10 +33,10 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:backend": "turbo run dev --filter=@repo/api",
-    "dev:web": "turbo run dev --filter=@aksam/desktop",
+    "dev:web": "turbo run dev:web --filter=@chess-coach/desktop",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types",
+    "check-types": "turbo run typecheck",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "clean:all": "turbo run clean",
     "db:push": "turbo --filter=db run db:push",
@@ -46,6 +47,9 @@
     "@biomejs/biome": "2.2.5",
     "turbo": "^2.9.16",
     "typescript": "catalog:"
+  },
+  "overrides": {
+    "@sinclair/typebox": "0.34.52"
   },
   "engines": {
     "node": ">=20"

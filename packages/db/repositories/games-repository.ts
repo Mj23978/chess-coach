@@ -4,9 +4,9 @@
  * All access goes through the lazy `db` proxy from ../db, which waits for
  * PGlite + migrations to finish before forwarding the call. Repositories are
  * plain object literals, not classes; import `gameRepository` and call its
- * methods.
+ * methods. No user/owner concept — games are global (local single-user app).
  */
-import { desc, eq, sql, count } from "drizzle-orm";
+import { desc, eq, count } from "drizzle-orm";
 import { db } from "../db";
 import { GamesTable } from "../schema/games";
 import type {
@@ -21,7 +21,6 @@ export const gameRepository: GameRepository = {
     const [row] = await db
       .insert(GamesTable)
       .values({
-        userId: input.userId,
         pgn: input.pgn,
         title: input.title,
         white: input.white,
@@ -43,15 +42,11 @@ export const gameRepository: GameRepository = {
     return row ?? undefined;
   },
 
-  listByUser: async (
-    userId: string,
-    options?: { limit?: number; offset?: number },
-  ): Promise<Game[]> => {
+  list: async (options?: { limit?: number; offset?: number }): Promise<Game[]> => {
     const { limit = 50, offset = 0 } = options ?? {};
     return db
       .select()
       .from(GamesTable)
-      .where(eq(GamesTable.userId, userId))
       .orderBy(desc(GamesTable.createdAt))
       .limit(limit)
       .offset(offset);
@@ -82,11 +77,8 @@ export const gameRepository: GameRepository = {
     await db.delete(GamesTable).where(eq(GamesTable.id, id));
   },
 
-  countByUser: async (userId: string): Promise<number> => {
-    const [row] = await db
-      .select({ n: count() })
-      .from(GamesTable)
-      .where(eq(GamesTable.userId, userId));
+  count: async (): Promise<number> => {
+    const [row] = await db.select({ n: count() }).from(GamesTable);
     return row?.n ?? 0;
   },
 };

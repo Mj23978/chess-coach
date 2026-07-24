@@ -1,11 +1,12 @@
 /**
  * Chess domain schema.
  *
- * `games` is the central record: a user's imported or played game (PGN +
- * result + optional engine analysis). This is intentionally small — extend
+ * `games` is the central record: an imported or played game (PGN + result +
+ * optional engine analysis). chess-coach is a local single-user desktop app
+ * with no auth, so there is no owner/user concept — games are global. Extend
  * with openings repertoire, play sessions, tactics, etc. as the app grows.
  */
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   text,
@@ -14,7 +15,6 @@ import {
   json,
   index,
 } from "drizzle-orm/pg-core";
-import { UserTable } from "./auth";
 
 /**
  * Result of a chess game, in standard PGN notation.
@@ -49,9 +49,6 @@ export const GamesTable = pgTable(
   "games",
   {
     id: uuid("id").primaryKey().notNull().defaultRandom(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => UserTable.id, { onDelete: "cascade" }),
     /** Game title / label for display. Defaults to "White vs. Black". */
     title: text("title"),
     /** Player names from the PGN headers. */
@@ -75,17 +72,9 @@ export const GamesTable = pgTable(
       .default(sql`CURRENT_TIMESTAMP`),
   },
   (table) => ({
-    userIdIdx: index("games_user_id_idx").on(table.userId),
     createdAtIdx: index("games_created_at_idx").on(table.createdAt),
   }),
 );
-
-export const gamesRelations = relations(GamesTable, (helpers) => ({
-  user: helpers.one(UserTable, {
-    fields: [GamesTable.userId],
-    references: [UserTable.id],
-  }),
-}));
 
 export type Game = typeof GamesTable.$inferSelect;
 export type NewGame = typeof GamesTable.$inferInsert;

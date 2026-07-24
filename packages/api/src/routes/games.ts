@@ -1,47 +1,73 @@
 /**
- * Games routes — the API pattern for chess-coach.
+ * Games routes — the API surface for chess-coach.
  *
- * Endpoints:
- *   GET    /games/:userId        list a user's games (newest first)
- *   GET    /games/demo           convenience: list the demo user's games
- *   GET    /games/:userId/:id    one game by id
- *   POST   /games/:userId        create a game (body: PGN + optional fields)
- *   PATCH  /games/:userId/:id    update a game's metadata
- *   DELETE /games/:userId/:id    delete a game
- *
- * No auth yet — the `userId` is a path param so the SPA can target a demo
- * user. When Better-Auth is wired in, replace `userId` resolution with the
- * session user and add ownership checks.
+ * chess-coach is a local single-user desktop app with no auth, so there is no
+ * owner/user dimension — games are global. Endpoints:
+ *   GET    /games                list all games (newest first)
+ *   GET    /games/:id            one game by id
+ *   POST   /games                create a game (body: PGN + optional fields)
+ *   PATCH  /games/:id            update a game's metadata
+ *   DELETE /games/:id            delete a game
+ *   POST   /games/:id/analyze    run engine + classifier, store MoveAnalysis[]
  */
 import { Elysia, t } from "elysia";
 import { gameRepository } from "@repo/db";
+import type { MoveAnalysis } from "@repo/db";
+import {
+  classifyGame,
+  EngineUnavailableError,
+  MoveClassification,
+} from "../classifier";
 
-/** A stable demo user id used by the desktop SPA before auth exists. */
-export const DEMO_USER_ID = "00000000-0000-0000-0000-000000000000";
+/**
+ * Map the classifier's per-move label onto the DB's `classification` union.
+ * The classifier can also emit `Opening` (book) or `Forced` (only one legal
+ * reply) — neither is a quality judgement, so collapse them to `best` to fit
+ * the stored union (the review UI still shows the eval bar for them).
+ */
+function normalizeClassification(
+  c: MoveClassification | undefined,
+): MoveAnalysis["classification"] {
+  switch (c) {
+    case MoveClassification.Brilliant:
+      return "brilliant";
+    case MoveClassification.Great:
+      return "great";
+    case MoveClassification.Best:
+      return "best";
+    case MoveClassification.Excellent:
+      return "excellent";
+    case MoveClassification.Good:
+      return "good";
+    case MoveClassification.Inaccuracy:
+      return "inaccuracy";
+    case MoveClassification.Mistake:
+      return "mistake";
+    case MoveClassification.Blunder:
+      return "blunder";
+    // Opening / Forced / undefined — no badge to store.
+    default:
+      return undefined;
+  }
+}
 
 export const gamesRoutes = new Elysia({ prefix: "/games" })
-  // Convenience route for the desktop dashboard before auth is wired.
-  .get("/demo", async () => {
-    const games = await gameRepository.listByUser(DEMO_USER_ID);
+  .get("/", async () => {
+    const games = await gameRepository.list();
     return { games };
   })
-  .get("/:userId", async ({ params: { userId } }) => {
-    const games = await gameRepository.listByUser(userId);
-    return { games };
-  })
-  .get("/:userId/:id", async ({ params: { userId, id }, set }) => {
+  .get("/:id", async ({ params: { id }, set }) => {
     const game = await gameRepository.getById(id);
-    if (!game || game.userId !== userId) {
+    if (!game) {
       set.status = 404;
       return { error: "Game not found" };
     }
     return { game };
   })
   .post(
-    "/:userId",
-    async ({ params: { userId }, body, set }) => {
+    "/",
+    async ({ body, set }) => {
       const game = await gameRepository.create({
-        userId,
         pgn: body.pgn,
         title: body.title,
         white: body.white,
@@ -73,10 +99,10 @@ export const gamesRoutes = new Elysia({ prefix: "/games" })
     },
   )
   .patch(
-    "/:userId/:id",
-    async ({ params: { userId, id }, body, set }) => {
+    "/:id",
+    async ({ params: { id }, body, set }) => {
       const existing = await gameRepository.getById(id);
-      if (!existing || existing.userId !== userId) {
+      if (!existing) {
         set.status = 404;
         return { error: "Game not found" };
       }
@@ -101,12 +127,74 @@ export const gamesRoutes = new Elysia({ prefix: "/games" })
       }),
     },
   )
-  .delete("/:userId/:id", async ({ params: { userId, id }, set }) => {
+  .delete("/:id", async ({ params: { id }, set }) => {
     const existing = await gameRepository.getById(id);
-    if (!existing || existing.userId !== userId) {
+    if (!existing) {
       set.status = 404;
       return { error: "Game not found" };
     }
     await gameRepository.delete(id);
     set.status = 204;
-  });
+  })
+  /**
+   * Run engine + classifier over a stored game's PGN, persist the resulting
+   * per-move `MoveAnalysis[]` into the existing `analysis` JSON column, and
+   * return the fresh analysis + per-side accuracy.
+   *
+   * Body (all optional): `{ depth?, multiPv? }`. Defaults: depth 18, multiPv 3
+   * (multiPv ≥ 2 is required for Brilliant/Great/Best to be reachable).
+   *
+   * Returns 503 if no Stockfish binary is staged under `binaries/` — see
+   * `packages/api/src/engine/resolve.ts`. Pre-analyzed games still render.
+   */
+  .post(
+    "/:id/analyze",
+    async ({ params: { id }, body, set }) => {
+      const existing = await gameRepository.getById(id);
+      if (!existing) {
+        set.status = 404;
+        return { error: "Game not found" };
+      }
+
+      let result;
+      try {
+        result = await classifyGame(existing.pgn, {
+          depth: body?.depth,
+          multiPv: body?.multiPv,
+        });
+      } catch (err) {
+        if (err instanceof EngineUnavailableError) {
+          set.status = 503;
+          return {
+            error: "Engine unavailable",
+            message: err.message,
+          };
+        }
+        // chess.js throws on malformed PGN.
+        set.status = 400;
+        return {
+          error: "Analysis failed",
+          message: err instanceof Error ? err.message : String(err),
+        };
+      }
+
+      // Normalize classifier labels → DB `classification` union.
+      const analysis: MoveAnalysis[] = result.moves.map((m) => ({
+        san: m.san,
+        evalCp: m.evalCp,
+        mate: m.mate,
+        classification: normalizeClassification(m.classification),
+      }));
+
+      const game = await gameRepository.setAnalysis(id, analysis);
+      return { game, accuracy: result.accuracy };
+    },
+    {
+      body: t.Optional(
+        t.Object({
+          depth: t.Optional(t.Number({ minimum: 1, maximum: 30 })),
+          multiPv: t.Optional(t.Number({ minimum: 1, maximum: 5 })),
+        }),
+      ),
+    },
+  );

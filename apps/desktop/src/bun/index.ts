@@ -143,7 +143,7 @@ if (!process.env.JWT_SECRET) {
 // `<cwd>/.db` (relative to the launcher's CWD — inside the install dir, wiped
 // on every rebuild/reinstall), losing all users/sessions on restart. The
 // desktop DB path is a host decision, not an env one. `@repo/db`'s
-// `resolveDatabasePath()` also reads `__AKSAM_DESKTOP__` directly as a
+// `resolveDatabasePath()` also reads `__CHESS_COACH_DESKTOP__` directly as a
 // belt-and-suspenders guard, but keeping `process.env.DATABASE_URL` correct
 // here matters too — the `/debug/db-info` route echoes it, and any other code
 // reading it directly stays consistent.

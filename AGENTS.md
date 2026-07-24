@@ -7,14 +7,13 @@ Workspace instructions for ZCode agents. Read this before editing.
 **Chess-coach** is a desktop chess coach app: analyze the user's games, play
 against them, and point out their mistakes. This workspace was bootstrapped by
 copying the `packages/` and `apps/desktop` from an unrelated project ("Aksam",
-an AI agent / video-creation platform). **The source is mid-migration and does
-not yet build.** Expect broken imports, missing workspace packages, and
-Aksam-specific routes/schemas that need to be replaced with chess-domain ones.
-
-When asked to "clean packages and apps," the target end state is:
-`@repo/api` + `@repo/db` schemas/routes serve chess concepts (games, analyses,
-positions, opening repertoires, play sessions), and the desktop SPA's routes
-become chess coach routes (dashboard, game review, play, repertoire, etc.).
+an AI agent / video-creation platform). The migration to chess-domain code is
+largely complete: `@repo/api` (`/games` CRUD) and `@repo/db` (a `games` table
+with PGN + a `MoveAnalysis[]` JSON column) are already chess-domain, and the
+desktop SPA's env/bun plumbing has been renamed to `CHESS_COACH_*` /
+`chess-coach.db`. Remaining work is adding chess *features* (board UI, engine
+analysis pipeline, Chess.com sync, puzzles, repertoire) on top of the clean
+plumbing.
 
 ## Repo layout
 
@@ -24,10 +23,10 @@ become chess coach routes (dashboard, game review, play, repertoire, etc.).
     `main.ts` = real boot, `server.ts` = starts the in-process Elysia API.
   - `src/web/` — the React SPA (moved here from a former `apps/web`). Owns all
     non-landing UI. Path alias `@/` → `src/web/`.
-  - `src/web/app/` — Next.js-style route tree (`(auth)`, `(protected)`) rendered
-    via react-router (see `App.tsx`). `next/*` imports resolve to hand-written
-    shims under `src/web/shims/next/*`.
-  - `src/web/shims/` — browser shims for `next/*` and `@repo/env`.
+  - `src/web/` — the React SPA. Flat page-based structure (see `App.tsx` +
+    `pages/`), rendered via react-router-dom. Path alias `@/` → `src/web/`.
+  - `src/web/shims/` — browser shim for `@repo/env` (reads the API base URL
+    injected by the Bun main).
   - `views/mainview/` — Vite build output; served via Electrobun `views://`.
   - `electrobun.config.ts`, `scripts/stage-native-assets.mjs` — bundling + PGlite
     native asset staging.
@@ -37,15 +36,24 @@ become chess coach routes (dashboard, game review, play, repertoire, etc.).
   - `@repo/storage` — S3/MinIO backend with a filesystem backend for desktop.
   - `@repo/ui` — shared Radix + Tailwind v4 component library (no build step;
     imported as raw `.tsx`).
-  - `@repo/env` — env validation via `@t3-oss/env-nextjs` + zod. **NOTE: the
-    `src/` was wiped during the copy — only the build contract remains. This is
-    a known gap to fix.**
+  - `@repo/env` — env validation via `@t3-oss/env-core` + zod. `index.ts` is
+    present and functional (all vars optional/defaulted so the desktop preload
+    shim's dummy values validate).
   - `@repo/logger` — consola-based logger.
-- `examples/` — reference material, NOT part of the build:
-  - `examples/pawn-appetite/` — a Tauri + Mantine + chessground chess app.
-    Useful reference for chess UI patterns (board, pieces, @lichess-org/chessground,
-    chess logic libs). Do not import from here.
-  - `examples/chess-kit/` — empty placeholder.
+- `examples/` — reference material, NOT part of the build (never import from
+  these in shipped code — copy/adapt instead):
+  - `examples/pawn-appetite/` — a mature Tauri 2 + Mantine + chessground chess
+    app. Reference for chess UI patterns (board, pieces), Chess.com pubapi
+    sync + TCN decoding, Lichess OAuth (PKCE), puzzle DB + adaptive Elo, native
+    UCI engine management (Stockfish et al.), ECO openings + repertoire gaps +
+    ts-fsrs spaced repetition. Heavy logic is in Rust (`src-tauri/`), so porting
+    means re-implementing that in TS; the `src/utils/*.ts(x)` frontend logic is
+    framework-agnostic and ports directly.
+  - `examples/chess-kit/` — a Next.js + MUI chess app that contains a complete,
+    self-contained chess.com/lila-style **move classifier** (Brilliant / Great /
+    Best / Excellent / Good / Inaccuracy / Mistake / Blunder). Lives in
+    `src/lib/engine/helpers/` + `src/lib/chess.ts` + `src/lib/math.ts`; pure TS
+    depending only on `chess.js`. Port these into the desktop app for game review.
 - `docker-compose.services.yml` — local infra (pgvector, redis, rustfs/S3,
   inngest, qdrant, searxng). The desktop app uses **embedded PGlite + filesystem
   storage**, so most of these are only relevant if you re-introduce a server mode.
@@ -58,8 +66,8 @@ managed by **Turborepo**.
 
 ```bash
 bun install                       # install (workspace + catalog resolution)
-bun run dev --filter=@aksam/desktop         # desktop app (electrobun dev)
-bun --filter=@aksam/desktop run dev:web     # SPA-only Vite dev server (HMR), port 5173
+bun run dev --filter=@chess-coach/desktop   # desktop app (electrobun dev)
+bun --filter=@chess-coach/desktop run dev:web  # SPA-only Vite dev server (HMR), port 5173
 bun run dev:backend               # @repo/api standalone (Elysia)
 bun run check-types               # turbo check-types (tsc --noEmit across pkgs)
 bun run lint                      # turbo lint (Biome — @biomejs/biome)
@@ -86,14 +94,14 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
    assume a separate server process or external Postgres for desktop.**
 2. **Env ordering is load-bearing.** `src/bun/index.ts` (preload shim) MUST run
    before any `@repo/*` import: it loads the app-data `.env`, sets desktop
-   defaults (S3 dummies, `DATABASE_URL` → `${APP_DATA_DIR}/aksam.db`,
+   defaults (S3 dummies, `DATABASE_URL` → `${APP_DATA_DIR}/chess-coach.db`,
    `NEXT_PUBLIC_*` placeholders), then dynamically imports `main.ts`. `@repo/env`
    validates `process.env` eagerly at import time — break this order and boot
    fails. See the long comment block in `src/bun/index.ts`.
 3. **`@repo/env` is shimmed in the browser.** The SPA never imports the real
    `@repo/env`; Vite aliases it to `src/web/shims/env.ts`, which reads the API
-   base URL from `window.__AKSAM_API_BASE__` (injected by the Bun main). Keep
-   browser/server env access separated.
+   base URL from `window.__CHESS_COACH_API_BASE__` (injected by the Bun main).
+   Keep browser/server env access separated.
 4. **`next/*` imports in `src/web/` are normal** — they resolve to shims, not
    real Next.js. Don't "fix" them by adding Next as a dependency; extend the
    shim under `src/web/shims/next/*` if a new Next API is used.
@@ -140,10 +148,9 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 - **Dev HMR:** run `dev:web` (Vite on :5173, `strictPort`) and `dev`
   (electrobun) separately. The Bun main points the webview at `127.0.0.1:5173`
   only when `NODE_ENV !== "production"`. API proxy target defaults to
-  `AKSAM_DEV_API_PORT` or 4001.
-- The Windows icon path in `electrobun.config.ts` points at
-  `../../apps/web/public/favicon.ico` — that app no longer exists in this repo.
-  Fix the path (or ship a local icon) before a Windows build.
+  `CHESS_COACH_DEV_API_PORT` or 4001.
+- **Windows icon** ships at `src/web/public/favicon.ico` and is referenced from
+  `electrobun.config.ts` (`win.icon`) and the tray (`views://mainview/favicon.ico`).
 
 ## Things to read before touching sensitive areas
 
@@ -152,7 +159,7 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 - `apps/desktop/electrobun.config.ts` — bundle `copy` paths + PGlite asset
   placement rationale.
 - `apps/desktop/vite.config.ts` — alias/shim resolution + `base: "./"` rationale.
-- `packages/api/README.md` — backend architecture (note: it describes the
-  original Aksam layout; some referenced dirs like `routes/projects.ts` /
-  `routes/inngest.ts` are no longer present).
+- `packages/api/README.md` — backend architecture (note: it may describe the
+  original Aksam layout; the live route surface is `/games` CRUD in
+  `src/routes/games.ts`).
 - `packages/db/README.md` — Drizzle + PGlite setup.

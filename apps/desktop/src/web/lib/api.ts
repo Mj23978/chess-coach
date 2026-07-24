@@ -23,13 +23,86 @@ export async function api<T>(
   return res.json() as Promise<T>;
 }
 
+/** Per-move analysis stored in the `analysis` JSON column. Mirrors the
+ *  `MoveAnalysis` interface in packages/db/schema/games.ts. */
+export interface MoveAnalysisDTO {
+  san: string;
+  /** Centipawn eval, WHITE-relative (+ = good for white). */
+  evalCp?: number;
+  /** Mate score, WHITE-relative plies (positive = white mates). */
+  mate?: number;
+  classification?:
+    | "brilliant"
+    | "great"
+    | "best"
+    | "excellent"
+    | "good"
+    | "inaccuracy"
+    | "mistake"
+    | "blunder";
+}
+
 /** Shape returned by the /games endpoints in @repo/api. */
 export interface GameDTO {
   id: string;
   title: string | null;
   white: string | null;
   black: string | null;
+  side: "white" | "black" | null;
   result: string | null;
   pgn: string;
+  analysis: MoveAnalysisDTO[] | null;
+  tags: string[] | null;
   createdAt: string;
+  updatedAt: string;
+}
+
+/** `GET /games` returns `{ games: GameDTO[] }`. */
+export async function fetchGames(): Promise<GameDTO[]> {
+  const data = await api<{ games: GameDTO[] }>("/games");
+  return data.games;
+}
+
+/** `GET /games/:id` returns `{ game: GameDTO }`. */
+export async function fetchGame(id: string): Promise<GameDTO> {
+  const data = await api<{ game: GameDTO }>(`/games/${id}`);
+  return data.game;
+}
+
+/** `POST /games` — create a game from a pasted PGN. */
+export async function createGame(input: {
+  pgn: string;
+  title?: string;
+  white?: string;
+  black?: string;
+  side?: "white" | "black";
+  result?: string;
+  tags?: string[];
+}): Promise<GameDTO> {
+  const data = await api<{ game: GameDTO }>("/games", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return data.game;
+}
+
+/** Result of `POST /games/:id/analyze`. */
+export interface AnalyzeResult {
+  game: GameDTO;
+  accuracy: { white: number; black: number };
+}
+
+/**
+ * Kick off engine + classifier analysis for a stored game. Long-running (one
+ * engine eval per position); the SPA shows a spinner. Returns 503 if no
+ * Stockfish binary is staged — surface that to the user.
+ */
+export async function analyzeGame(
+  id: string,
+  opts?: { depth?: number; multiPv?: number },
+): Promise<AnalyzeResult> {
+  return api<AnalyzeResult>(`/games/${id}/analyze`, {
+    method: "POST",
+    body: JSON.stringify(opts ?? {}),
+  });
 }

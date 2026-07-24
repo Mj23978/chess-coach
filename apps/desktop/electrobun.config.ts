@@ -24,7 +24,7 @@ export default {
         "playwright-chromium",
       ],
     },
-    // No `views.mainview.entrypoint` — the Aksam UI is a Vite-built React SPA,
+    // No `views.mainview.entrypoint` — the Chess Coach UI is a Vite-built React SPA,
     // not an Electroview RPC client. The SPA talks to the in-process Elysia
     // server over plain HTTP (cookies + SSE work natively in the webview), so
     // there is zero Electrobun RPC surface and no Electroview bootstrap needed.
@@ -76,8 +76,9 @@ export default {
     },
     win: {
       bundleCEF: false,
-      // Window/taskbar icon. TODO: ship a Chess Coach .ico (16/32/48/256) at
-      // src/web/public/favicon.ico and set `icon: "src/web/public/favicon.ico"`.
+      // Window/taskbar icon (16/32/48/256 multiresolution .ico, also reused as
+      // the tray image in main.ts via `views://mainview/favicon.ico`).
+      icon: "src/web/public/favicon.ico",
     },
   },
   runtime: {

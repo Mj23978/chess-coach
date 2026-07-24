@@ -8,4 +8,3 @@
  */
 export { app } from "./server";
 export type { App } from "./server";
-export { DEMO_USER_ID } from "./routes/games";
