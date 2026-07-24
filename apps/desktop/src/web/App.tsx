@@ -9,6 +9,7 @@ import { Routes, Route } from "react-router-dom";
 import { DesignSystemProvider } from "@repo/ui";
 import DashboardPage from "./pages/dashboard";
 import GameReviewPage from "./pages/game-review";
+import SettingsPage from "./pages/settings";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/games/:id" element={<GameReviewPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </DesignSystemProvider>
   );

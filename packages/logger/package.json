@@ -17,6 +17,7 @@
     "consola": "^3.4.2"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "typescript": "catalog:"
   }
 }

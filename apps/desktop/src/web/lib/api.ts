@@ -106,3 +106,91 @@ export async function analyzeGame(
     body: JSON.stringify(opts ?? {}),
   });
 }
+
+// ============================================================================
+// Engine Management API
+// ============================================================================
+
+export interface EngineDTO {
+  id: string;
+  name: string;
+  version: string | null;
+  path: string | null;
+  exists: boolean;
+  isActive: boolean;
+  elo: number | null;
+  image: string | null;
+  options: UciOptionDTO[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UciOptionDTO {
+  name: string;
+  type: "check" | "spin" | "combo" | "string" | "button" | "filename";
+  default?: string | number | boolean;
+  min?: number;
+  max?: number;
+  vars?: string[];
+  value?: string | number | boolean;
+}
+
+export interface CatalogEngineDTO {
+  name: string;
+  version: string;
+  os: string;
+  downloadUrl: string;
+  pathInArchive: string;
+  elo: number;
+  downloadSize: number;
+  image: string;
+}
+
+/** `GET /engines` — list all configured engines. */
+export async function fetchEngines(): Promise<EngineDTO[]> {
+  const data = await api<{ engines: EngineDTO[] }>("/engines");
+  return data.engines;
+}
+
+/** `GET /engines/catalog` — list downloadable engines for this platform. */
+export async function fetchEngineCatalog(): Promise<{
+  engines: CatalogEngineDTO[];
+  platform: string;
+}> {
+  return api<{ engines: CatalogEngineDTO[]; platform: string }>("/engines/catalog");
+}
+
+/** `POST /engines` — add an engine from a local path. */
+export async function addLocalEngine(input: {
+  path: string;
+  name?: string;
+  version?: string;
+}): Promise<EngineDTO> {
+  const data = await api<{ engine: EngineDTO }>("/engines", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return data.engine;
+}
+
+/** `POST /engines/download` — download an engine from the catalog. */
+export async function downloadEngine(catalogIndex: number): Promise<EngineDTO> {
+  const data = await api<{ engine: EngineDTO }>("/engines/download", {
+    method: "POST",
+    body: JSON.stringify({ catalogIndex }),
+  });
+  return data.engine;
+}
+
+/** `POST /engines/:id/activate` — set an engine as active. */
+export async function activateEngine(id: string): Promise<EngineDTO> {
+  const data = await api<{ engine: EngineDTO }>(`/engines/${id}/activate`, {
+    method: "POST",
+  });
+  return data.engine;
+}
+
+/** `DELETE /engines/:id` — remove an engine config. */
+export async function deleteEngine(id: string): Promise<void> {
+  await api(`/engines/${id}`, { method: "DELETE" });
+}

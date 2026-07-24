@@ -224,7 +224,7 @@ export const filesystemBackend: StorageBackend = {
       throw error;
     }
     const nodeStream = (await import("node:fs")).createReadStream(target);
-    return Readable.toWeb(nodeStream) as ReadableStream<Uint8Array>;
+    return Readable.toWeb(nodeStream) as unknown as ReadableStream<Uint8Array>;
   },
 
   /** Read an object and decode as UTF-8 text. */

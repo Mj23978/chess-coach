@@ -9,6 +9,10 @@
  * The manager is LAZY: the engine binary isn't spawned until the first
  * `analyze()` call, so an app without a Stockfish binary still boots and can
  * review games whose `analysis` column was already populated.
+ *
+ * Engine selection:
+ *  - First checks for an active engine in the database (user-configured).
+ *  - Falls back to a binary in the `binaries/` directory (dev/bundled).
  */
 import { UciEngine } from "./process";
 import { resolveStockfishPath } from "./resolve";
@@ -24,21 +28,41 @@ let chain: Promise<unknown> = Promise.resolve();
 /**
  * Lazily boot the singleton engine. Resolves to the same promise on repeat
  * calls. Throws if no binary is resolvable.
+ * 
+ * Selection order:
+ *  1. Active engine from database (user-configured)
+ *  2. Fallback binary in binaries/ directory
  */
 function getEngine(): Promise<UciEngine> {
   if (!enginePromise) {
     enginePromise = (async () => {
-      const path = resolveStockfishPath();
-      if (!path) {
+      // Try to get active engine from database
+      let enginePath: string | null = null;
+      try {
+        // Dynamic import to avoid circular dependency
+        const { engineRepository } = await import("@repo/db");
+        const activeEngine = await engineRepository.getActive();
+        if (activeEngine?.path && activeEngine.exists) {
+          enginePath = activeEngine.path;
+        }
+      } catch {
+        // DB not initialized or no active engine
+      }
+      
+      // Fallback to bundled binary
+      if (!enginePath) {
+        enginePath = resolveStockfishPath();
+      }
+      
+      if (!enginePath) {
         throw new EngineUnavailableError(
-          "No Stockfish binary found. Drop one in the repo's `binaries/` " +
-            "directory (stockfish-win.exe / stockfish-macos[-arm64] / " +
-            "stockfish-linux) and restart.",
+          "No engine configured. Add an engine via Settings → Engines, " +
+            "or drop a Stockfish binary in the repo's `binaries/` directory.",
         );
       }
       // Sensible desktop defaults. Threads/Hash are tuned low so the engine
       // doesn't hog the machine during review; MultiPV is set per-analyze.
-      const eng = await UciEngine.create(path);
+      const eng = await UciEngine.create(enginePath);
       await eng.setOption("Threads", "2");
       await eng.setOption("Hash", "128");
       return eng;

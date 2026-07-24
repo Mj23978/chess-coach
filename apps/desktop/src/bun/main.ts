@@ -199,10 +199,10 @@ function quitApp() {
 }
 
 tray.setMenu([
-  { label: "Show Chess Coach", action: "show" },
-  { label: `Open API (:${port})`, action: "open-api" },
+  { type: "normal", label: "Show Chess Coach", action: "show" },
+  { type: "normal", label: `Open API (:${port})`, action: "open-api" },
   { type: "divider" },
-  { label: "Quit", action: "quit" },
+  { type: "normal", label: "Quit", action: "quit" },
 ]);
 
 // `tray-clicked` fires for both the icon click and menu-item clicks; the

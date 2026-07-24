@@ -46,7 +46,12 @@ export default function DashboardPage() {
             Analyze your games and find your mistakes.
           </p>
         </div>
-        <Button onClick={() => setModalOpen(true)}>Import PGN</Button>
+        <div className="flex gap-2">
+          <Link to="/settings">
+            <Button variant="outline">Settings</Button>
+          </Link>
+          <Button onClick={() => setModalOpen(true)}>Import PGN</Button>
+        </div>
       </header>
 
       {modalOpen && (

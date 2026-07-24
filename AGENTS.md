@@ -74,6 +74,7 @@ bun run lint                      # turbo lint (Biome — @biomejs/biome)
 bun run format                    # prettier --write on **/*.{ts,tsx,md}
 bun run build                     # turbo build
 bun run clean                     # git clean -xdf .cache .turbo dist node_modules
+bun run db:generate               # drizzle-kit generate (schema → migration folder sync)
 bun run db:push                   # drizzle-kit push (schema → DB)
 bun run db:migrate                # drizzle-kit migrate
 bun run db:studio                 # drizzle-kit studio
@@ -152,8 +153,97 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 - **Windows icon** ships at `src/web/public/favicon.ico` and is referenced from
   `electrobun.config.ts` (`win.icon`) and the tray (`views://mainview/favicon.ico`).
 
+## Project Management System
+
+This project uses a structured task management system in `.project/` to enable
+parallel development and persist work across sessions. **Read this section before
+starting any implementation work.**
+
+### Directory Structure
+
+```
+.project/
+├── ROADMAP.md           # Master task list with all features and tasks
+├── plans/               # Implementation plans for each feature
+│   └── PLAN-XXX-name/   # One folder per plan
+│       ├── plan.md      # Plan overview and approach
+│       ├── task-YYY.md  # Individual task files
+│       └── notes.md     # Implementation notes
+├── backlog/             # Deferred or unplanned tasks
+└── context/             # Shared context files for investigation results
+```
+
+### Workflow for Agents
+
+1. **Before starting**: Read `.project/ROADMAP.md` to understand the full scope
+   and find a task with status `TODO` and no blocking dependencies.
+
+2. **Pick a plan**: Each plan folder covers a cohesive feature area. Multiple
+   agents can work on different plans simultaneously without conflicts.
+
+3. **Document work**: 
+   - Create/update task files in the plan folder
+   - Store investigation findings in `.project/context/`
+   - Update task status in `ROADMAP.md` when starting/completing
+
+4. **Handoff**: When passing work to another agent, the task files and context
+   provide everything needed to continue without re-investigating.
+
+### Current Plan Folders
+
+| Plan ID | Feature | Phase | Parallel Safe |
+|---------|---------|-------|---------------|
+| PLAN-001 | App Shell & Navigation | 1 | ✅ Yes |
+| PLAN-002 | Dashboard Redesign | 2 | ✅ Yes (after PLAN-001) |
+| PLAN-003 | Board Page Redesign | 3 | ✅ Yes (after PLAN-001) |
+| PLAN-004 | Accounts & Sync | 4 | ✅ Yes (after PLAN-001) |
+| PLAN-005 | Databases Page | 5 | ✅ Yes (after PLAN-001) |
+| PLAN-006 | Files Page | 6 | ✅ Yes (after PLAN-001) |
+| PLAN-007 | Engines Page Polish | 7 | ✅ Yes |
+| PLAN-008 | Settings & Keybindings | 8 | ✅ Yes |
+
+### Task Status Convention
+
+- `TODO` — Not started, available for pickup
+- `IN_PROGRESS` — Currently being worked on (agent name + date)
+- `BLOCKED` — Blocked by another task (note which one)
+- `DONE` — Completed (note completion date)
+- `DEFERRED` — Moved to backlog or future phase
+
+### Example Task File
+
+```markdown
+# F1-001: Create AppShell Component
+
+**Status**: IN_PROGRESS
+**Started**: 2026-07-24
+**Agent**: main
+
+## Objective
+Create the main layout wrapper that provides the navigation rail and content area.
+
+## Approach
+1. Create AppShell.tsx in src/web/components/layout/
+2. Use flex layout with fixed-width left rail
+3. Accept children for the main content area
+
+## Dependencies
+- None
+
+## Files Affected
+- src/web/components/layout/AppShell.tsx (new)
+- src/web/App.tsx (modify)
+
+## Notes
+- Reference examples/pawn-appetite/src/routes/__root.tsx for layout pattern
+- Use @repo/ui Card component for styling consistency
+```
+
+---
+
 ## Things to read before touching sensitive areas
 
+- `.project/ROADMAP.md` — **START HERE** for task assignments and project status.
 - `apps/desktop/src/bun/index.ts` — env preload order (don't reorder imports).
 - `apps/desktop/src/bun/main.ts` — boot sequence + dev/prod webview branching.
 - `apps/desktop/electrobun.config.ts` — bundle `copy` paths + PGlite asset

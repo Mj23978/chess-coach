@@ -3,3 +3,4 @@
  * the type `typeof schema` in db.ts see them all. Add new schema files here.
  */
 export * from "./schema/games";
+export * from "./schema/engines";

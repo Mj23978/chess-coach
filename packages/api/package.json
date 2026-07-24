@@ -12,6 +12,10 @@
       "types": "./src/server.ts",
       "import": "./src/server.ts"
     },
+    "./engine/uci-types": {
+      "types": "./src/engine/uci-types.ts",
+      "import": "./src/engine/uci-types.ts"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {

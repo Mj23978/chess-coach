@@ -35,6 +35,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/three": "^0.165.0",
     "@vitejs/plugin-react": "^4.3.0",
     "bun-types": "catalog:",
     "typescript": "catalog:",
