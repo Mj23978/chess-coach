@@ -1,6 +1,6 @@
 # Chess-Coach Development Roadmap
 
-> Last updated: 2026-07-24
+> Last updated: 2026-07-24 (PLAN-001 complete)
 > 
 > This roadmap tracks all features and tasks for the chess-coach desktop app.
 > Each feature is broken into tasks that can be picked up independently.
@@ -22,27 +22,27 @@
 ### F1: App Shell & Layout System
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| F1-001 | Create AppShell component with layout wrapper | TODO | - |
-| F1-002 | Create NavigationRail component (left sidebar) | TODO | F1-001 |
-| F1-003 | Add navigation items with icons | TODO | F1-002 |
-| F1-004 | Implement active state indicator | TODO | F1-002 |
-| F1-005 | Add collapsible/expandable behavior | TODO | F1-002 |
-| F1-006 | Create TitleBar component with menus | TODO | - |
-| F1-007 | Add File/Edit/View menus | TODO | F1-006 |
-| F1-008 | Add minimize/maximize/close buttons | TODO | F1-006 |
-| F1-009 | Add search bar to title bar | TODO | F1-006 |
-| F1-010 | Wire up routes in App.tsx | TODO | F1-001 |
+| F1-001 | Create AppShell component with layout wrapper | DONE | - |
+| F1-002 | Create NavigationRail component (left sidebar) | DONE | F1-001 |
+| F1-003 | Add navigation items with icons | DONE | F1-002 |
+| F1-004 | Implement active state indicator | DONE | F1-002 |
+| F1-005 | Add collapsible/expandable behavior | DONE | F1-002 |
+| F1-006 | Create TitleBar component with menus | DONE | - |
+| F1-007 | Add File/Edit/View menus | DONE | F1-006 |
+| F1-008 | Add minimize/maximize/close buttons | DONE | F1-006 |
+| F1-009 | Add search bar to title bar | DONE | F1-006 |
+| F1-010 | Wire up routes in App.tsx | DONE | F1-001 |
 
 ### F2: Navigation Routes
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| F2-001 | Add /board route (placeholder) | TODO | - |
-| F2-002 | Add /engines route (move from settings) | TODO | - |
-| F2-003 | Add /databases route (placeholder) | TODO | - |
-| F2-004 | Add /files route (placeholder) | TODO | - |
-| F2-005 | Add /accounts route (placeholder) | TODO | - |
-| F2-006 | Add /train route (placeholder, deferred) | TODO | - |
-| F2-007 | Update /settings route | TODO | F2-002 |
+| F2-001 | Add /board route (placeholder) | DONE | - |
+| F2-002 | Add /engines route (move from settings) | DONE | - |
+| F2-003 | Add /databases route (placeholder) | DONE | - |
+| F2-004 | Add /files route (placeholder) | DONE | - |
+| F2-005 | Add /accounts route (placeholder) | DONE | - |
+| F2-006 | Add /train route (placeholder, deferred) | DONE | - |
+| F2-007 | Update /settings route | DONE | F2-002 |
 
 ---
 
@@ -275,8 +275,8 @@
 ### E1: Engines Page Migration
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| E1-001 | Create EnginesPage component | TODO | - |
-| E1-002 | Move engine management from settings | TODO | E1-001 |
+| E1-001 | Create EnginesPage component | DONE | - |
+| E1-002 | Move engine management from settings | DONE | E1-001 |
 | E1-003 | Add search functionality | TODO | E1-001 |
 | E1-004 | Add List view toggle | TODO | E1-001 |
 | E1-005 | Improve EngineCard styling | TODO | - |
@@ -358,17 +358,17 @@
 
 | Phase | Total Tasks | TODO | IN_PROGRESS | DONE | DEFERRED |
 |-------|-------------|------|-------------|------|----------|
-| Phase 1: Foundation | 17 | 17 | 0 | 0 | 0 |
+| Phase 1: Foundation | 17 | 0 | 0 | 17 | 0 |
 | Phase 2: Dashboard | 18 | 17 | 0 | 0 | 1 |
 | Phase 3: Board | 28 | 28 | 0 | 0 | 0 |
 | Phase 4: Accounts | 26 | 22 | 0 | 0 | 4 |
 | Phase 5: Databases | 17 | 17 | 0 | 0 | 0 |
 | Phase 6: Files | 8 | 8 | 0 | 0 | 0 |
-| Phase 7: Engines | 6 | 6 | 0 | 0 | 0 |
+| Phase 7: Engines | 6 | 4 | 0 | 2 | 0 |
 | Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
 | Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **147** | **134** | **0** | **0** | **13** |
+| **Total** | **147** | **115** | **0** | **19** | **13** |
 
 ---
 

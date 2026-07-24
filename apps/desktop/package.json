@@ -28,7 +28,8 @@
     "elysia": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router-dom": "catalog:"
+    "react-router-dom": "catalog:",
+    "lucide-react": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
