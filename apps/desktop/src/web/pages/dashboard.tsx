@@ -1,24 +1,37 @@
 /**
- * Dashboard — the landing page of the coach. Lists the imported games.
+ * Dashboard — `/`.
  *
- * Hits the API with @tanstack/react-query and renders a Card per game. Each
- * card links to the review page and shows an inline Analyze action.
- * chess-coach is a local single-user app, so there is no owner dimension —
- * `/games` returns every stored game.
+ * The landing page, redesigned in PLAN-002. Composes a stack of cards in the
+ * pawn-appetite style:
  *
- * The "Import PGN" button opens the app-level modal (owned by App.tsx so it
- * can be triggered from the TitleBar File menu too).
+ *   ┌──────────────────────── WelcomeCard ────────────────────────┐
+ *   ├──── ConnectedAccountsCard ─────┬──── TimeControlGrid ────────┤
+ *   ├────────────────────── GamesTable ───────────────────────────┤
+ *   ├──── TrainingSuggestionsCard ───┬──── DailyGoalsCard ────────┤
+ *   └─────────────────────────────────────────────────────────────┘
+ *
+ * Data flow:
+ *  - `useQuery(["games"])` is the single source of truth for the games list.
+ *    It feeds both GamesTable (full rows) and DailyGoalsCard (count-based
+ *    "played today" counter).
+ *  - Import PGN is triggered via the app-level modal (owned by App.tsx) —
+ *    `onImportPgn` opens it; the query is invalidated from App on success.
+ *
+ * Until PLAN-003 (play) and PLAN-004 (account sync) land, several surfaces are
+ * intentionally lightweight: time-control cards navigate to `/board` (a
+ * placeholder) with the chosen time control as router state, and the
+ * Chess.com/Lichess tabs show empty states pointing at the Accounts page.
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
-import { Link } from "react-router-dom";
-import { fetchGames, analyzeGame, type GameDTO } from "../lib/api";
+	ConnectedAccountsCard,
+	DailyGoalsCard,
+	GamesTable,
+	TimeControlGrid,
+	TrainingSuggestionsCard,
+	WelcomeCard,
+} from "../components/dashboard";
+import { fetchGames, type GameDTO } from "../lib/api";
 
 interface DashboardPageProps {
 	/** Open the app-level Import PGN modal. */
@@ -26,98 +39,31 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ onImportPgn }: DashboardPageProps) {
-	const qc = useQueryClient();
-
 	const { data, isLoading, error } = useQuery<GameDTO[]>({
 		queryKey: ["games"],
 		queryFn: fetchGames,
 	});
 
-	const analyzeMut = useMutation({
-		mutationFn: (id: string) => analyzeGame(id),
-		onSuccess: () => qc.invalidateQueries({ queryKey: ["games"] }),
-	});
+	const gamesCount = data?.length ?? 0;
 
 	return (
-		<div className="mx-auto max-w-3xl p-8">
-			<header className="mb-8 flex items-center justify-between">
-				<div>
-					<h1 className="text-2xl font-bold">Chess Coach</h1>
-					<p className="text-sm text-neutral-500">
-						Analyze your games and find your mistakes.
-					</p>
+		<div className="mx-auto max-w-6xl space-y-4 p-8">
+			<WelcomeCard onImportPgn={() => onImportPgn?.()} />
+
+			<div className="grid gap-4 md:grid-cols-3">
+				<ConnectedAccountsCard />
+				<div className="md:col-span-2">
+					<TimeControlGrid />
 				</div>
-				<Button onClick={onImportPgn}>Import PGN</Button>
-			</header>
+			</div>
 
-			{isLoading && <p className="text-neutral-500">Loading games…</p>}
-			{error && (
-				<p className="text-red-600">Failed to load games: {String(error)}</p>
-			)}
+			<GamesTable games={data ?? []} isLoading={isLoading} error={error} />
 
-			<div className="space-y-3">
-				{data?.length === 0 && (
-					<p className="text-neutral-500">
-						No games yet. Import a PGN to begin.
-					</p>
-				)}
-				{data?.map((g) => {
-					const analyzed = (g.analysis?.length ?? 0) > 0;
-					return (
-						<Card key={g.id}>
-							<CardHeader>
-								<CardTitle>
-									<Link to={`/games/${g.id}`} className="hover:underline">
-										{g.title ??
-											`${g.white ?? "White"} vs ${g.black ?? "Black"}`}
-									</Link>
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<div className="flex items-center justify-between">
-									<div>
-										<p className="text-sm text-neutral-600">
-											Result:{" "}
-											<span className="font-mono">{g.result ?? "*"}</span>
-											{analyzed && (
-												<span className="ml-2 rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">
-													analyzed
-												</span>
-											)}
-										</p>
-										<p className="mt-1 text-xs text-neutral-400">
-											{new Date(g.createdAt).toLocaleString()}
-										</p>
-									</div>
-									<div className="flex gap-2">
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={() => analyzeMut.mutate(g.id)}
-											disabled={analyzeMut.isPending}
-										>
-											{analyzeMut.isPending && analyzeMut.variables === g.id
-												? "Analyzing…"
-												: analyzed
-													? "Re-analyze"
-													: "Analyze"}
-										</Button>
-										<Link to={`/games/${g.id}`}>
-											<Button size="sm">Review</Button>
-										</Link>
-									</div>
-								</div>
-								{analyzeMut.isError && analyzeMut.variables === g.id && (
-									<p className="mt-2 text-xs text-red-600">
-										{analyzeMut.error instanceof Error
-											? analyzeMut.error.message
-											: "Analysis failed"}
-									</p>
-								)}
-							</CardContent>
-						</Card>
-					);
-				})}
+			<div className="grid gap-4 md:grid-cols-3">
+				<div className="md:col-span-2">
+					<TrainingSuggestionsCard />
+				</div>
+				<DailyGoalsCard gamesCount={gamesCount} />
 			</div>
 		</div>
 	);

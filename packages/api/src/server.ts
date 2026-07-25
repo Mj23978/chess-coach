@@ -11,6 +11,7 @@ import { cors } from "@elysiajs/cors";
 import { env } from "@repo/env";
 import { gamesRoutes } from "./routes/games";
 import { enginesRoutes } from "./routes/engines";
+import { playRoutes } from "./routes/play";
 
 const corsOrigins = [
   env.NEXT_PUBLIC_APP_URL,
@@ -37,6 +38,7 @@ export const app = new Elysia()
     timestamp: new Date().toISOString(),
   }))
   .use(gamesRoutes)
-  .use(enginesRoutes);
+  .use(enginesRoutes)
+  .use(playRoutes);
 
 export type App = typeof app;

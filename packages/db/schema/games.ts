@@ -31,6 +31,17 @@ export type GameResult = "1-0" | "0-1" | "1/2-1/2" | "*";
 export type PlaySide = "white" | "black";
 
 /**
+ * Where a game came from.
+ *   "local"    pasted/imported in-app (default; no platform account)
+ *   "chesscom" synced from a Chess.com account
+ *   "lichess"  synced from a Lichess account
+ *
+ * The dashboard's games table is grouped by this value. Kept in sync with the
+ * `AccountPlatform` union in ./accounts.ts (which omits "local").
+ */
+export type GameSource = "local" | "chesscom" | "lichess";
+
+/**
  * Engine analysis stored per move. Coarse for now — the analysis pipeline can
  * enrich this (best move, PV, eval units, etc.) without a schema change because
  * it's JSON.
@@ -64,6 +75,16 @@ export const GamesTable = pgTable(
     analysis: json("analysis").$type<MoveAnalysis[]>().default([]),
     /** Free-form tags for filtering (e.g. ["blitz", "Caro-Kann"]). */
     tags: text("tags").array(),
+    /**
+     * Origin of the game. Defaults to "local" for pasted/imported games; set
+     * to "chesscom" / "lichess" by the account sync flow. See GameSource.
+     */
+    source: text("source").$type<GameSource>().notNull().default("local"),
+    /**
+     * Owning account for synced games (references accounts.id). Nullable for
+     * local games. No DB-level FK — app enforces; keeps migrations loose.
+     */
+    accountId: uuid("account_id"),
     createdAt: timestamp("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -73,6 +94,10 @@ export const GamesTable = pgTable(
   },
   (table) => ({
     createdAtIdx: index("games_created_at_idx").on(table.createdAt),
+    /** Dashboard groups games by source (Local / Chess.com / Lichess tabs). */
+    sourceIdx: index("games_source_idx").on(table.source),
+    /** Account-detail views filter a synced account's games. */
+    accountIdIdx: index("games_account_id_idx").on(table.accountId),
   }),
 );
 

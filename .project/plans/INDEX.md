@@ -62,4 +62,5 @@ PLAN-XXX-feature/
 
 ## Completed Plans
 
-None yet.
+- [PLAN-001](./PLAN-001-app-shell/plan.md) — App Shell & Navigation (2026-07-24)
+- [PLAN-002](./PLAN-002-dashboard/plan.md) — Dashboard Redesign (2026-07-25)

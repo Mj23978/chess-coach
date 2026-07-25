@@ -1,6 +1,6 @@
 # Chess-Coach Development Roadmap
 
-> Last updated: 2026-07-24 (PLAN-001 complete)
+> Last updated: 2026-07-25 (PLAN-002 complete)
 > 
 > This roadmap tracks all features and tasks for the chess-coach desktop app.
 > Each feature is broken into tasks that can be picked up independently.
@@ -51,33 +51,33 @@
 ### D1: Dashboard Layout
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| D1-001 | Create WelcomeCard component | TODO | - |
-| D1-002 | Add Play Now button action | TODO | D1-001 |
-| D1-003 | Add Import Game button action | TODO | D1-001 |
-| D1-004 | Create ConnectedAccountsCard component | TODO | - |
-| D1-005 | Create TimeControlGrid component | TODO | - |
-| D1-006 | Add Classical/Rapid/Blitz/Bullet cards | TODO | D1-005 |
-| D1-007 | Wire time control cards to game start | TODO | D1-006 |
-| D1-008 | Rewrite DashboardPage with new layout | TODO | D1-001, D1-004, D1-005 |
+| D1-001 | Create WelcomeCard component | DONE | - |
+| D1-002 | Add Play Now button action | DONE | D1-001 |
+| D1-003 | Add Import Game button action | DONE | D1-001 |
+| D1-004 | Create ConnectedAccountsCard component | DONE | - |
+| D1-005 | Create TimeControlGrid component | DONE | - |
+| D1-006 | Add Classical/Rapid/Blitz/Bullet cards | DONE | D1-005 |
+| D1-007 | Wire time control cards to game start | DONE | D1-006 |
+| D1-008 | Rewrite DashboardPage with new layout | DONE | D1-001, D1-004, D1-005 |
 
 ### D2: Games Table
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| D2-001 | Create GamesTable component | TODO | - |
-| D2-002 | Add Local/Chess.com/Lichess tabs | TODO | D2-001 |
-| D2-003 | Add columns: Opponent, Color, Result | TODO | D2-001 |
-| D2-004 | Add columns: Accuracy, ACPL, Moves, Date | TODO | D2-001 |
-| D2-005 | Add Account column | TODO | D2-001 |
-| D2-006 | Make rows clickable → game review | TODO | D2-001 |
-| D2-007 | Add sorting functionality | TODO | D2-001 |
-| D2-008 | Add filtering functionality | TODO | D2-001 |
+| D2-001 | Create GamesTable component | DONE | - |
+| D2-002 | Add Local/Chess.com/Lichess tabs | DONE | D2-001 |
+| D2-003 | Add columns: Opponent, Color, Result | DONE | D2-001 |
+| D2-004 | Add columns: Accuracy, ACPL, Moves, Date | DONE | D2-001 |
+| D2-005 | Add Account column | DONE | D2-001 |
+| D2-006 | Make rows clickable → game review | DONE | D2-001 |
+| D2-007 | Add sorting functionality | DONE | D2-001 |
+| D2-008 | Add filtering functionality | DONE | D2-001 |
 
 ### D3: Daily Goals Widget
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| D3-001 | Create DailyGoalsCard component | TODO | - |
-| D3-002 | Add games played counter | TODO | D3-001 |
-| D3-003 | Add puzzles solved counter (placeholder) | TODO | D3-001 |
+| D3-001 | Create DailyGoalsCard component | DONE | - |
+| D3-002 | Add games played counter | DONE | D3-001 |
+| D3-003 | Add puzzles solved counter (placeholder) | DONE | D3-001 |
 | D3-004 | Create daily_goals table schema | TODO | - |
 | D3-005 | Add API routes for goals | TODO | D3-004 |
 
@@ -359,7 +359,7 @@
 | Phase | Total Tasks | TODO | IN_PROGRESS | DONE | DEFERRED |
 |-------|-------------|------|-------------|------|----------|
 | Phase 1: Foundation | 17 | 0 | 0 | 17 | 0 |
-| Phase 2: Dashboard | 18 | 17 | 0 | 0 | 1 |
+| Phase 2: Dashboard | 21 | 2 | 0 | 19 | 0 |
 | Phase 3: Board | 28 | 28 | 0 | 0 | 0 |
 | Phase 4: Accounts | 26 | 22 | 0 | 0 | 4 |
 | Phase 5: Databases | 17 | 17 | 0 | 0 | 0 |
@@ -368,7 +368,7 @@
 | Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
 | Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **147** | **115** | **0** | **19** | **13** |
+| **Total** | **150** | **100** | **0** | **38** | **12** |
 
 ---
 

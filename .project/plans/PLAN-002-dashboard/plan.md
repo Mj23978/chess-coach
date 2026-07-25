@@ -33,25 +33,25 @@ and daily goals widget.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| D1-001 | Create WelcomeCard component | TODO | - |
-| D1-002 | Add Play Now button action | TODO | D1-001 |
-| D1-003 | Add Import Game button action | TODO | D1-001 |
-| D1-004 | Create ConnectedAccountsCard | TODO | - |
-| D1-005 | Create TimeControlGrid component | TODO | - |
-| D1-006 | Add Classical/Rapid/Blitz/Bullet cards | TODO | D1-005 |
-| D1-007 | Wire time control cards to game start | TODO | D1-006 |
-| D1-008 | Rewrite DashboardPage layout | TODO | D1-001, D1-004, D1-005 |
-| D2-001 | Create GamesTable component | TODO | - |
-| D2-002 | Add Local/Chess.com/Lichess tabs | TODO | D2-001 |
-| D2-003 | Add columns: Opponent, Color, Result | TODO | D2-001 |
-| D2-004 | Add columns: Accuracy, ACPL, Moves, Date | TODO | D2-001 |
-| D2-005 | Add Account column | TODO | D2-001 |
-| D2-006 | Make rows clickable → game review | TODO | D2-001 |
-| D2-007 | Add sorting functionality | TODO | D2-001 |
-| D2-008 | Add filtering functionality | TODO | D2-001 |
-| D3-001 | Create DailyGoalsCard component | TODO | - |
-| D3-002 | Add games played counter | TODO | D3-001 |
-| D3-003 | Add puzzles solved counter (placeholder) | TODO | D3-001 |
+| D1-001 | Create WelcomeCard component | DONE | - |
+| D1-002 | Add Play Now button action | DONE | D1-001 |
+| D1-003 | Add Import Game button action | DONE | D1-001 |
+| D1-004 | Create ConnectedAccountsCard | DONE | - |
+| D1-005 | Create TimeControlGrid component | DONE | - |
+| D1-006 | Add Classical/Rapid/Blitz/Bullet cards | DONE | D1-005 |
+| D1-007 | Wire time control cards to game start | DONE | D1-006 |
+| D1-008 | Rewrite DashboardPage layout | DONE | D1-001, D1-004, D1-005 |
+| D2-001 | Create GamesTable component | DONE | - |
+| D2-002 | Add Local/Chess.com/Lichess tabs | DONE | D2-001 |
+| D2-003 | Add columns: Opponent, Color, Result | DONE | D2-001 |
+| D2-004 | Add columns: Accuracy, ACPL, Moves, Date | DONE | D2-001 |
+| D2-005 | Add Account column | DONE | D2-001 |
+| D2-006 | Make rows clickable → game review | DONE | D2-001 |
+| D2-007 | Add sorting functionality | DONE | D2-001 |
+| D2-008 | Add filtering functionality | DONE | D2-001 |
+| D3-001 | Create DailyGoalsCard component | DONE | - |
+| D3-002 | Add games played counter | DONE | D3-001 |
+| D3-003 | Add puzzles solved counter (placeholder) | DONE | D3-001 |
 | D3-004 | Create daily_goals table schema | TODO | - |
 | D3-005 | Add API routes for goals | TODO | D3-004 |
 
@@ -151,18 +151,18 @@ POST /goals/daily       # Update goal progress
 
 ## Acceptance Criteria
 
-- [ ] WelcomeCard shows greeting and quick actions
-- [ ] Play Now button navigates to /board with new game modal
-- [ ] Import Game button opens import modal
-- [ ] ConnectedAccountsCard shows list of accounts (empty state OK)
-- [ ] TimeControlGrid shows 4 time control cards
-- [ ] Clicking a time control card starts a new game
-- [ ] GamesTable shows tabs for Local/Chess.com/Lichess
-- [ ] GamesTable columns display correct data
-- [ ] Clicking a game row opens game review
-- [ ] DailyGoalsCard shows progress counters
-- [ ] Type checking passes
-- [ ] Lint passes
+- [x] WelcomeCard shows greeting and quick actions
+- [x] Play Now button navigates to /board with new game modal
+- [x] Import Game button opens import modal
+- [x] ConnectedAccountsCard shows list of accounts (empty state OK)
+- [x] TimeControlGrid shows 4 time control cards
+- [x] Clicking a time control card starts a new game (navigates to /board w/ time control state; full play mode is PLAN-003)
+- [x] GamesTable shows tabs for Local/Chess.com/Lichess
+- [x] GamesTable columns display correct data
+- [x] Clicking a game row opens game review
+- [x] DailyGoalsCard shows progress counters
+- [x] Type checking passes
+- [x] Lint passes
 
 ---
 
