@@ -106,6 +106,77 @@ export interface AnalyzeResult {
   accuracy: { white: number; black: number };
 }
 
+// ============================================================================
+// Files API (PLAN-009)
+// ============================================================================
+
+/** Kind of imported file. Mirrors `FileType` in packages/db/schema/files.ts. */
+export type FileType = "games" | "repertoire" | "tournament" | "puzzle";
+
+/** Shape returned by the /files endpoints in @repo/api. */
+export interface FileDTO {
+  id: string;
+  name: string;
+  type: FileType;
+  description: string | null;
+  pgn: string;
+  gameCount: number;
+  storageBytes: number;
+  tags: string[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** `GET /files` — list all files. */
+export async function fetchFiles(): Promise<FileDTO[]> {
+  const data = await api<{ files: FileDTO[] }>("/files");
+  return data.files;
+}
+
+/** `GET /files/:id`. */
+export async function fetchFile(id: string): Promise<FileDTO> {
+  const data = await api<{ file: FileDTO }>(`/files/${id}`);
+  return data.file;
+}
+
+/** `POST /files` — create a file from a PGN import. */
+export async function createFile(input: {
+  name: string;
+  type?: FileType;
+  description?: string;
+  pgn: string;
+  tags?: string[];
+}): Promise<FileDTO> {
+  const data = await api<{ file: FileDTO }>("/files", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  return data.file;
+}
+
+/** `PATCH /files/:id` — rename / re-describe / update PGN. */
+export async function updateFile(
+  id: string,
+  input: {
+    name?: string;
+    description?: string | null;
+    type?: FileType;
+    pgn?: string;
+    tags?: string[] | null;
+  },
+): Promise<FileDTO> {
+  const data = await api<{ file: FileDTO }>(`/files/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+  return data.file;
+}
+
+/** `DELETE /files/:id`. */
+export async function deleteFile(id: string): Promise<void> {
+  await api(`/files/${id}`, { method: "DELETE" });
+}
+
 /**
  * Kick off engine + classifier analysis for a stored game. Long-running (one
  * engine eval per position); the SPA shows a spinner. Returns 503 if no

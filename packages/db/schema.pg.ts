@@ -6,3 +6,4 @@ export * from "./schema/games";
 export * from "./schema/engines";
 export * from "./schema/accounts";
 export * from "./schema/databases";
+export * from "./schema/files";

@@ -1,6 +1,6 @@
 # Chess-Coach Development Roadmap
 
-> Last updated: 2026-07-25 (PLAN-005 complete)
+> Last updated: 2026-07-26 (PLAN-009 / Phase 6 complete)
 > 
 > This roadmap tracks all features and tasks for the chess-coach desktop app.
 > Each feature is broken into tasks that can be picked up independently.
@@ -246,27 +246,27 @@
 ### FL1: Database Schema
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| FL1-001 | Create files table schema | TODO | - |
-| FL1-002 | Run db:generate migration | TODO | FL1-001 |
-| FL1-003 | Run db:push to apply | TODO | FL1-002 |
+| FL1-001 | Create files table schema | DONE | - |
+| FL1-002 | Run db:generate migration | DONE | FL1-001 |
+| FL1-003 | Run db:push to apply | DONE | FL1-002 |
 
 ### FL2: Files Page UI
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| FL2-001 | Create FilesPage component | TODO | - |
-| FL2-002 | Create FileCard component | TODO | - |
-| FL2-003 | Create AddFileModal component | TODO | - |
-| FL2-004 | Add type picker (game/repertoire/tournament/puzzle) | TODO | FL2-003 |
-| FL2-005 | Add PGN paste/file upload | TODO | FL2-003 |
+| FL2-001 | Create FilesPage component | DONE | - |
+| FL2-002 | Create FileCard component | DONE | - |
+| FL2-003 | Create AddFileModal component | DONE | - |
+| FL2-004 | Add type picker (game/repertoire/tournament/puzzle) | DONE | FL2-003 |
+| FL2-005 | Add PGN paste/file upload | DONE | FL2-003 |
 
 ### FL3: Files API Routes
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| FL3-001 | Add GET /files endpoint | TODO | FL1-003 |
-| FL3-002 | Add POST /files endpoint | TODO | FL1-003 |
-| FL3-003 | Add GET /files/:id endpoint | TODO | FL1-003 |
-| FL3-004 | Add PATCH /files/:id endpoint | TODO | FL1-003 |
-| FL3-005 | Add DELETE /files/:id endpoint | TODO | FL1-003 |
+| FL3-001 | Add GET /files endpoint | DONE | FL1-003 |
+| FL3-002 | Add POST /files endpoint | DONE | FL1-003 |
+| FL3-003 | Add GET /files/:id endpoint | DONE | FL1-003 |
+| FL3-004 | Add PATCH /files/:id endpoint | DONE | FL1-003 |
+| FL3-005 | Add DELETE /files/:id endpoint | DONE | FL1-003 |
 
 ---
 
@@ -363,12 +363,12 @@
 | Phase 3: Board | 28 | 11 | 0 | 17 | 0 |
 | Phase 4: Accounts | 26 | 0 | 0 | 25 | 1 |
 | Phase 5: Databases | 17 | 0 | 0 | 17 | 0 |
-| Phase 6: Files | 8 | 8 | 0 | 0 | 0 |
+| Phase 6: Files | 8 | 0 | 0 | 8 | 0 |
 | Phase 7: Engines | 6 | 4 | 0 | 2 | 0 |
 | Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
 | Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **150** | **66** | **0** | **72** | **12** |
+| **Total** | **150** | **58** | **0** | **80** | **12** |
 
 ---
 

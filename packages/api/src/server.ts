@@ -14,6 +14,7 @@ import { enginesRoutes } from "./routes/engines";
 import { playRoutes } from "./routes/play";
 import { databasesRoutes } from "./routes/databases";
 import { accountsRoutes } from "./routes/accounts";
+import { filesRoutes } from "./routes/files";
 import { authRoutes } from "./routes/auth";
 
 const corsOrigins = [
@@ -45,6 +46,7 @@ export const app = new Elysia()
   .use(playRoutes)
   .use(databasesRoutes)
   .use(accountsRoutes)
+  .use(filesRoutes)
   .use(authRoutes);
 
 export type App = typeof app;
