@@ -243,6 +243,13 @@
 
 ## Phase 6: Files Page
 
+> **Migrations are generated, never committed.** FL1-002 / FL1-003 mean "the
+> owner runs `bun run db:generate` + `db:push` on their Windows PC" — agents do
+> **not** hand-write or commit `packages/api/migrations/*.sql` or `meta/*`. The
+> schema is the source of truth (`packages/db/schema/files.ts`); drizzle-kit
+> regenerates the whole `migrations/` folder from it. See AGENTS.md §"Migrations
+> are generated".
+
 ### FL1: Database Schema
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|

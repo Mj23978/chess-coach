@@ -19,7 +19,6 @@ import { Routes, Route } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { DesignSystemProvider } from "@repo/ui";
 import { AppShell } from "./components/layout";
-import { ToastProvider } from "./components/ui";
 import DashboardPage from "./pages/dashboard";
 import GameReviewPage from "./pages/game-review";
 import SettingsPage from "./pages/settings";
@@ -30,6 +29,7 @@ import FilesPage from "./pages/files";
 import AccountsPage from "./pages/accounts";
 import TrainPage from "./pages/train";
 import { ImportPgnModal } from "./components/import-pgn-modal";
+import { ToastProvider } from "@repo/ui/components/toast";
 
 export default function App() {
 	const [importModalOpen, setImportModalOpen] = useState(false);

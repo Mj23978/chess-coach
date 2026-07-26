@@ -4,14 +4,20 @@ Workspace instructions for ZCode agents. Read this before editing.
 
 > ⚠️⚠️⚠️ **THIS VPS IS CODE-ONLY.** Do **NOT** run `bun install`, `bun run
 > check-types`, `bun run lint`, `bun run build`, `bun run db:*`, or any other
-> build/type-check/lint/migrate command here. Bun and the rest of the
-> toolchain are not installed on this host, and **the owner intentionally does
-> not want them installed** — installing Bun/Node toolchains, `node_modules`,
+> build/type-check/lint/migrate command here. Bun and the rest of the toolchain
+> are not installed on this host, and **the owner intentionally does not want
+> them installed** — installing Bun/Node toolchains, `node_modules`,
 > `drizzle-kit`, `tsc`, etc. on this VPS is out of scope and forbidden. This
 > VPS exists **only to write and edit code**; all verification (typecheck,
 > lint, migrations, build, runtime testing) is performed **later by the owner
 > on their own Windows PC**, where the full toolchain is set up. Just edit the
 > files, commit, and push — the detailed commands below are for reference only.
+>
+> **Migrations are generated, never authored.** Do **not** hand-write or commit
+> `packages/api/migrations/*.sql`, `meta/_journal.json`, or `meta/*_snapshot.json`
+> — that whole folder is `drizzle-kit generate` output, regenerated from
+> `packages/db/schema/*`. Edit only the schema files; the owner runs
+> `db:generate` on their PC and the desktop bundle stages the result.
 
 ## Project goal
 
@@ -136,11 +142,18 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 5. **`@repo/ui` is source-consumed.** It has no build step; apps import raw
    `.tsx` via the `./components/*`, `./hooks/*`, `./lib/*`, `./icons/*` exports.
    Use Tailwind v4 conventions (it ships `@repo/ui/postcss.config.mjs`).
-6. **DB schema changes require migrations.** Edit `packages/db/schema/*`, then
-   `bun run db:generate` (create) / `db:push` (apply to PGlite). The desktop
-   bundle copies staged migrations in via `electrobun.config.ts` `copy` +
-   `scripts/stage-native-assets.mjs` — keep that path consistent when adding
-   migrations.
+6. **DB schema changes: edit schema, app generates migrations.** Edit
+   `packages/db/schema/*` and re-export new files from `schema.pg.ts`. **Do NOT
+   hand-write, edit, or commit migration `.sql` files or `meta/_journal.json` /
+   `meta/*_snapshot.json`.** The entire `packages/api/migrations/` folder is
+   **generated output** — `drizzle-kit generate` regenerates it from the schema
+   barrel, and `packages/db/migrations.ts` applies it to PGlite at boot. The
+   owner runs `bun run db:generate` (→ `db:push`) on their Windows PC, where
+   drizzle-kit is installed; the produced folder is then staged into the desktop
+   bundle by `electrobun.config.ts` `copy` + `scripts/stage-native-assets.mjs`.
+   On this VPS, **just add/edit the schema files and re-export them** — never
+   touch the `migrations/` folder. (The folder is gitignored precisely so
+   generated migrations aren't committed; see `.gitignore`.)
 7. **Don't import from `examples/`.** It's reference-only.
 
 ## Coding conventions

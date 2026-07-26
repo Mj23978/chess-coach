@@ -1,0 +1,8 @@
+{
+  "hosts": {
+    "amo": {
+      "host": "46.8.69.94",
+      "username": "root"
+    }
+  }
+}
