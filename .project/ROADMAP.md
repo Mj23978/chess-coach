@@ -1,6 +1,6 @@
 # Chess-Coach Development Roadmap
 
-> Last updated: 2026-07-26 (Phase 7 complete)
+> Last updated: 2026-07-26 (Phase 8 & 9 complete)
 > 
 > This roadmap tracks all features and tasks for the chess-coach desktop app.
 > Each feature is broken into tasks that can be picked up independently.
@@ -289,22 +289,22 @@
 ### S1: Settings Page Redesign
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| S1-001 | Create new SettingsPage layout | TODO | - |
-| S1-002 | Add Appearance section (theme, board colors) | TODO | S1-001 |
-| S1-003 | Add Engine defaults section | TODO | S1-001 |
-| S1-004 | Add Sync preferences section | TODO | S1-001 |
-| S1-005 | Add Keyboard shortcuts editor | TODO | S1-001 |
-| S1-006 | Add About section | TODO | S1-001 |
+| S1-001 | Create new SettingsPage layout | DONE | - |
+| S1-002 | Add Appearance section (theme, board colors) | DONE | S1-001 |
+| S1-003 | Add Engine defaults section | DONE | S1-001 |
+| S1-004 | Add Sync preferences section | DONE | S1-001 |
+| S1-005 | Add Keyboard shortcuts editor | DONE | S1-001 |
+| S1-006 | Add About section | DONE | S1-001 |
 
 ### S2: Keyboard Shortcuts
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| S2-001 | Create useKeyboardShortcuts hook | TODO | - |
-| S2-002 | Add Ctrl+1-7 for navigation | TODO | S2-001 |
-| S2-003 | Add arrow keys for game navigation | TODO | S2-001 |
-| S2-004 | Add F for flip board | TODO | S2-001 |
-| S2-005 | Add S for save PGN | TODO | S2-001 |
-| S2-006 | Add Ctrl+F for global search | TODO | S2-001 |
+| S2-001 | Create useKeyboardShortcuts hook | DONE | - |
+| S2-002 | Add Ctrl+1-7 for navigation | DONE | S2-001 |
+| S2-003 | Add arrow keys for game navigation | DONE | S2-001 |
+| S2-004 | Add F for flip board | DONE | S2-001 |
+| S2-005 | Add S for save PGN | DONE | S2-001 |
+| S2-006 | Add Ctrl+F for global search | DONE | S2-001 |
 
 ---
 
@@ -313,17 +313,17 @@
 ### X1: Export Features
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| X1-001 | Add PGN export with annotations | TODO | - |
-| X1-002 | Add FEN copy to clipboard | TODO | - |
-| X1-003 | Add screenshot to clipboard/file | TODO | - |
+| X1-001 | Add PGN export with annotations | DONE | - |
+| X1-002 | Add FEN copy to clipboard | DONE | - |
+| X1-003 | Add screenshot to clipboard/file | DONE | - |
 
 ### X2: UI Polish
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| X2-001 | Add loading skeletons | TODO | - |
-| X2-002 | Add error boundaries | TODO | - |
-| X2-003 | Add empty states | TODO | - |
-| X2-004 | Add toast notifications | TODO | - |
+| X2-001 | Add loading skeletons | DONE | - |
+| X2-002 | Add error boundaries | DONE | - |
+| X2-003 | Add empty states | DONE | - |
+| X2-004 | Add toast notifications | DONE | - |
 
 ---
 
@@ -365,10 +365,10 @@
 | Phase 5: Databases | 17 | 0 | 0 | 17 | 0 |
 | Phase 6: Files | 8 | 0 | 0 | 8 | 0 |
 | Phase 7: Engines | 6 | 0 | 0 | 6 | 0 |
-| Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
-| Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
+| Phase 8: Settings | 12 | 0 | 0 | 12 | 0 |
+| Phase 9: Export | 7 | 0 | 0 | 7 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **150** | **54** | **0** | **84** | **12** |
+| **Total** | **150** | **32** | **0** | **106** | **12** |
 
 ---
 

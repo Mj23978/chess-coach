@@ -23,6 +23,7 @@ import {
 	Bug,
 } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
+import { toast } from "../ui";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -101,7 +102,12 @@ export function TitleBar({
 							<Upload className="mr-2 size-4" />
 							Import PGN...
 						</DropdownMenuItem>
-						<DropdownMenuItem onClick={onExportPgn}>
+						<DropdownMenuItem
+							onClick={() => {
+								if (onExportPgn) onExportPgn();
+								else toast.info("Navigate to a game to export PGN");
+							}}
+						>
 							<Download className="mr-2 size-4" />
 							Export PGN...
 						</DropdownMenuItem>

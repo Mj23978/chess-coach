@@ -19,6 +19,7 @@ import { Routes, Route } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { DesignSystemProvider } from "@repo/ui";
 import { AppShell } from "./components/layout";
+import { ToastProvider } from "./components/ui";
 import DashboardPage from "./pages/dashboard";
 import GameReviewPage from "./pages/game-review";
 import SettingsPage from "./pages/settings";
@@ -54,6 +55,8 @@ export default function App() {
 					<Route path="/settings" element={<SettingsPage />} />
 				</Routes>
 			</AppShell>
+
+			<ToastProvider />
 
 			{importModalOpen && (
 				<ImportPgnModal

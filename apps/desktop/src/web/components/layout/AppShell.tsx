@@ -14,6 +14,7 @@ import { useState } from "react";
 import { SidebarInset, SidebarProvider } from "@repo/ui/components/sidebar";
 import { NavigationRail } from "./NavigationRail";
 import { TitleBar } from "./TitleBar";
+import { useKeyboardShortcuts } from "../../lib/useKeyboardShortcuts";
 
 interface AppShellProps {
 	children: React.ReactNode;
@@ -30,6 +31,18 @@ export function AppShell({
 }: AppShellProps) {
 	const [keybindingsOpen, setKeybindingsOpen] = useState(false);
 	const [defaultSidebarOpen, setDefaultSidebarOpen] = useState(true);
+
+	// Global keyboard shortcuts
+	useKeyboardShortcuts({
+		onToggleSidebar: () => setDefaultSidebarOpen((open) => !open),
+		onGlobalSearch: () => {
+			// Focus the search input in the title bar
+			const searchInput = document.querySelector<HTMLInputElement>(
+				'app-drag input[type="text"]',
+			);
+			searchInput?.focus();
+		},
+	});
 
 	return (
 		<div className="flex h-screen flex-col overflow-hidden">

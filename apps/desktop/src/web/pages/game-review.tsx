@@ -21,6 +21,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Key } from "@lichess-org/chessground/types";
+import { Download, Copy, Camera } from "lucide-react";
 import { Button } from "@repo/ui/components/button";
 import { Chessboard } from "../components/Chessboard";
 import { fetchGame, analyzeGame, type MoveAnalysisDTO } from "../lib/api";
@@ -32,6 +33,13 @@ import {
 	CLASSIFICATION_STYLES,
 	type Classification,
 } from "../lib/classification";
+import {
+	exportPgnWithAnnotations,
+	copyFenToClipboard,
+	downloadText,
+	generatePgnFilename,
+} from "../lib/export";
+import { BoardErrorBoundary, toast, TOAST_MESSAGES } from "../components/ui";
 
 /** Square pair for `lastMove`, derived from the UCI string ("e2e4" → ["e2","e4"]). */
 function uciLastMove(uci: string): [string, string] | null {
@@ -149,6 +157,40 @@ export default function GameReviewPage() {
 								: "Analysis failed"}
 						</span>
 					)}
+
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => {
+							const fen = displayFen;
+							copyFenToClipboard(fen).then((ok) => {
+								if (ok) toast.success(TOAST_MESSAGES.FEN_COPIED);
+								else toast.error("Failed to copy FEN");
+							});
+						}}
+					>
+						<Copy className="mr-1.5 size-3.5" />
+						FEN
+					</Button>
+
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => {
+							const pgn = exportPgnWithAnnotations({
+								pgn: game!.pgn,
+								analysis,
+								includeEval: true,
+								includeClassification: true,
+							});
+							downloadText(pgn, generatePgnFilename(game!), "text/x-chess-pgn");
+							toast.success(TOAST_MESSAGES.PGN_EXPORTED);
+						}}
+					>
+						<Download className="mr-1.5 size-3.5" />
+						PGN
+					</Button>
+
 					<Button
 						onClick={() => analyzeMut.mutate()}
 						disabled={analyzeMut.isPending}
@@ -175,11 +217,13 @@ export default function GameReviewPage() {
 				<div className="flex items-stretch gap-2">
 					<EvalBar whiteWin={winPct} />
 					<div className="w-[480px] max-w-full">
-						<Chessboard
-							fen={displayFen}
-							orientation={game.side ?? "white"}
-							lastMove={lastMove as [Key, Key] | null}
-						/>
+						<BoardErrorBoundary>
+							<Chessboard
+								fen={displayFen}
+								orientation={game.side ?? "white"}
+								lastMove={lastMove as [Key, Key] | null}
+							/>
+						</BoardErrorBoundary>
 					</div>
 				</div>
 
