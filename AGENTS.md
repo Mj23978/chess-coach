@@ -61,6 +61,18 @@ plumbing.
 
 ## Build / dev / test commands
 
+> ⚠️ **DO NOT run any of these commands on the current VPS server.** Bun,
+> node_modules, drizzle-kit, tsc, and the rest of the toolchain are **not
+> installed** on this host (`bun`, `tsc`, `drizzle-kit` are all missing, and
+> `node_modules/` does not exist). Do not attempt `bun install`, `bun run
+> check-types`, `bun run lint`, `bun run db:generate`, `bun run build`, or any
+> other build/type-check/lint/migrate command here — it will fail and waste
+> time. Instead, **just write/edit the files and push the changes**. The owner
+> pulls the work onto their own Windows PC (where the toolchain is installed)
+> and a separate agent runs type-check / lint / migrations / build and refines
+> for bugs. Migrations (`.sql`) and any generated artifacts are produced on
+> that machine, not here.
+
 Run from repo root. Package manager is **Bun** (`packageManager: bun@1.3.14`),
 managed by **Turborepo**.
 
@@ -85,6 +97,9 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 
 > Build is expected to fail until the missing `@repo/*` packages are either
 > restored, re-implemented, or removed from imports.
+>
+> (Reminder: none of these commands run on this VPS — see the ⚠️ note above.
+> Edit the files, commit, and push; verification happens on the owner's PC.)
 
 ## Architecture boundaries & layer rules
 
@@ -117,6 +132,11 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 7. **Don't import from `examples/`.** It's reference-only.
 
 ## Coding conventions
+
+> Reminder: per the ⚠️ note in **Build / dev / test commands** above, do **not**
+> run build/type-check/lint/migrate commands on this VPS — they are not
+> installed here. Just write the code carefully and push; another agent on the
+> owner's Windows PC verifies and refines.
 
 - TypeScript strict mode + `noUncheckedIndexedAccess` (root `tsconfig.json`).
   `moduleResolution: "Bundler"`, `target: ES2022`.

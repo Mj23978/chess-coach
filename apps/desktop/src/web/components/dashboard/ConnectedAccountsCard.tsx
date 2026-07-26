@@ -1,13 +1,12 @@
 /**
  * ConnectedAccountsCard (D1-004) — quick summary of synced Chess.com/Lichess
- * accounts.
+ * accounts, shown on the dashboard.
  *
- * Until PLAN-004 (Accounts & Sync) lands there are no accounts in the DB, so
- * this card shows both platforms as "Not connected" and links to the Accounts
- * page to set them up. The component is shaped so wiring real account data
- * later is just a prop change (pass an `accounts` array).
+ * Fetches the account list itself (`["accounts"]`) and renders one row per
+ * platform: connected accounts show their username + synced-game count;
+ * unconnected platforms show a "Connect" link to the Accounts page.
  */
-
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@repo/ui/components/button";
 import {
 	Card,
@@ -17,23 +16,16 @@ import {
 } from "@repo/ui/components/card";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
+import { fetchAccounts } from "../../lib/api";
 
-export interface ConnectedAccount {
-	platform: "chess.com" | "lichess";
-	username: string;
-	gamesSynced: number;
-}
+export function ConnectedAccountsCard() {
+	const { data: accounts } = useQuery({
+		queryKey: ["accounts"],
+		queryFn: fetchAccounts,
+	});
 
-interface ConnectedAccountsCardProps {
-	/** Synced accounts. Empty until PLAN-004 wires real data. */
-	accounts?: ConnectedAccount[];
-}
-
-export function ConnectedAccountsCard({
-	accounts = [],
-}: ConnectedAccountsCardProps) {
-	const chessCom = accounts.find((a) => a.platform === "chess.com");
-	const lichess = accounts.find((a) => a.platform === "lichess");
+	const chessCom = accounts?.find((a) => a.platform === "chess.com");
+	const lichess = accounts?.find((a) => a.platform === "lichess");
 
 	return (
 		<Card className="h-full">
@@ -52,7 +44,7 @@ export function ConnectedAccountsCard({
 					dotClass="bg-emerald-500"
 					detail={
 						chessCom
-							? `${chessCom.username} · ${chessCom.gamesSynced} games`
+							? `${chessCom.username} · ${chessCom.gamesCount} games`
 							: "Not connected"
 					}
 					connected={!!chessCom}
@@ -62,7 +54,7 @@ export function ConnectedAccountsCard({
 					dotClass="bg-neutral-800"
 					detail={
 						lichess
-							? `${lichess.username} · ${lichess.gamesSynced} games`
+							? `${lichess.username} · ${lichess.gamesCount} games`
 							: "Not connected"
 					}
 					connected={!!lichess}

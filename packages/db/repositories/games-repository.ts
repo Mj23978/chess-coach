@@ -9,6 +9,7 @@
 import { desc, eq, count } from "drizzle-orm";
 import { db } from "../db";
 import { GamesTable } from "../schema/games";
+import type { GameSource } from "../schema/games";
 import type {
   CreateGameInput,
   Game,
@@ -28,6 +29,8 @@ export const gameRepository: GameRepository = {
         side: input.side,
         result: input.result,
         tags: input.tags,
+        source: input.source,
+        accountId: input.accountId,
       })
       .returning();
     return row!;
@@ -50,6 +53,22 @@ export const gameRepository: GameRepository = {
       .orderBy(desc(GamesTable.createdAt))
       .limit(limit)
       .offset(offset);
+  },
+
+  listBySource: async (source: GameSource): Promise<Game[]> => {
+    return db
+      .select()
+      .from(GamesTable)
+      .where(eq(GamesTable.source, source))
+      .orderBy(desc(GamesTable.createdAt));
+  },
+
+  listByAccount: async (accountId: string): Promise<Game[]> => {
+    return db
+      .select()
+      .from(GamesTable)
+      .where(eq(GamesTable.accountId, accountId))
+      .orderBy(desc(GamesTable.createdAt));
   },
 
   update: async (
@@ -79,6 +98,22 @@ export const gameRepository: GameRepository = {
 
   count: async (): Promise<number> => {
     const [row] = await db.select({ n: count() }).from(GamesTable);
+    return row?.n ?? 0;
+  },
+
+  countBySource: async (source: GameSource): Promise<number> => {
+    const [row] = await db
+      .select({ n: count() })
+      .from(GamesTable)
+      .where(eq(GamesTable.source, source));
+    return row?.n ?? 0;
+  },
+
+  countByAccount: async (accountId: string): Promise<number> => {
+    const [row] = await db
+      .select({ n: count() })
+      .from(GamesTable)
+      .where(eq(GamesTable.accountId, accountId));
     return row?.n ?? 0;
   },
 };

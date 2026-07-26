@@ -5,7 +5,6 @@
  * individual components stay swappable and the import surface is small.
  */
 
-export type { ConnectedAccount } from "./ConnectedAccountsCard";
 export { ConnectedAccountsCard } from "./ConnectedAccountsCard";
 export { DailyGoalsCard } from "./DailyGoalsCard";
 export type { GamesTableProps } from "./GamesTable";

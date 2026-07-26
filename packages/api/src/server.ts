@@ -12,6 +12,9 @@ import { env } from "@repo/env";
 import { gamesRoutes } from "./routes/games";
 import { enginesRoutes } from "./routes/engines";
 import { playRoutes } from "./routes/play";
+import { databasesRoutes } from "./routes/databases";
+import { accountsRoutes } from "./routes/accounts";
+import { authRoutes } from "./routes/auth";
 
 const corsOrigins = [
   env.NEXT_PUBLIC_APP_URL,
@@ -39,6 +42,9 @@ export const app = new Elysia()
   }))
   .use(gamesRoutes)
   .use(enginesRoutes)
-  .use(playRoutes);
+  .use(playRoutes)
+  .use(databasesRoutes)
+  .use(accountsRoutes)
+  .use(authRoutes);
 
 export type App = typeof app;

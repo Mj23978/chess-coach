@@ -53,13 +53,23 @@ import {
 type SortKey = "opponent" | "result" | "accuracy" | "acpl" | "moves" | "date";
 type SortDir = "asc" | "desc";
 
-interface LocalGamesTableProps {
+interface GamesSubTableProps {
 	games: GameDTO[];
 	isLoading: boolean;
 	error: unknown;
+	/** Message shown when the (filtered) list is empty. */
+	emptyMessage: string;
+	/** When set, the empty state shows a "sync from Accounts" CTA. */
+	emptyAction?: "connect";
 }
 
-function LocalGamesTable({ games, isLoading, error }: LocalGamesTableProps) {
+function GamesSubTable({
+	games,
+	isLoading,
+	error,
+	emptyMessage,
+	emptyAction,
+}: GamesSubTableProps) {
 	const qc = useQueryClient();
 	const [sortKey, setSortKey] = useState<SortKey>("date");
 	const [sortDir, setSortDir] = useState<SortDir>("desc");
@@ -106,9 +116,12 @@ function LocalGamesTable({ games, isLoading, error }: LocalGamesTableProps) {
 	if (games.length === 0) {
 		return (
 			<div className="rounded-md border border-dashed border-neutral-300 p-8 text-center">
-				<p className="text-sm text-neutral-500">
-					No games yet. Import a PGN to begin.
-				</p>
+				<p className="text-sm text-neutral-500">{emptyMessage}</p>
+				{emptyAction === "connect" && (
+					<Button asChild variant="outline" size="sm" className="mt-3">
+						<Link to="/accounts">Sync from Accounts</Link>
+					</Button>
+				)}
 			</div>
 		);
 	}
@@ -232,7 +245,7 @@ function LocalGamesTable({ games, isLoading, error }: LocalGamesTableProps) {
 									{formatDate(g.createdAt)}
 								</TableCell>
 								<TableCell>
-									<Badge variant="secondary">Local</Badge>
+									<Badge variant="secondary">{sourceLabel(g.source)}</Badge>
 								</TableCell>
 								<TableCell className="text-right">
 									<Button
@@ -272,21 +285,18 @@ function LocalGamesTable({ games, isLoading, error }: LocalGamesTableProps) {
 	);
 }
 
-/** "No games synced" empty state for the Chess.com / Lichess tabs. */
-function SyncEmptyState({ platform }: { platform: "Chess.com" | "Lichess" }) {
-	return (
-		<div className="flex flex-col items-center justify-center gap-3 px-4 py-12 text-center">
-			<p className="text-sm text-neutral-500">
-				No {platform} games synced yet.
-			</p>
-			<Button asChild variant="outline" size="sm">
-				<Link to="/accounts">Connect your {platform} account</Link>
-			</Button>
-			<p className="text-xs text-neutral-400">
-				Account sync arrives in Phase 4 (Accounts & Sync).
-			</p>
-		</div>
-	);
+/** Display label for a game's source. */
+function sourceLabel(
+	source: GameDTO["source"] | null | undefined,
+): string {
+	switch (source) {
+		case "chesscom":
+			return "Chess.com";
+		case "lichess":
+			return "Lichess";
+		default:
+			return "Local";
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -412,33 +422,54 @@ export function GamesTable({
 	error,
 	defaultTab = "local",
 }: GamesTableProps) {
+	const local = games.filter((g) => (g.source ?? "local") === "local");
+	const chesscom = games.filter((g) => g.source === "chesscom");
+	const lichess = games.filter((g) => g.source === "lichess");
+
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle className="text-base">Recent Games</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<Tabs defaultValue={defaultTab}>
-					<TabsList>
-						<TabsTrigger value="local">Local</TabsTrigger>
-						<TabsTrigger value="chesscom">Chess.com</TabsTrigger>
-						<TabsTrigger value="lichess">Lichess</TabsTrigger>
-					</TabsList>
-					<TabsContent value="local">
-						<LocalGamesTable
-							games={games}
-							isLoading={isLoading}
-							error={error}
-						/>
-					</TabsContent>
-					<TabsContent value="chesscom">
-						<SyncEmptyState platform="Chess.com" />
-					</TabsContent>
-					<TabsContent value="lichess">
-						<SyncEmptyState platform="Lichess" />
-					</TabsContent>
-				</Tabs>
-			</CardContent>
+			<Tabs defaultValue={defaultTab}>
+				<TabsList>
+					<TabsTrigger value="local">Local ({local.length})</TabsTrigger>
+					<TabsTrigger value="chesscom">
+						Chess.com ({chesscom.length})
+					</TabsTrigger>
+					<TabsTrigger value="lichess">
+						Lichess ({lichess.length})
+					</TabsTrigger>
+				</TabsList>
+				<TabsContent value="local">
+					<GamesSubTable
+						games={local}
+						isLoading={isLoading}
+						error={error}
+						emptyMessage="No games yet. Import a PGN to begin."
+					/>
+				</TabsContent>
+				<TabsContent value="chesscom">
+					<GamesSubTable
+						games={chesscom}
+						isLoading={false}
+						error={error}
+						emptyMessage="No Chess.com games synced yet."
+						emptyAction="connect"
+					/>
+				</TabsContent>
+				<TabsContent value="lichess">
+					<GamesSubTable
+						games={lichess}
+						isLoading={false}
+						error={error}
+						emptyMessage="No Lichess games synced yet."
+						emptyAction="connect"
+					/>
+				</TabsContent>
+			</Tabs>
+		</CardContent>
 		</Card>
 	);
 }

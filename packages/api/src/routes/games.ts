@@ -52,10 +52,30 @@ function normalizeClassification(
 }
 
 export const gamesRoutes = new Elysia({ prefix: "/games" })
-  .get("/", async () => {
-    const games = await gameRepository.list();
-    return { games };
-  })
+  .get(
+    "/",
+    async ({ query }) => {
+      // Optional filters: `source` ("local"|"chesscom"|"lichess") and
+      // `accountId`. Used by the dashboard tabs and the account drawer.
+      let games;
+      if (query.accountId) {
+        games = await gameRepository.listByAccount(query.accountId);
+      } else if (query.source) {
+        games = await gameRepository.listBySource(query.source);
+      } else {
+        games = await gameRepository.list();
+      }
+      return { games };
+    },
+    {
+      query: t.Optional(
+        t.Object({
+          source: t.Optional(t.String()),
+          accountId: t.Optional(t.String()),
+        }),
+      ),
+    },
+  )
   .get("/:id", async ({ params: { id }, set }) => {
     const game = await gameRepository.getById(id);
     if (!game) {
