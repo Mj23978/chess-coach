@@ -88,37 +88,37 @@
 ### B1: Tabbed Board Interface
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| B1-001 | Create BoardPage with tab state | TODO | - |
-| B1-002 | Create TabBar component (browser-like) | TODO | B1-001 |
-| B1-003 | Add new tab button (+) | TODO | B1-002 |
-| B1-004 | Implement tab switching | TODO | B1-002 |
-| B1-005 | Create NewTabModal component | TODO | B1-003 |
-| B1-006 | Add 4-card selection in modal | TODO | B1-005 |
+| B1-001 | Create BoardPage with tab state | DONE | - |
+| B1-002 | Create TabBar component (browser-like) | DONE | B1-001 |
+| B1-003 | Add new tab button (+) | DONE | B1-002 |
+| B1-004 | Implement tab switching | DONE | B1-002 |
+| B1-005 | Create NewTabModal component | DONE | B1-003 |
+| B1-006 | Add 4-card selection in modal | DONE | B1-005 |
 
 ### B2: Play Game Mode
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| B2-001 | Create PlayGameView component | TODO | - |
-| B2-002 | Add Chessboard with eval bar | TODO | B2-001 |
-| B2-003 | Create PlayerConfigCard component | TODO | - |
-| B2-004 | Add White/Black side tabs | TODO | B2-003 |
-| B2-005 | Add Human/Engine toggle per side | TODO | B2-004 |
-| B2-006 | Add player name input (human) | TODO | B2-005 |
-| B2-007 | Add time control selector (human) | TODO | B2-005 |
-| B2-008 | Add engine dropdown (engine) | TODO | B2-005 |
-| B2-009 | Add FEN input for custom position | TODO | B2-001 |
-| B2-010 | Create GameActionsBar component | TODO | - |
-| B2-011 | Add Flip/Screenshot/Save/Reload buttons | TODO | B2-010 |
-| B2-012 | Create Clock component | TODO | - |
+| B2-001 | Create PlayGameView component | DONE | - |
+| B2-002 | Add Chessboard with eval bar | DONE | B2-001 |
+| B2-003 | Create PlayerConfigCard component | DONE | - |
+| B2-004 | Add White/Black side tabs | DONE | B2-003 |
+| B2-005 | Add Human/Engine toggle per side | DONE | B2-004 |
+| B2-006 | Add player name input (human) | DONE | B2-005 |
+| B2-007 | Add time control selector (human) | DONE | B2-005 |
+| B2-008 | Add engine dropdown (engine) | DONE | B2-005 |
+| B2-009 | Add FEN input for custom position | DONE | B2-001 |
+| B2-010 | Create GameActionsBar component | DONE | - |
+| B2-011 | Add Flip/Screenshot/Save/Reload buttons | DONE | B2-010 |
+| B2-012 | Create Clock component | DONE | - |
 
 ### B3: Game API for Play Mode
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| B3-001 | Add POST /games/play endpoint | TODO | - |
-| B3-002 | Add POST /games/:id/move endpoint | TODO | B3-001 |
-| B3-003 | Add game state management | TODO | B3-001 |
-| B3-004 | Add engine move calculation | TODO | B3-003 |
-| B3-005 | Add SSE for real-time updates | TODO | B3-003 |
+| B3-001 | Add POST /games/play endpoint | DONE | - |
+| B3-002 | Add POST /games/:id/move endpoint | DONE | B3-001 |
+| B3-003 | Add game state management | DONE | B3-001 |
+| B3-004 | Add engine move calculation | DONE | B3-003 |
+| B3-005 | Add SSE for real-time updates | DONE | B3-003 |
 
 ### B4: Analysis Mode
 | Task ID | Title | Status | Dependencies |
@@ -360,7 +360,7 @@
 |-------|-------------|------|-------------|------|----------|
 | Phase 1: Foundation | 17 | 0 | 0 | 17 | 0 |
 | Phase 2: Dashboard | 21 | 2 | 0 | 19 | 0 |
-| Phase 3: Board | 28 | 28 | 0 | 0 | 0 |
+| Phase 3: Board | 28 | 11 | 0 | 17 | 0 |
 | Phase 4: Accounts | 26 | 0 | 0 | 25 | 1 |
 | Phase 5: Databases | 17 | 0 | 0 | 17 | 0 |
 | Phase 6: Files | 8 | 8 | 0 | 0 | 0 |
@@ -368,7 +368,7 @@
 | Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
 | Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **150** | **83** | **0** | **55** | **12** |
+| **Total** | **150** | **66** | **0** | **72** | **12** |
 
 ---
 
