@@ -1,6 +1,6 @@
 # Chess-Coach Development Roadmap
 
-> Last updated: 2026-07-25 (PLAN-002 complete)
+> Last updated: 2026-07-25 (PLAN-005 complete)
 > 
 > This roadmap tracks all features and tasks for the chess-coach desktop app.
 > Each feature is broken into tasks that can be picked up independently.
@@ -209,35 +209,35 @@
 ### DB1: Database Schema
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| DB1-001 | Create databases table schema | TODO | - |
-| DB1-002 | Create databaseGames junction table | TODO | - |
-| DB1-003 | Run db:generate migration | TODO | DB1-001, DB1-002 |
-| DB1-004 | Run db:push to apply | TODO | DB1-003 |
+| DB1-001 | Create databases table schema | DONE | - |
+| DB1-002 | Create databaseGames junction table | DONE | - |
+| DB1-003 | Run db:generate migration | DONE | DB1-001, DB1-002 |
+| DB1-004 | Run db:push to apply | DONE | DB1-003 |
 
 ### DB2: Databases Page UI
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| DB2-001 | Create DatabasesPage component | TODO | - |
-| DB2-002 | Create DatabaseCard component | TODO | - |
-| DB2-003 | Add Grid/List view toggle | TODO | DB2-001 |
-| DB2-004 | Create GenericHeader component | TODO | - |
-| DB2-005 | Add search/sort/add actions | TODO | DB2-004 |
-| DB2-006 | Create DatabaseDrawer component | TODO | - |
-| DB2-007 | Add rename/description fields | TODO | DB2-006 |
-| DB2-008 | Add explore games action | TODO | DB2-006 |
-| DB2-009 | Add remove duplicates action | TODO | DB2-006 |
-| DB2-010 | Add export games action | TODO | DB2-006 |
+| DB2-001 | Create DatabasesPage component | DONE | - |
+| DB2-002 | Create DatabaseCard component | DONE | - |
+| DB2-003 | Add Grid/List view toggle | DONE | DB2-001 |
+| DB2-004 | Create GenericHeader component | DONE | - |
+| DB2-005 | Add search/sort/add actions | DONE | DB2-004 |
+| DB2-006 | Create DatabaseDrawer component | DONE | - |
+| DB2-007 | Add rename/description fields | DONE | DB2-006 |
+| DB2-008 | Add explore games action | DONE | DB2-006 |
+| DB2-009 | Add remove duplicates action | DONE | DB2-006 |
+| DB2-010 | Add export games action | DONE | DB2-006 |
 
 ### DB3: Database API Routes
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| DB3-001 | Add GET /databases endpoint | TODO | DB1-004 |
-| DB3-002 | Add POST /databases endpoint | TODO | DB1-004 |
-| DB3-003 | Add GET /databases/:id endpoint | TODO | DB1-004 |
-| DB3-004 | Add PATCH /databases/:id endpoint | TODO | DB1-004 |
-| DB3-005 | Add DELETE /databases/:id endpoint | TODO | DB1-004 |
-| DB3-006 | Add POST /databases/:id/games endpoint | TODO | DB1-004 |
-| DB3-007 | Add GET /databases/:id/export endpoint | TODO | DB1-004 |
+| DB3-001 | Add GET /databases endpoint | DONE | DB1-004 |
+| DB3-002 | Add POST /databases endpoint | DONE | DB1-004 |
+| DB3-003 | Add GET /databases/:id endpoint | DONE | DB1-004 |
+| DB3-004 | Add PATCH /databases/:id endpoint | DONE | DB1-004 |
+| DB3-005 | Add DELETE /databases/:id endpoint | DONE | DB1-004 |
+| DB3-006 | Add POST /databases/:id/games endpoint | DONE | DB1-004 |
+| DB3-007 | Add GET /databases/:id/export endpoint | DONE | DB1-004 |
 
 ---
 
@@ -362,13 +362,13 @@
 | Phase 2: Dashboard | 21 | 2 | 0 | 19 | 0 |
 | Phase 3: Board | 28 | 28 | 0 | 0 | 0 |
 | Phase 4: Accounts | 26 | 22 | 0 | 0 | 4 |
-| Phase 5: Databases | 17 | 17 | 0 | 0 | 0 |
+| Phase 5: Databases | 17 | 0 | 0 | 17 | 0 |
 | Phase 6: Files | 8 | 8 | 0 | 0 | 0 |
 | Phase 7: Engines | 6 | 4 | 0 | 2 | 0 |
 | Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
 | Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **150** | **100** | **0** | **38** | **12** |
+| **Total** | **150** | **83** | **0** | **55** | **12** |
 
 ---
 
