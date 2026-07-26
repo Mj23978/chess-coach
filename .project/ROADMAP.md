@@ -1,6 +1,6 @@
 # Chess-Coach Development Roadmap
 
-> Last updated: 2026-07-26 (PLAN-009 / Phase 6 complete)
+> Last updated: 2026-07-26 (Phase 7 complete)
 > 
 > This roadmap tracks all features and tasks for the chess-coach desktop app.
 > Each feature is broken into tasks that can be picked up independently.
@@ -277,10 +277,10 @@
 |---------|-------|--------|--------------|
 | E1-001 | Create EnginesPage component | DONE | - |
 | E1-002 | Move engine management from settings | DONE | E1-001 |
-| E1-003 | Add search functionality | TODO | E1-001 |
-| E1-004 | Add List view toggle | TODO | E1-001 |
-| E1-005 | Improve EngineCard styling | TODO | - |
-| E1-006 | Add engine images | TODO | E1-005 |
+| E1-003 | Add search functionality | DONE | E1-001 |
+| E1-004 | Add List view toggle | DONE | E1-001 |
+| E1-005 | Improve EngineCard styling | DONE | - |
+| E1-006 | Add engine images | DONE | E1-005 |
 
 ---
 
@@ -364,11 +364,11 @@
 | Phase 4: Accounts | 26 | 0 | 0 | 25 | 1 |
 | Phase 5: Databases | 17 | 0 | 0 | 17 | 0 |
 | Phase 6: Files | 8 | 0 | 0 | 8 | 0 |
-| Phase 7: Engines | 6 | 4 | 0 | 2 | 0 |
+| Phase 7: Engines | 6 | 0 | 0 | 6 | 0 |
 | Phase 8: Settings | 12 | 12 | 0 | 0 | 0 |
 | Phase 9: Export | 7 | 7 | 0 | 0 | 0 |
 | Deferred: Training | 8 | 0 | 0 | 0 | 8 |
-| **Total** | **150** | **58** | **0** | **80** | **12** |
+| **Total** | **150** | **54** | **0** | **84** | **12** |
 
 ---
 

@@ -1,18 +1,28 @@
 /**
- * Engines page — `/engines`.
+ * Engines page — `/engines` (Phase 7: E1-001 … E1-006).
  *
  * Engine management UI. Moved from Settings page to its own dedicated page.
- * Will be polished in Phase 7 (Engines Page Polish).
+ * Features search, grid/list view toggle, improved card styling, and engine
+ * images.
+ *
+ * Data flow:
+ *  - `useQuery(["engines"])` is the single source of truth.
+ *  - Mutations (activate, delete, download, add) invalidate `["engines"]`.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Cpu, Plus, Search } from "lucide-react";
+import { Input } from "@repo/ui/components/input";
+import { Button } from "@repo/ui/components/button";
 import {
 	Card,
 	CardContent,
 	CardHeader,
 	CardTitle,
 } from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
+import {
+	EngineCard,
+} from "../components/engines";
 import {
 	fetchEngines,
 	fetchEngineCatalog,
@@ -23,10 +33,16 @@ import {
 	type EngineDTO,
 } from "../lib/api";
 
+type ViewMode = "grid" | "list";
+
 export default function EnginesPage() {
 	const qc = useQueryClient();
 	const [showAddModal, setShowAddModal] = useState(false);
 	const [showCatalogModal, setShowCatalogModal] = useState(false);
+
+	// Search + view state
+	const [view, setView] = useState<ViewMode>("grid");
+	const [search, setSearch] = useState("");
 
 	const { data: engines, isLoading } = useQuery({
 		queryKey: ["engines"],
@@ -43,56 +59,168 @@ export default function EnginesPage() {
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["engines"] }),
 	});
 
+	// Filtered list
+	const visible = useMemo(() => {
+		const q = search.trim().toLowerCase();
+		if (!q) return engines ?? [];
+		return (engines ?? []).filter(
+			(e) =>
+				e.name.toLowerCase().includes(q) ||
+				(e.version ?? "").toLowerCase().includes(q),
+		);
+	}, [engines, search]);
+
+	function handleDelete(engine: EngineDTO) {
+		if (
+			confirm(
+				`Remove "${engine.name}"? The engine binary on disk is not deleted.`,
+			)
+		) {
+			deleteMut.mutate(engine.id);
+		}
+	}
+
 	return (
-		<div className="mx-auto max-w-3xl p-8">
+		<div className="mx-auto max-w-6xl p-8">
+			{/* Header */}
 			<header className="mb-6">
-				<h1 className="text-2xl font-bold">Engines</h1>
-				<p className="text-sm text-neutral-500">
-					Manage your chess engines for analysis and play.
-				</p>
+				<div className="flex items-start justify-between gap-4">
+					<div className="min-w-0">
+						<div className="mt-1 flex items-center gap-3">
+							<div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
+								<Cpu className="size-5" />
+							</div>
+							<div className="min-w-0">
+								<h1 className="truncate text-2xl font-bold">Engines</h1>
+								<p className="mt-0.5 text-sm text-neutral-500">
+									Manage your chess engines for analysis and play.
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div className="flex shrink-0 items-center gap-2">
+						<div className="relative w-56">
+							<Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+							<Input
+								variant="minimal"
+								placeholder="Search engines…"
+								value={search}
+								onChange={(e) => setSearch(e.target.value)}
+								className="h-9 pl-8"
+							/>
+						</div>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setShowCatalogModal(true)}
+						>
+							Download Engine
+						</Button>
+						<Button size="sm" onClick={() => setShowAddModal(true)}>
+							<Plus className="mr-1.5 size-4" />
+							Add Engine
+						</Button>
+					</div>
+				</div>
 			</header>
 
+			{/* View toggle + count */}
 			<div className="mb-4 flex items-center justify-between">
-				<h2 className="text-lg font-semibold">Configured Engines</h2>
-				<div className="flex gap-2">
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => setShowCatalogModal(true)}
-					>
-						Download Engine
-					</Button>
-					<Button size="sm" onClick={() => setShowAddModal(true)}>
-						Add Local Engine
-					</Button>
+				<div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
+					<ViewToggle
+						mode="grid"
+						active={view === "grid"}
+						onClick={() => setView("grid")}
+					/>
+					<ViewToggle
+						mode="list"
+						active={view === "list"}
+						onClick={() => setView("list")}
+					/>
 				</div>
+				<span className="text-sm text-neutral-500">
+					{visible.length} engine{visible.length === 1 ? "" : "s"}
+					{search && engines && visible.length !== engines.length && (
+						<> of {engines.length}</>
+					)}
+				</span>
 			</div>
 
-			{isLoading && <p className="text-neutral-500">Loading engines…</p>}
+			{/* Loading */}
+			{isLoading && (
+				<p className="py-12 text-center text-sm text-neutral-500">
+					Loading engines…
+				</p>
+			)}
 
-			{engines?.length === 0 && (
-				<div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center">
-					<p className="text-neutral-500">
-						No engines configured. Download Stockfish or add a local engine to
-						enable analysis.
+			{/* Empty state */}
+			{!isLoading && visible.length === 0 && (
+				<div className="rounded-xl border border-dashed border-neutral-300 p-12 text-center">
+					<Cpu className="mx-auto mb-4 size-12 text-neutral-300" />
+					<h3 className="mb-2 font-medium text-neutral-700">
+						{engines && engines.length > 0
+							? "No engines match your search"
+							: "No engines configured"}
+					</h3>
+					<p className="mb-4 text-sm text-neutral-500">
+						{engines && engines.length > 0
+							? "Try a different search term."
+							: "Download Stockfish or add a local engine to enable analysis."}
 					</p>
+					{!engines || engines.length === 0 ? (
+						<div className="flex justify-center gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => setShowCatalogModal(true)}
+							>
+								Download Engine
+							</Button>
+							<Button size="sm" onClick={() => setShowAddModal(true)}>
+								<Plus className="mr-1.5 size-4" />
+								Add Engine
+							</Button>
+						</div>
+					) : null}
 				</div>
 			)}
 
-			<div className="space-y-3">
-				{engines?.map((engine) => (
-					<EngineCard
-						key={engine.id}
-						engine={engine}
-						onActivate={() => activateMut.mutate(engine.id)}
-						onDelete={() => deleteMut.mutate(engine.id)}
-						isActivating={activateMut.isPending}
-						isDeleting={deleteMut.isPending}
-					/>
-				))}
-			</div>
+			{/* Grid */}
+			{view === "grid" && visible.length > 0 && (
+				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					{visible.map((engine) => (
+						<EngineCard
+							key={engine.id}
+							engine={engine}
+							view="grid"
+							onActivate={() => activateMut.mutate(engine.id)}
+							onDelete={() => handleDelete(engine)}
+							isActivating={activateMut.isPending}
+							isDeleting={deleteMut.isPending}
+						/>
+					))}
+				</div>
+			)}
 
-			{/* Modals - reuse from settings page */}
+			{/* List */}
+			{view === "list" && visible.length > 0 && (
+				<div className="space-y-2">
+					{visible.map((engine) => (
+						<EngineCard
+							key={engine.id}
+							engine={engine}
+							view="list"
+							onActivate={() => activateMut.mutate(engine.id)}
+							onDelete={() => handleDelete(engine)}
+							isActivating={activateMut.isPending}
+							isDeleting={deleteMut.isPending}
+						/>
+					))}
+				</div>
+			)}
+
+			{/* Catalog modal (download) */}
 			{showCatalogModal && (
 				<CatalogModal
 					onClose={() => setShowCatalogModal(false)}
@@ -103,6 +231,7 @@ export default function EnginesPage() {
 				/>
 			)}
 
+			{/* Add local engine modal */}
 			{showAddModal && (
 				<AddEngineModal
 					onClose={() => setShowAddModal(false)}
@@ -116,80 +245,80 @@ export default function EnginesPage() {
 	);
 }
 
-function EngineCard({
-	engine,
-	onActivate,
-	onDelete,
-	isActivating,
-	isDeleting,
+// ---------------------------------------------------------------------------
+// View toggle icons
+// ---------------------------------------------------------------------------
+
+function ViewToggle({
+	mode,
+	active,
+	onClick,
 }: {
-	engine: EngineDTO;
-	onActivate: () => void;
-	onDelete: () => void;
-	isActivating: boolean;
-	isDeleting: boolean;
+	mode: ViewMode;
+	active: boolean;
+	onClick: () => void;
 }) {
+	const Icon = mode === "grid" ? GridIcon : ListIcon;
 	return (
-		<Card>
-			<CardContent className="flex items-center justify-between py-4">
-				<div className="flex items-center gap-3">
-					{engine.image && (
-						<img
-							src={engine.image}
-							alt={engine.name}
-							className="h-10 w-10 rounded object-contain"
-						/>
-					)}
-					<div>
-						<div className="flex items-center gap-2">
-							<span className="font-medium">{engine.name}</span>
-							{engine.version && (
-								<span className="rounded bg-neutral-100 px-1.5 py-0.5 text-xs text-neutral-600">
-									v{engine.version}
-								</span>
-							)}
-							{engine.isActive && (
-								<span className="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-700">
-									Active
-								</span>
-							)}
-						</div>
-						<div className="mt-0.5 flex items-center gap-2 text-xs text-neutral-500">
-							{engine.elo && <span>ELO: {engine.elo}</span>}
-							{!engine.exists && engine.path && (
-								<span className="text-red-600">⚠ File not found</span>
-							)}
-							{!engine.path && (
-								<span className="text-neutral-400">No path set</span>
-							)}
-						</div>
-					</div>
-				</div>
-				<div className="flex gap-2">
-					{!engine.isActive && engine.exists && (
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={onActivate}
-							disabled={isActivating}
-						>
-							{isActivating ? "Activating…" : "Activate"}
-						</Button>
-					)}
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={onDelete}
-						disabled={isDeleting}
-						className="text-red-600 hover:bg-red-50"
-					>
-						Remove
-					</Button>
-				</div>
-			</CardContent>
-		</Card>
+		<button
+			type="button"
+			onClick={onClick}
+			className={`flex items-center justify-center rounded px-2 py-1 text-sm transition-colors ${
+				active
+					? "bg-neutral-100 text-neutral-900"
+					: "text-neutral-500 hover:bg-neutral-50"
+			}`}
+			aria-label={`${mode} view`}
+			aria-pressed={active}
+		>
+			<Icon className="size-4" />
+		</button>
 	);
 }
+
+function GridIcon({ className }: { className?: string }) {
+	return (
+		<svg
+			className={className}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<rect x="3" y="3" width="7" height="7" rx="1" />
+			<rect x="14" y="3" width="7" height="7" rx="1" />
+			<rect x="3" y="14" width="7" height="7" rx="1" />
+			<rect x="14" y="14" width="7" height="7" rx="1" />
+		</svg>
+	);
+}
+
+function ListIcon({ className }: { className?: string }) {
+	return (
+		<svg
+			className={className}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		>
+			<line x1="8" y1="6" x2="21" y2="6" />
+			<line x1="8" y1="12" x2="21" y2="12" />
+			<line x1="8" y1="18" x2="21" y2="18" />
+			<circle cx="3.5" cy="6" r="1" />
+			<circle cx="3.5" cy="12" r="1" />
+			<circle cx="3.5" cy="18" r="1" />
+		</svg>
+	);
+}
+
+// ---------------------------------------------------------------------------
+// Modals
+// ---------------------------------------------------------------------------
 
 function CatalogModal({
 	onClose,
@@ -243,12 +372,16 @@ function CatalogModal({
 										className="flex items-center justify-between rounded-lg border p-3"
 									>
 										<div className="flex items-center gap-3">
-											{engine.image && (
+											{engine.image ? (
 												<img
 													src={engine.image}
 													alt={engine.name}
-													className="h-8 w-8 rounded object-contain"
+													className="h-10 w-10 rounded-lg object-contain"
 												/>
+											) : (
+												<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500">
+													<Cpu className="size-5" />
+												</div>
 											)}
 											<div>
 												<div className="font-medium">
