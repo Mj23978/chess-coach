@@ -227,15 +227,13 @@ function OpeningsTab({
 		});
 		const side = userSide({ side: g.side }) === "white" ? "white" : "black";
 		// Infer side from player name when the game didn't record it.
-		const effSide =
-			g.side ??
-			(username &&
-			(g.white?.toLowerCase() === username.toLowerCase()
-				? "white"
-				: g.black?.toLowerCase() === username.toLowerCase()
-					? "black"
-					: side));
-		const r = resultLabel({ result: g.result, side: effSide as "white" | "black" });
+		let effSide: "white" | "black" = side;
+		if (username) {
+			if (g.white?.toLowerCase() === username.toLowerCase()) effSide = "white";
+			else if (g.black?.toLowerCase() === username.toLowerCase())
+				effSide = "black";
+		}
+		const r = resultLabel({ result: g.result, side: effSide });
 		if (r.tone === "win") row.wins++;
 		else if (r.tone === "draw") row.draws++;
 		else if (r.tone === "loss") row.losses++;

@@ -2,6 +2,17 @@
 
 Workspace instructions for ZCode agents. Read this before editing.
 
+> ⚠️⚠️⚠️ **THIS VPS IS CODE-ONLY.** Do **NOT** run `bun install`, `bun run
+> check-types`, `bun run lint`, `bun run build`, `bun run db:*`, or any other
+> build/type-check/lint/migrate command here. Bun and the rest of the
+> toolchain are not installed on this host, and **the owner intentionally does
+> not want them installed** — installing Bun/Node toolchains, `node_modules`,
+> `drizzle-kit`, `tsc`, etc. on this VPS is out of scope and forbidden. This
+> VPS exists **only to write and edit code**; all verification (typecheck,
+> lint, migrations, build, runtime testing) is performed **later by the owner
+> on their own Windows PC**, where the full toolchain is set up. Just edit the
+> files, commit, and push — the detailed commands below are for reference only.
+
 ## Project goal
 
 **Chess-coach** is a desktop chess coach app: analyze the user's games, play
@@ -64,14 +75,15 @@ plumbing.
 > ⚠️ **DO NOT run any of these commands on the current VPS server.** Bun,
 > node_modules, drizzle-kit, tsc, and the rest of the toolchain are **not
 > installed** on this host (`bun`, `tsc`, `drizzle-kit` are all missing, and
-> `node_modules/` does not exist). Do not attempt `bun install`, `bun run
+> `node_modules/` does not exist) — and **they must not be installed here**
+> (see the top-of-file callout). Do not attempt `bun install`, `bun run
 > check-types`, `bun run lint`, `bun run db:generate`, `bun run build`, or any
 > other build/type-check/lint/migrate command here — it will fail and waste
 > time. Instead, **just write/edit the files and push the changes**. The owner
 > pulls the work onto their own Windows PC (where the toolchain is installed)
-> and a separate agent runs type-check / lint / migrations / build and refines
-> for bugs. Migrations (`.sql`) and any generated artifacts are produced on
-> that machine, not here.
+> and runs type-check / lint / migrations / build there, then refines for bugs.
+> Migrations (`.sql`) and any generated artifacts are produced on that
+> machine, not here.
 
 Run from repo root. Package manager is **Bun** (`packageManager: bun@1.3.14`),
 managed by **Turborepo**.

@@ -147,60 +147,60 @@
 ### A1: Database Schema
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| A1-001 | Create accounts table schema | TODO | - |
-| A1-002 | Create accountStats table schema | TODO | - |
-| A1-003 | Run db:generate migration | TODO | A1-001, A1-002 |
-| A1-004 | Run db:push to apply | TODO | A1-003 |
+| A1-001 | Create accounts table schema | DONE | - |
+| A1-002 | Create accountStats table schema | DEFERRED | - |
+| A1-003 | Run db:generate migration | DONE | A1-001, A1-002 |
+| A1-004 | Run db:push to apply | DONE | A1-003 |
 
 ### A2: Accounts Page
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| A2-001 | Create AccountsPage component | TODO | - |
-| A2-002 | Create AccountCard component | TODO | - |
-| A2-003 | Add platform icon (Chess.com/Lichess) | TODO | A2-002 |
-| A2-004 | Add rating display per time control | TODO | A2-002 |
-| A2-005 | Add games synced/total display | TODO | A2-002 |
-| A2-006 | Create AddAccountModal component | TODO | - |
-| A2-007 | Add platform + username inputs | TODO | A2-006 |
-| A2-008 | Add Edit/Sync/Download/Remove actions | TODO | A2-002 |
+| A2-001 | Create AccountsPage component | DONE | - |
+| A2-002 | Create AccountCard component | DONE | - |
+| A2-003 | Add platform icon (Chess.com/Lichess) | DONE | A2-002 |
+| A2-004 | Add rating display per time control | DONE | A2-002 |
+| A2-005 | Add games synced/total display | DONE | A2-002 |
+| A2-006 | Create AddAccountModal component | DONE | - |
+| A2-007 | Add platform + username inputs | DONE | A2-006 |
+| A2-008 | Add Edit/Sync/Download/Remove actions | DONE | A2-002 |
 
 ### A3: Chess.com Integration
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| A3-001 | Create chesscom.ts API client | TODO | A1-004 |
-| A3-002 | Implement public API access | TODO | A3-001 |
-| A3-003 | Fetch game archives by username | TODO | A3-002 |
-| A3-004 | Download PGNs incrementally | TODO | A3-003 |
-| A3-005 | Parse PGN and store in games table | TODO | A3-004 |
-| A3-006 | Add source field to games table | TODO | A1-004 |
+| A3-001 | Create chesscom.ts API client | DONE | A1-004 |
+| A3-002 | Implement public API access | DONE | A3-001 |
+| A3-003 | Fetch game archives by username | DONE | A3-002 |
+| A3-004 | Download PGNs incrementally | DONE | A3-003 |
+| A3-005 | Parse PGN and store in games table | DONE | A3-004 |
+| A3-006 | Add source field to games table | DONE | A1-004 |
 
 ### A4: Lichess Integration
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| A4-001 | Create lichess.ts API client | TODO | A1-004 |
-| A4-002 | Implement OAuth PKCE flow | TODO | A4-001 |
-| A4-003 | Store tokens in accounts table | TODO | A4-002 |
-| A4-004 | Fetch games via API | TODO | A4-002 |
-| A4-005 | Incremental sync with lastSyncedAt | TODO | A4-004 |
+| A4-001 | Create lichess.ts API client | DONE | A1-004 |
+| A4-002 | Implement OAuth PKCE flow | DONE | A4-001 |
+| A4-003 | Store tokens in accounts table | DONE | A4-002 |
+| A4-004 | Fetch games via API | DONE | A4-002 |
+| A4-005 | Incremental sync with lastSyncedAt | DONE | A4-004 |
 
 ### A5: Player Database Drawer
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| A5-001 | Create PlayerDatabaseDrawer component | TODO | - |
-| A5-002 | Create OverviewTab (win % chart) | TODO | A5-001 |
-| A5-003 | Create RatingsTab (rating history) | TODO | A5-001 |
-| A5-004 | Create OpeningsTab (opening performance) | TODO | A5-001 |
-| A5-005 | Add account switcher dropdown | TODO | A5-001 |
+| A5-001 | Create PlayerDatabaseDrawer component | DONE | - |
+| A5-002 | Create OverviewTab (win % chart) | DONE | A5-001 |
+| A5-003 | Create RatingsTab (rating history) | DONE | A5-001 |
+| A5-004 | Create OpeningsTab (opening performance) | DONE | A5-001 |
+| A5-005 | Add account switcher dropdown | DONE | A5-001 |
 
 ### A6: Account API Routes
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| A6-001 | Add GET /accounts endpoint | TODO | A1-004 |
-| A6-002 | Add POST /accounts endpoint | TODO | A1-004 |
-| A6-003 | Add PATCH /accounts/:id endpoint | TODO | A1-004 |
-| A6-004 | Add DELETE /accounts/:id endpoint | TODO | A1-004 |
-| A6-005 | Add POST /accounts/:id/sync endpoint | TODO | A3-001, A4-001 |
-| A6-006 | Add GET /accounts/:id/stats endpoint | TODO | A1-004 |
+| A6-001 | Add GET /accounts endpoint | DONE | A1-004 |
+| A6-002 | Add POST /accounts endpoint | DONE | A1-004 |
+| A6-003 | Add PATCH /accounts/:id endpoint | DONE | A1-004 |
+| A6-004 | Add DELETE /accounts/:id endpoint | DONE | A1-004 |
+| A6-005 | Add POST /accounts/:id/sync endpoint | DONE | A3-001, A4-001 |
+| A6-006 | Add GET /accounts/:id/stats endpoint | DONE | A1-004 |
 
 ---
 
@@ -361,7 +361,7 @@
 | Phase 1: Foundation | 17 | 0 | 0 | 17 | 0 |
 | Phase 2: Dashboard | 21 | 2 | 0 | 19 | 0 |
 | Phase 3: Board | 28 | 28 | 0 | 0 | 0 |
-| Phase 4: Accounts | 26 | 22 | 0 | 0 | 4 |
+| Phase 4: Accounts | 26 | 0 | 0 | 25 | 1 |
 | Phase 5: Databases | 17 | 0 | 0 | 17 | 0 |
 | Phase 6: Files | 8 | 8 | 0 | 0 | 0 |
 | Phase 7: Engines | 6 | 4 | 0 | 2 | 0 |

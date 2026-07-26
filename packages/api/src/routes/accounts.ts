@@ -22,8 +22,7 @@ import { getPlayerProfile, getPlayerStats, syncChessComGames } from "../integrat
 import { getAccount, syncLichessGames } from "../integrations/lichess";
 import { parsePgnForStorage } from "../integrations/pgn";
 import { startLichessPkce } from "../integrations/oauth-store";
-import type { SyncedGame } from "../integrations/types";
-import type { RatingSnapshot } from "../integrations/types";
+import type { SyncedGame, RatingSnapshot } from "../integrations/types";
 
 /** Strip token secrets from an account row before returning it over HTTP. */
 function publicAccount(a: Account) {
