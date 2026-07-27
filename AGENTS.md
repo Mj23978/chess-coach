@@ -198,6 +198,23 @@ Per-package typecheck: each package has a `typecheck` (or `type-check`) script
 - **Windows icon** ships at `src/web/public/favicon.ico` and is referenced from
   `electrobun.config.ts` (`win.icon`) and the tray (`views://mainview/favicon.ico`).
 
+## Known Issues (from first test session — 2026-07-26)
+
+These are bugs and UX problems discovered during the owner's first end-to-end
+test after the initial implementation phase. Each maps to an active plan.
+
+| Issue | Severity | Plan |
+|-------|----------|------|
+| SPA renders duplicate window controls (minimize/maximize/close) and File/Edit/View menus that Electrobun handles natively | High | PLAN-010 |
+| Engine downloads successfully but analyze returns 503 — `getEngine()` fails to find the DB-stored active engine | **CRITICAL** | PLAN-011 |
+| Sidebar overlays page content instead of pushing it aside; no close/collapse button | High | PLAN-012 |
+| Dialogs/modals don't close on outside click — must click Cancel/Close button | Medium | PLAN-013 |
+| Pages don't take full width — inconsistent max-widths, Settings layout shifts on expand | Medium | PLAN-014 |
+| Settings changes (theme, colors) don't persist or apply — purely local state | Medium | PLAN-015 |
+| Board tabs don't survive navigation (lost on page change); "+" opens modal instead of new tab | Medium | PLAN-016 |
+| Eval bar doesn't update during play — engine not connected to live sessions | High | PLAN-017 |
+| Game analysis pipeline needs full chess.com-style move classification + eval graph | **CRITICAL** | PLAN-018 |
+
 ## Project Management System
 
 This project uses a structured task management system in `.project/` to enable
@@ -234,18 +251,37 @@ starting any implementation work.**
 4. **Handoff**: When passing work to another agent, the task files and context
    provide everything needed to continue without re-investigating.
 
-### Current Plan Folders
+### Implemented Features (Archived)
 
-| Plan ID | Feature | Phase | Parallel Safe |
-|---------|---------|-------|---------------|
-| PLAN-001 | App Shell & Navigation | 1 | ✅ Yes |
-| PLAN-002 | Dashboard Redesign | 2 | ✅ Yes (after PLAN-001) |
-| PLAN-003 | Board Page Redesign | 3 | ✅ Yes (after PLAN-001) |
-| PLAN-004 | Accounts & Sync | 4 | ✅ Yes (after PLAN-001) |
-| PLAN-005 | Databases Page | 5 | ✅ Yes (after PLAN-001) |
-| PLAN-006 | Files Page | 6 | ✅ Yes (after PLAN-001) |
-| PLAN-007 | Engines Page Polish | 7 | ✅ Yes |
-| PLAN-008 | Settings & Keybindings | 8 | ✅ Yes |
+Completed plans are archived in `.project/archive/`. These features are
+shipped and should not be reworked unless a bug is found.
+
+| Feature | Plan | Key Files |
+|---------|------|-----------|
+| App Shell & Navigation Rail | PLAN-001 | `components/layout/AppShell.tsx`, `NavigationRail.tsx` |
+| Dashboard (Welcome, Time Controls, Games Table) | PLAN-002 | `pages/dashboard.tsx` |
+| Board Page (Tabs, Play, FEN) | PLAN-003 | `pages/board.tsx`, `components/board/*` |
+| Accounts & Sync (Chess.com/Lichess) | PLAN-004 | `pages/accounts.tsx`, `lib/api.ts` |
+| Databases Page (CRUD, Export) | PLAN-005 | `pages/databases.tsx` |
+| Files Page (PGN Import, CRUD) | PLAN-009 | `pages/files.tsx` |
+| Engines Page (Download, Activate, Grid/List) | PLAN-007 | `pages/engines.tsx`, `components/engines/*` |
+| Settings & Keybindings | PLAN-008 | `pages/settings.tsx`, `lib/useKeyboardShortcuts.ts` |
+| Export (PGN, FEN, Screenshot) | PLAN-008 | `lib/export.ts` |
+
+### Active Plan Folders
+
+| Plan ID | Feature | Priority | Parallel Safe |
+|---------|---------|----------|---------------|
+| PLAN-003 | Board Page (remaining TODO tasks) | Medium | ✅ Yes |
+| PLAN-010 | Window Chrome Cleanup | High | ✅ Yes |
+| PLAN-011 | Engine Pipeline Fix | **CRITICAL** | ❌ No (blocks others) |
+| PLAN-012 | Sidebar Fix | High | ✅ Yes |
+| PLAN-013 | Dialog & Modal Improvements | Medium | ✅ Yes |
+| PLAN-014 | Layout Consistency | Medium | ✅ Yes |
+| PLAN-015 | Settings Persistence | Medium | ✅ Yes |
+| PLAN-016 | Board Tabs Persistence | Medium | ✅ Yes |
+| PLAN-017 | Board Engine Integration & Win Bar | High | ❌ No (needs 011) |
+| PLAN-018 | Game Analysis Pipeline | **CRITICAL** | ❌ No (needs 011) |
 
 ### Task Status Convention
 
