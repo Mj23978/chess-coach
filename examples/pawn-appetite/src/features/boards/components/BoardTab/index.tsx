@@ -1,0 +1,151 @@
+import { ActionIcon, Button, Menu } from "@mantine/core";
+import { useClickOutside, useHotkeys, useToggle } from "@mantine/hooks";
+import {
+  IconChartLine,
+  IconChess,
+  IconCopy,
+  IconEdit,
+  IconPuzzle,
+  IconX,
+} from "@tabler/icons-react";
+import cx from "clsx";
+import { useEffect } from "react";
+import { ContentEditable } from "@/components/ContentEditable";
+import type { Tab } from "@/utils/tabs";
+import * as classes from "./styles.css";
+
+export function BoardTab({
+  tab,
+  setActiveTab,
+  closeTab,
+  renameTab,
+  duplicateTab,
+  closeOtherTabs,
+  closeTabsToRight,
+  selected,
+}: {
+  tab: Tab;
+  setActiveTab: (v: string) => void;
+  closeTab: (v: string) => void;
+  renameTab: (v: string, n: string) => void;
+  duplicateTab: (v: string) => void;
+  closeOtherTabs: (v: string) => void;
+  closeTabsToRight: (v: string) => void;
+  selected: boolean;
+}) {
+  const [open, toggleOpen] = useToggle();
+  const [renaming, toggleRenaming] = useToggle();
+  const ref = useClickOutside(() => {
+    toggleOpen(false);
+    toggleRenaming(false);
+  });
+
+  useHotkeys([
+    [
+      "F2",
+      () => {
+        if (selected) toggleRenaming();
+      },
+    ],
+  ]);
+
+  useEffect(() => {
+    if (renaming) ref.current?.focus();
+  }, [renaming, ref]);
+
+  const TypeIcon =
+    tab.type === "play"
+      ? IconChess
+      : tab.type === "analysis"
+        ? IconChartLine
+        : tab.type === "puzzles"
+          ? IconPuzzle
+          : IconCopy;
+
+  return (
+    <Menu opened={open} shadow="md" width={200} closeOnClickOutside>
+      <Menu.Target>
+        <Button
+          component="div"
+          className={cx(classes.tab, { [classes.selected]: selected })}
+          variant="default"
+          fw="normal"
+          leftSection={<TypeIcon size="0.95rem" stroke={1.6} />}
+          rightSection={
+            <ActionIcon
+              component="div"
+              className={classes.closeTabBtn}
+              onClick={(e) => {
+                closeTab(tab.value);
+                e.stopPropagation();
+              }}
+              size="0.875rem"
+              aria-label="Close tab"
+            >
+              <IconX />
+            </ActionIcon>
+          }
+          onPointerDown={(e) => {
+            if (e.button === 0) {
+              setActiveTab(tab.value);
+            }
+          }}
+          onDoubleClick={() => toggleRenaming(true)}
+          onAuxClick={(e) => {
+            // middle button click
+            if (e.button === 1) {
+              closeTab(tab.value);
+            }
+          }}
+          onContextMenu={(e) => {
+            toggleOpen();
+            e.preventDefault();
+          }}
+        >
+          <ContentEditable
+            innerRef={ref}
+            disabled={!renaming}
+            html={tab.name}
+            className={classes.input}
+            onChange={(e) => renameTab(tab.value, e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") toggleRenaming(false);
+            }}
+          />
+        </Button>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <Menu.Item
+          leftSection={<IconCopy size="0.875rem" />}
+          onClick={() => duplicateTab(tab.value)}
+        >
+          Duplicate Tab
+        </Menu.Item>
+        <Menu.Item leftSection={<IconEdit size="0.875rem" />} onClick={() => toggleRenaming(true)}>
+          Rename Tab
+        </Menu.Item>
+        <Menu.Item
+          color="red"
+          leftSection={<IconX size="0.875rem" />}
+          onClick={() => closeTab(tab.value)}
+        >
+          Close Tab
+        </Menu.Item>
+        <Menu.Item
+          color="red"
+          leftSection={<IconX size="0.875rem" />}
+          onClick={() => closeOtherTabs(tab.value)}
+        >
+          Close Other Tabs
+        </Menu.Item>
+        <Menu.Item
+          color="red"
+          leftSection={<IconX size="0.875rem" />}
+          onClick={() => closeTabsToRight(tab.value)}
+        >
+          Close Tabs to the Right
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  );
+}

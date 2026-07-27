@@ -1,0 +1,95 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Pawn Appetit",
+  "version": "0.12.1",
+  "mainBinaryName": "pawn-appetit",
+  "identifier": "com.pawnappetit",
+  "bundle": {
+    "active": true,
+    "category": "BoardGame",
+    "copyright": "",
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "linux": {
+      "deb": {
+        "depends": []
+      },
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    },
+    "publisher": "Pawn-Appetit Team",
+    "shortDescription": "Ultimate Chess Toolkit",
+    "longDescription": "",
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": "-"
+    },
+    "resources": {
+      "../sound/": "sound/"
+    },
+    "targets": "all",
+    "createUpdaterArtifacts": true
+  },
+  "build": {
+    "beforeDevCommand": "pnpm start-vite",
+    "beforeBuildCommand": "pnpm build-vite",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
+  },
+  "plugins": {
+    "cli": {
+      "args": [
+        {
+          "name": "file",
+          "index": 1,
+          "takesValue": true
+        }
+      ]
+    },
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENBQUUwNEI2OTg2RjA5QzUKUldURkNXK1l0Z1N1eW9ldFQwV29oZVBGQVc0RFR6cml2WERFWXlhRDE4di8yaW1EbjRCUUY2bHEK",
+      "endpoints": [
+        "https://github.com/Pawn-Appetit/pawn-appetit/releases/latest/download/latest.json"
+      ]
+    }
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Pawn Appétit",
+        "maximized": true,
+        "visible": false,
+        "decorations": false,
+        "minWidth": 1024,
+        "minHeight": 640,
+        "minimizable": true,
+        "backgroundColor": "#1a1b1e"
+      }
+    ],
+    "security": {
+      "assetProtocol": {
+        "scope": [
+          "**"
+        ],
+        "enable": true
+      },
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost data: blob: https:; media-src 'self' asset: https://asset.localhost http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://github.com http://127.0.0.1:*"
+    }
+  }
+}
