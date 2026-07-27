@@ -38,7 +38,15 @@ export default function App() {
 
 	return (
 		<DesignSystemProvider>
-			<AppShell onImportPgn={() => setImportModalOpen(true)}>
+			<AppShell
+				onNewGame={() => {
+					// TODO: Navigate to board page or create new game
+				}}
+				onImportPgn={() => setImportModalOpen(true)}
+				onExportPgn={() => {
+					// TODO: Trigger PGN export for current game
+				}}
+			>
 				<Routes>
 					<Route
 						path="/"

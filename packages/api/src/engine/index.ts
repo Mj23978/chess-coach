@@ -14,6 +14,7 @@
  *  - First checks for an active engine in the database (user-configured).
  *  - Falls back to a binary in the `binaries/` directory (dev/bundled).
  */
+import { existsSync } from "node:fs";
 import { UciEngine } from "./process";
 import { resolveStockfishPath } from "./resolve";
 import type { AnalyzeOptions, PositionEval } from "./types";
@@ -30,42 +31,82 @@ let chain: Promise<unknown> = Promise.resolve();
  * calls. Throws if no binary is resolvable.
  * 
  * Selection order:
- *  1. Active engine from database (user-configured)
- *  2. Fallback binary in binaries/ directory
+ *  1. Active engine from database (user-configured path)
+ *  2. Fallback binary in binaries/ directory (dev / bundled)
  */
 function getEngine(): Promise<UciEngine> {
   if (!enginePromise) {
     enginePromise = (async () => {
-      // Try to get active engine from database
+      const triedPaths: string[] = [];
+
+      // --- Step 1: try the active engine from the database ---
       let enginePath: string | null = null;
       try {
-        // Dynamic import to avoid circular dependency
         const { engineRepository } = await import("@repo/db");
         const activeEngine = await engineRepository.getActive();
-        if (activeEngine?.path && activeEngine.exists) {
-          enginePath = activeEngine.path;
+        if (activeEngine) {
+          console.log(
+            `[engine] Active engine from DB: ${activeEngine.name}` +
+              ` (path=${activeEngine.path ?? "(none)"}, exists=${activeEngine.exists})`
+          );
+          if (activeEngine.path) {
+            triedPaths.push(activeEngine.path);
+            // Re-verify existence at startup — the file may have been deleted
+            // since the DB flag was last set.
+            const fileExists = existsSync(activeEngine.path);
+            if (fileExists) {
+              enginePath = activeEngine.path;
+            } else {
+              console.warn(
+                `[engine] DB path does not exist on disk: ${activeEngine.path}`
+              );
+            }
+          }
+        } else {
+          console.log("[engine] No active engine in database");
         }
-      } catch {
-        // DB not initialized or no active engine
+      } catch (err) {
+        console.warn("[engine] Failed to query active engine from DB:", err);
       }
-      
-      // Fallback to bundled binary
+
+      // --- Step 2: fallback to bundled/dev binary ---
       if (!enginePath) {
-        enginePath = resolveStockfishPath();
+        const fallbackPath = resolveStockfishPath();
+        if (fallbackPath) {
+          triedPaths.push(fallbackPath);
+          enginePath = fallbackPath;
+          console.log(`[engine] Using bundled fallback: ${fallbackPath}`);
+        }
       }
-      
+
+      // --- Step 3: nothing found ---
       if (!enginePath) {
+        const tried = triedPaths.length
+          ? `\nTried paths:\n  ${triedPaths.join("\n  ")}`
+          : "";
         throw new EngineUnavailableError(
-          "No engine configured. Add an engine via Settings → Engines, " +
-            "or drop a Stockfish binary in the repo's `binaries/` directory.",
+          `No engine configured. Add an engine via Settings → Engines, ` +
+            `or drop a Stockfish binary in the repo's \`binaries/\` directory.${tried}`
         );
       }
+
+      console.log(`[engine] Spawning engine at: ${enginePath}`);
+
       // Sensible desktop defaults. Threads/Hash are tuned low so the engine
       // doesn't hog the machine during review; MultiPV is set per-analyze.
-      const eng = await UciEngine.create(enginePath);
-      await eng.setOption("Threads", "2");
-      await eng.setOption("Hash", "128");
-      return eng;
+      try {
+        const eng = await UciEngine.create(enginePath);
+        await eng.setOption("Threads", "2");
+        await eng.setOption("Hash", "128");
+        console.log(`[engine] Engine ready: ${enginePath}`);
+        return eng;
+      } catch (err) {
+        console.error(`[engine] Failed to start engine at ${enginePath}:`, err);
+        throw new EngineUnavailableError(
+          `Engine binary exists but failed to start: ${enginePath}. ` +
+            `${err instanceof Error ? err.message : String(err)}`
+        );
+      }
     })();
   }
   return enginePromise;
@@ -96,6 +137,14 @@ export function analyze(fen: string, opts?: AnalyzeOptions): Promise<PositionEva
   // so Node doesn't emit unhandled-rejection for the placeholder.
   chain = result.catch(() => {});
   return result;
+}
+
+/**
+ * Reset the engine singleton so the next `analyze()` call re-spawns the
+ * process. Call this after switching the active engine in Settings.
+ */
+export async function resetEngine(): Promise<void> {
+  await shutdownEngine();
 }
 
 /**

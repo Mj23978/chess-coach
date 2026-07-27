@@ -5,3 +5,4 @@
  */
 export { EngineCard } from "./EngineCard";
 export type { EngineCardProps } from "./EngineCard";
+export { EngineDetailSheet } from "./EngineDetailSheet";

@@ -6,8 +6,10 @@
  * (packages/api/src/standalone.ts) share the exact same `app` — the only
  * difference is who calls `listen()` and on what port.
  */
-import { app } from "@repo/api";
+import { app, logEngineHealth } from "@repo/api";
 
 export async function startElysiaServer(port: number): Promise<void> {
   app.listen(port);
+  // Log engine health in the background (non-blocking).
+  logEngineHealth();
 }

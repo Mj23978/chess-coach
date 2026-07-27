@@ -69,12 +69,12 @@ chess-playing feature.
 ### B4: Analysis Mode
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| B4-001 | Create AnalysisPanel component | TODO | - |
-| B4-002 | Create AnalyzeTab (engine lines, eval graph) | TODO | B4-001 |
-| B4-003 | Create DatabaseTab (similar positions) | TODO | B4-001 |
-| B4-004 | Create AnnotateTab (comments, marks) | TODO | B4-001 |
-| B4-005 | Create InfoTab (metadata, opening) | TODO | B4-001 |
-| B4-006 | Add panel to game-review page | TODO | B4-001 |
+| B4-001 | Create AnalysisPanel component | DONE | - |
+| B4-002 | Create AnalyzeTab (engine lines, eval graph) | DONE | B4-001 |
+| B4-003 | Create DatabaseTab (similar positions) | DONE | B4-001 |
+| B4-004 | Create AnnotateTab (comments, marks) | DONE | B4-001 |
+| B4-005 | Create InfoTab (metadata, opening) | DONE | B4-001 |
+| B4-006 | Add panel to game-review page | DONE | B4-001 |
 
 ### B5: Online Play Integration
 | Task ID | Title | Status | Dependencies |
@@ -200,18 +200,18 @@ POST /games/online
 
 ## Acceptance Criteria
 
-- [ ] Tab bar shows open tabs with close buttons
-- [ ] New tab modal shows 4 options
-- [ ] Play Game view shows board + player config
-- [ ] Can configure Human vs Engine game
-- [ ] Can configure Human vs Human (local) game
-- [ ] Clock component works with time control
-- [ ] Making moves updates board and PGN
-- [ ] Engine responds to moves (if engine opponent)
-- [ ] Game ends correctly with result
-- [ ] Analysis panel shows in review mode
-- [ ] Type checking passes
-- [ ] Lint passes
+- [x] Tab bar shows open tabs with close buttons
+- [x] New tab modal shows 4 options
+- [x] Play Game view shows board + player config
+- [x] Can configure Human vs Engine game
+- [x] Can configure Human vs Human (local) game
+- [x] Clock component works with time control
+- [x] Making moves updates board and PGN
+- [x] Engine responds to moves (if engine opponent)
+- [x] Game ends correctly with result
+- [x] Analysis panel shows in review mode
+- [ ] Type checking passes (owner verifies on PC)
+- [ ] Lint passes (owner verifies on PC)
 
 ---
 

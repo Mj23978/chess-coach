@@ -6,7 +6,7 @@
 
 | Plan ID | Feature | Priority | Parallel Safe |
 |---------|---------|----------|---------------|
-| PLAN-003 | Board Page Redesign (remaining TODO tasks) | Medium | ✅ Yes |
+| PLAN-003 | Board Page Redesign (B1-B4 DONE, B5 deferred) | Medium | ✅ Yes |
 | PLAN-010 | Window Chrome Cleanup (remove duplicate TitleBar) | High | ✅ Yes |
 | PLAN-011 | Engine Pipeline Fix (503 error, engine unusable) | **CRITICAL** | ❌ No (blocks others) |
 | PLAN-012 | Sidebar Fix (push layout, close button) | High | ✅ Yes |
@@ -29,6 +29,7 @@
 | PLAN-007 | Engines Page Polish | 2026-07-26 |
 | PLAN-008 | Settings & Keybindings | 2026-07-26 |
 | PLAN-009 | Files Page (API + UI) | 2026-07-26 |
+| PLAN-003 | Board Page Redesign (B1-B4) | 2026-07-27 |
 
 ## Deferred Plans
 
@@ -53,4 +54,6 @@ Priority 2 (can be parallel after 011):
 Priority 3 (needs 011):
   PLAN-017 Board Engine Integration
   PLAN-018 Game Analysis Pipeline
+
+PLAN-003: Board Page Redesign — LARGELY COMPLETE (B1-B4 done, B5 deferred)
 ```

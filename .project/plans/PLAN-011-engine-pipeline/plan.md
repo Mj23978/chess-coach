@@ -1,6 +1,6 @@
 # PLAN-011: Engine Pipeline Fix
 
-**Status**: TODO
+**Status**: DONE
 **Created**: 2026-07-26
 **Priority**: CRITICAL
 
@@ -26,12 +26,12 @@ Root cause analysis:
 
 | Task ID | Title | Status |
 |---------|-------|--------|
-| T11-001 | Fix `getEngine()` to properly use active engine from DB with error logging | TODO |
-| T11-002 | Ensure `chmod +x` works on downloaded engines (verify on desktop) | TODO |
-| T11-003 | Add engine status validation endpoint (check if binary is usable) | TODO |
-| T11-004 | Make EngineCard clickable to show details (path, options, status) | TODO |
-| T11-005 | Add engine health check on app startup | TODO |
-| T11-006 | Surface engine path in the engine details view | TODO |
+| T11-001 | Fix `getEngine()` to properly use active engine from DB with error logging | DONE |
+| T11-002 | Ensure `chmod +x` works on downloaded engines (verify on desktop) | DONE |
+| T11-003 | Add engine status validation endpoint (check if binary is usable) | DONE |
+| T11-004 | Make EngineCard clickable to show details (path, options, status) | DONE |
+| T11-005 | Add engine health check on app startup | DONE |
+| T11-006 | Surface engine path in the engine details view | DONE |
 
 ## Files Affected
 - `packages/api/src/engine/index.ts` (modify — fix getEngine, add logging)

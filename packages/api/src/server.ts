@@ -50,3 +50,30 @@ export const app = new Elysia()
   .use(authRoutes);
 
 export type App = typeof app;
+
+/**
+ * Log engine health at server startup. Non-blocking — runs in the background
+ * so it doesn't delay the server from accepting requests.
+ */
+export async function logEngineHealth(): Promise<void> {
+  try {
+    const { engineRepository } = await import("@repo/db");
+    const { existsSync } = await import("node:fs");
+    const active = await engineRepository.getActive();
+    if (!active) {
+      console.warn("[server] ⚠ No active engine configured. Analysis will 503.");
+      return;
+    }
+    if (!active.path) {
+      console.warn(`[server] ⚠ Active engine \"${active.name}\" has no binary path.`);
+      return;
+    }
+    if (!existsSync(active.path)) {
+      console.warn(`[server] ⚠ Active engine \"${active.name}\" binary not found: ${active.path}`);
+      return;
+    }
+    console.log(`[server] ✓ Active engine: ${active.name} at ${active.path}`);
+  } catch (err) {
+    console.warn("[server] Could not check engine health:", err);
+  }
+}

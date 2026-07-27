@@ -311,7 +311,13 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
 			data-slot="sidebar-inset"
 			className={cn(
 				"bg-background relative flex w-full flex-1 flex-col",
+				// Inset variant: rounded card style with margin
 				"md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2",
+				// Sidebar variant: push layout with left padding when expanded
+				"md:peer-data-[variant=sidebar]:transition-[padding-left] md:peer-data-[variant=sidebar]:duration-200 md:peer-data-[variant=sidebar]:ease-linear",
+				"md:peer-data-[variant=sidebar]:peer-data-[state=expanded]:pl-(--sidebar-width)",
+				"md:peer-data-[variant=sidebar]:peer-data-[state=collapsed]:peer-data-[collapsible=icon]:pl-(--sidebar-width-icon)",
+				"md:peer-data-[variant=sidebar]:peer-data-[state=collapsed]:peer-data-[collapsible=offcanvas]:pl-0",
 				className,
 			)}
 			{...props}

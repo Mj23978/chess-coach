@@ -280,6 +280,19 @@ export async function deleteEngine(id: string): Promise<void> {
   await api(`/engines/${id}`, { method: "DELETE" });
 }
 
+export interface EngineHealthDTO {
+  status: "ok" | "no_active_engine" | "no_path" | "missing" | "not_executable" | "spawn_failed" | "error";
+  engineId?: string;
+  name?: string;
+  path?: string;
+  message: string;
+}
+
+/** `GET /engines/health` — check if the active engine is operational. */
+export async function fetchEngineHealth(): Promise<EngineHealthDTO> {
+  return api<EngineHealthDTO>("/engines/health");
+}
+
 // ============================================================================
 // Databases API (PLAN-005)
 // ============================================================================

@@ -1,6 +1,6 @@
 # T11-001: Fix getEngine() DB Path Resolution
 
-**Status**: TODO
+**Status**: DONE
 **Priority**: CRITICAL
 
 ## Objective

@@ -22,6 +22,7 @@ import {
 } from "@repo/ui/components/card";
 import {
 	EngineCard,
+	EngineDetailSheet,
 } from "../components/engines";
 import {
 	fetchEngines,
@@ -39,6 +40,7 @@ export default function EnginesPage() {
 	const qc = useQueryClient();
 	const [showAddModal, setShowAddModal] = useState(false);
 	const [showCatalogModal, setShowCatalogModal] = useState(false);
+	const [detailEngine, setDetailEngine] = useState<EngineDTO | null>(null);
 
 	// Search + view state
 	const [view, setView] = useState<ViewMode>("grid");
@@ -196,6 +198,7 @@ export default function EnginesPage() {
 							view="grid"
 							onActivate={() => activateMut.mutate(engine.id)}
 							onDelete={() => handleDelete(engine)}
+							onShowDetails={() => setDetailEngine(engine)}
 							isActivating={activateMut.isPending}
 							isDeleting={deleteMut.isPending}
 						/>
@@ -213,6 +216,7 @@ export default function EnginesPage() {
 							view="list"
 							onActivate={() => activateMut.mutate(engine.id)}
 							onDelete={() => handleDelete(engine)}
+							onShowDetails={() => setDetailEngine(engine)}
 							isActivating={activateMut.isPending}
 							isDeleting={deleteMut.isPending}
 						/>
@@ -239,6 +243,14 @@ export default function EnginesPage() {
 						setShowAddModal(false);
 						qc.invalidateQueries({ queryKey: ["engines"] });
 					}}
+				/>
+			)}
+
+			{/* Engine detail sheet */}
+			{detailEngine && (
+				<EngineDetailSheet
+					engine={detailEngine}
+					onClose={() => setDetailEngine(null)}
 				/>
 			)}
 		</div>
@@ -347,8 +359,11 @@ function CatalogModal({
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<Card className="w-full max-w-md">
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+			onClick={onClose}
+		>
+			<Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
 				<CardHeader>
 					<CardTitle>Download Engine</CardTitle>
 				</CardHeader>
@@ -440,8 +455,11 @@ function AddEngineModal({
 	});
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<Card className="w-full max-w-md">
+		<div
+			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+			onClick={onClose}
+		>
+			<Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
 				<CardHeader>
 					<CardTitle>Add Local Engine</CardTitle>
 				</CardHeader>

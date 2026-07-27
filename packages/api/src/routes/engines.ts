@@ -14,12 +14,12 @@
  * The active engine is used by the /games/:id/analyze route.
  */
 import { Elysia, t } from "elysia";
-import { existsSync, mkdirSync, unlinkSync, createWriteStream } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync, statSync, accessSync, constants } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { pipeline } from "node:stream/promises";
 import { engineRepository } from "@repo/db";
 import { UciEngine } from "../engine/process";
+import { resetEngine } from "../engine";
 import type { UciOption } from "../engine/uci-types";
 
 // Engine catalog — predefined downloadable engines
@@ -97,11 +97,18 @@ async function validateEnginePath(path: string): Promise<{ valid: boolean; optio
   if (!existsSync(path)) {
     return { valid: false, error: "File not found" };
   }
+
+  // On Unix, check executable permission
+  if (process.platform !== "win32") {
+    try {
+      accessSync(path, constants.X_OK);
+    } catch {
+      return { valid: false, error: "File exists but is not executable. Try: chmod +x " + path };
+    }
+  }
   
   try {
     const engine = await UciEngine.create(path);
-    // Get UCI options by sending "uci" and parsing the response
-    // For now, just verify the engine starts
     await engine.terminate();
     return { valid: true, options: [] };
   } catch (err) {
@@ -317,6 +324,8 @@ export const enginesRoutes = new Elysia({ prefix: "/engines" })
     }
     
     const engine = await engineRepository.setActive(id);
+    // Reset the singleton so the next analyze() call uses the new engine.
+    await resetEngine();
     return { engine };
   })
   
@@ -332,6 +341,40 @@ export const enginesRoutes = new Elysia({ prefix: "/engines" })
     return { success: true };
   })
   
+  // Health check — validate the active engine is usable
+  .get("/health", async () => {
+    try {
+      const active = await engineRepository.getActive();
+      if (!active) {
+        return { status: "no_active_engine" as const, message: "No engine is set as active." };
+      }
+      if (!active.path) {
+        return { status: "no_path" as const, engineId: active.id, message: "Active engine has no binary path configured." };
+      }
+      if (!existsSync(active.path)) {
+        return { status: "missing" as const, engineId: active.id, path: active.path, message: "Engine binary not found on disk." };
+      }
+      // On Unix, check executable bit
+      if (process.platform !== "win32") {
+        try {
+          accessSync(active.path, constants.X_OK);
+        } catch {
+          return { status: "not_executable" as const, engineId: active.id, path: active.path, message: "Engine binary is not executable. Run: chmod +x " + active.path };
+        }
+      }
+      // Try to spawn the engine
+      try {
+        const eng = await UciEngine.create(active.path);
+        await eng.terminate();
+        return { status: "ok" as const, engineId: active.id, name: active.name, path: active.path, message: "Engine is operational." };
+      } catch (err) {
+        return { status: "spawn_failed" as const, engineId: active.id, path: active.path, message: `Engine binary failed to start: ${err instanceof Error ? err.message : String(err)}` };
+      }
+    } catch (err) {
+      return { status: "error" as const, message: `Health check failed: ${err instanceof Error ? err.message : String(err)}` };
+    }
+  })
+
   // Get UCI options from engine binary
   .get("/:id/options", async ({ params: { id }, set }) => {
     const engine = await engineRepository.getById(id);

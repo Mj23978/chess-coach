@@ -32,6 +32,7 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 | 7 | Engines Page (Download, Activate, Grid/List) | PLAN-007 | ✅ Complete |
 | 8 | Settings & Keybindings | PLAN-008 | ✅ Complete |
 | 9 | Export Features (PGN, FEN, Screenshot) | PLAN-009 | ✅ Complete |
+| 10 | Sidebar Push Layout | PLAN-012 | ✅ Complete |
 
 ---
 
@@ -44,12 +45,12 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| T11-001 | Fix `getEngine()` to use active engine from DB with error logging | TODO | — |
-| T11-002 | Ensure `chmod +x` works on downloaded engines | TODO | — |
-| T11-003 | Add engine status validation endpoint | TODO | — |
-| T11-004 | Make EngineCard clickable to show details (path, status) | TODO | — |
-| T11-005 | Add engine health check on app startup | TODO | — |
-| T11-006 | Surface engine path in the engine details view | TODO | — |
+| T11-001 | Fix `getEngine()` to use active engine from DB with error logging | DONE | — |
+| T11-002 | Ensure `chmod +x` works on downloaded engines | DONE | — |
+| T11-003 | Add engine status validation endpoint | DONE | — |
+| T11-004 | Make EngineCard clickable to show details (path, status) | DONE | — |
+| T11-005 | Add engine health check on app startup | DONE | — |
+| T11-006 | Surface engine path in the engine details view | DONE | — |
 
 ### P2: UI/UX Fixes (Parallel, after P1)
 
@@ -59,21 +60,21 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| T10-001 | Remove TitleBar component and imports from AppShell | TODO | — |
-| T10-002 | Add minimal app-drag region for window dragging | TODO | — |
-| T10-003 | Move File menu actions to keyboard shortcuts | TODO | — |
-| T10-004 | Remove Edit/View menus (unused) | TODO | — |
-| T10-005 | Update AppShell layout for removed TitleBar | TODO | — |
+| T10-001 | Remove TitleBar component and imports from AppShell | DONE | — |
+| T10-002 | Add minimal app-drag region for window dragging | DONE | — |
+| T10-003 | Move File menu actions to keyboard shortcuts | DONE | — |
+| T10-004 | Remove Edit/View menus (unused) | DONE | — |
+| T10-005 | Update AppShell layout for removed TitleBar | DONE | — |
 
-#### PLAN-012: Sidebar Fix
+#### PLAN-012: Sidebar Fix ✅
 > Sidebar overlays content instead of pushing. No close button.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| T12-001 | Fix SidebarInset layout to push content | TODO | — |
-| T12-002 | Add collapse/expand button in sidebar header | TODO | — |
-| T12-003 | Ensure smooth transition when sidebar toggles | TODO | — |
-| T12-004 | Test sidebar behavior at all viewport sizes | TODO | — |
+| T12-001 | Fix SidebarInset layout to push content | DONE | — |
+| T12-002 | Add collapse/expand button in sidebar header | DONE | — |
+| T12-003 | Ensure smooth transition when sidebar toggles | DONE | — |
+| T12-004 | Test sidebar behavior at all viewport sizes | DONE | — |
 
 #### PLAN-013: Dialog & Modal Improvements
 > Modals don't close on outside click.
@@ -185,12 +186,12 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 
 | Category | Tasks | TODO | DEFERRED |
 |----------|-------|------|----------|
-| P1: Engine Pipeline | 6 | 6 | 0 |
-| P2: UI/UX Fixes | 29 | 29 | 0 |
+| P1: Engine Pipeline | 6 | 0 | 0 |
+| P2: UI/UX Fixes | 29 | 25 | 0 |
 | P3: Board & Analysis | 15 | 15 | 0 |
 | Deferred: Training | 8 | 0 | 8 |
 | Deferred: Online Play | 5 | 0 | 5 |
-| **Total** | **63** | **50** | **13** |
+| **Total** | **63** | **40** | **13** |
 
 ---
 

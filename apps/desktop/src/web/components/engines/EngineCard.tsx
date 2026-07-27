@@ -24,6 +24,8 @@ export interface EngineCardProps {
 	onActivate: () => void;
 	/** Remove the engine config (binary on disk is left alone). */
 	onDelete: () => void;
+	/** Show the engine detail sheet. */
+	onShowDetails?: () => void;
 	/** Mutation in-flight flags from the parent (for button spinners). */
 	isActivating?: boolean;
 	isDeleting?: boolean;
@@ -34,12 +36,40 @@ export function EngineCard({
 	view = "grid",
 	onActivate,
 	onDelete,
+	onShowDetails,
 	isActivating = false,
 	isDeleting = false,
 }: EngineCardProps) {
 	if (view === "list") {
 		return (
-			<div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 transition-colors hover:border-neutral-300 hover:bg-neutral-50">
+			<button
+				type="button"
+				onClick={onShowDetails}
+				className="flex w-full items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 text-left transition-colors hover:border-neutral-300 hover:bg-neutral-50"
+			>
+				<Avatar engine={engine} size="sm" />
+				<div className="min-w-0 flex-1">
+					<div className="flex items-center gap-2">
+						<span className="truncate font-medium">{engine.name}</span>
+						{engine.version && (
+							<span className="text-xs text-neutral-400">v{engine.version}</span>
+						)}
+						{engine.isActive && <ActiveBadge />}
+					</div>
+					<div className="font-mono text-[11px] text-neutral-500">
+						{engine.elo ? `${engine.elo} ELO` : "ELO unknown"}
+						{!engine.exists && " · missing binary"}
+					</div>
+				</div>
+				<Actions
+					engine={engine}
+					onActivate={onActivate}
+					onDelete={onDelete}
+					isActivating={isActivating}
+					isDeleting={isDeleting}
+					onStopPropagation
+				/>
+			</button>
 				<Avatar engine={engine} size="sm" />
 				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2">
@@ -67,7 +97,11 @@ export function EngineCard({
 
 	// Grid variant
 	return (
-		<div className="flex flex-col rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-md">
+		<button
+			type="button"
+			onClick={onShowDetails}
+			className="flex flex-col rounded-xl border border-neutral-200 bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-md"
+		>
 			<div className="mb-3 flex items-start gap-3">
 				<Avatar engine={engine} size="lg" />
 				<div className="min-w-0 flex-1">
@@ -97,10 +131,11 @@ export function EngineCard({
 					onDelete={onDelete}
 					isActivating={isActivating}
 					isDeleting={isDeleting}
+					onStopPropagation
 					stacked
 				/>
 			</div>
-		</div>
+		</button>
 	);
 }
 
@@ -175,6 +210,7 @@ function Actions({
 	onDelete,
 	isActivating,
 	isDeleting,
+	onStopPropagation,
 	stacked = false,
 }: {
 	engine: EngineDTO;
@@ -182,11 +218,13 @@ function Actions({
 	onDelete: () => void;
 	isActivating: boolean;
 	isDeleting: boolean;
+	onStopPropagation?: boolean;
 	stacked?: boolean;
 }) {
 	return (
 		<div
 			className={`flex ${stacked ? "flex-col gap-1.5" : "items-center gap-1"} justify-end`}
+			onClick={(e) => onStopPropagation && e.stopPropagation()}
 		>
 			<Button
 				variant={engine.isActive ? "outline" : "default"}

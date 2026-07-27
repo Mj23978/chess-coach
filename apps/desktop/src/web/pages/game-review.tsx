@@ -40,6 +40,7 @@ import {
 	generatePgnFilename,
 } from "../lib/export";
 import { BoardErrorBoundary, toast, TOAST_MESSAGES } from "../components/ui";
+import { AnalysisPanel } from "../components/board/AnalysisPanel";
 
 /** Square pair for `lastMove`, derived from the UCI string ("e2e4" → ["e2","e4"]). */
 function uciLastMove(uci: string): [string, string] | null {
@@ -139,7 +140,7 @@ export default function GameReviewPage() {
 	const hasAnalysis = analysis.length > 0;
 
 	return (
-		<div className="mx-auto max-w-6xl p-6">
+		<div className="mx-auto max-w-screen-xl p-6">
 			<header className="mb-4 flex items-center justify-between">
 				<div>
 					<h1 className="text-xl font-bold">
@@ -302,6 +303,17 @@ export default function GameReviewPage() {
 					)}
 				</div>
 			</div>
+
+			{/* Analysis Panel */}
+			<AnalysisPanel
+				pgn={game.pgn}
+				fen={displayFen}
+				ply={ply}
+				analysis={analysis}
+				totalPlies={positions.length}
+				onNavigate={(p) => setPly(p)}
+				className="hidden lg:flex"
+			/>
 		</div>
 	);
 }

@@ -3,7 +3,11 @@
  *
  * Uses the @repo/ui Sidebar components with a collapsible rail pattern.
  * Shows icons when collapsed, full labels when expanded.
+ *
+ * Includes a search input in the header (moved from the removed TitleBar)
+ * and a sidebar collapse toggle.
  */
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
 	Home,
@@ -15,6 +19,9 @@ import {
 	GraduationCap,
 	Settings,
 	Keyboard,
+	PanelLeftClose,
+	PanelLeftOpen,
+	Search,
 } from "lucide-react";
 import {
 	Sidebar,
@@ -31,6 +38,7 @@ import {
 	SidebarSeparator,
 } from "@repo/ui/components/sidebar";
 import { Button } from "@repo/ui/components/button";
+import { Input } from "@repo/ui/components/input";
 
 const mainNavItems = [
 	{ id: "dashboard", label: "Dashboard", icon: Home, path: "/" },
@@ -54,22 +62,61 @@ const bottomNavItems = [
 
 interface NavigationRailProps {
 	onKeybindings?: () => void;
+	onToggleSidebar?: () => void;
 }
 
-export function NavigationRail({ onKeybindings }: NavigationRailProps) {
+export function NavigationRail({ onKeybindings, onToggleSidebar }: NavigationRailProps) {
 	const location = useLocation();
 	const currentPath = location.pathname;
+	const [searchValue, setSearchValue] = useState("");
 
 	return (
 		<Sidebar collapsible="icon" variant="sidebar">
 			<SidebarHeader className="h-14 border-b border-sidebar-border">
 				<div className="flex items-center gap-2 px-2">
+					{/* App title (hidden when collapsed) */}
 					<span className="text-lg font-bold group-data-[collapsible=icon]:hidden">
 						Chess Coach
 					</span>
 					<span className="hidden text-lg font-bold group-data-[collapsible=icon]:block">
 						♚
 					</span>
+
+					{/* Collapse toggle — visible when expanded */}
+					<Button
+						variant="ghost"
+						size="icon"
+						className="ml-auto h-7 w-7 group-data-[collapsible=icon]:hidden"
+						onClick={onToggleSidebar}
+						title="Collapse sidebar"
+					>
+						<PanelLeftClose className="size-4" />
+					</Button>
+
+					{/* Expand toggle — visible when collapsed */}
+					<Button
+						variant="ghost"
+						size="icon"
+						className="hidden h-7 w-7 group-data-[collapsible=icon]:block"
+						onClick={onToggleSidebar}
+						title="Expand sidebar"
+					>
+						<PanelLeftOpen className="size-4" />
+					</Button>
+				</div>
+
+				{/* Search input — only visible when sidebar is expanded */}
+				<div className="hidden px-2 group-data-[collapsible=icon]:hidden">
+					<div className="relative">
+						<Search className="absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+						<Input
+							type="text"
+							placeholder="Search..."
+							value={searchValue}
+							onChange={(e) => setSearchValue(e.target.value)}
+							className="h-7 w-full pl-8 text-xs"
+						/>
+					</div>
 				</div>
 			</SidebarHeader>
 

@@ -5,7 +5,7 @@
  */
 import "dotenv/config";
 import { env } from "@repo/env";
-import { app } from "./server";
+import { app, logEngineHealth } from "./server";
 import { initDB } from "@repo/db";
 
 // Await DB init before listening so the first request hits a ready DB.
@@ -16,3 +16,6 @@ app.listen(process.env.BACKEND_PORT ?? env.BACKEND_PORT);
 console.log(
   `🦊 chess-coach API running at http://${app.server?.hostname}:${app.server?.port}`,
 );
+
+// Log engine health in the background (non-blocking).
+logEngineHealth();

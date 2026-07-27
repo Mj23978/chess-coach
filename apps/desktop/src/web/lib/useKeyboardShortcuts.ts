@@ -21,6 +21,9 @@ import { useEffect } from "react";
 export interface ShortcutHandler {
 	onToggleSidebar?: () => void;
 	onGlobalSearch?: () => void;
+	onNewGame?: () => void;
+	onImportPgn?: () => void;
+	onExportPgn?: () => void;
 }
 
 export interface ShortcutEntry {
@@ -46,6 +49,9 @@ export const ALL_SHORTCUTS: ShortcutGroup[] = [
 		shortcuts: [
 			{ keys: "Ctrl+B", description: "Toggle sidebar" },
 			{ keys: "Ctrl+F", description: "Focus search" },
+			{ keys: "Ctrl+N", description: "New game" },
+			{ keys: "Ctrl+O", description: "Import PGN" },
+			{ keys: "Ctrl+Shift+S", description: "Export PGN" },
 		],
 	},
 	{
@@ -90,6 +96,25 @@ export function useKeyboardShortcuts(handler: ShortcutHandler): void {
 			// Non-modifier shortcuts (if any are added later) should respect
 			// typing context.
 			if (isTypingTarget()) return;
+
+			// Ctrl/Cmd+N → New game
+			if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "n") {
+				e.preventDefault();
+				handler.onNewGame?.();
+				return;
+			}
+			// Ctrl/Cmd+O → Import PGN
+			if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "o") {
+				e.preventDefault();
+				handler.onImportPgn?.();
+				return;
+			}
+			// Ctrl/Cmd+Shift+S → Export PGN
+			if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && e.key.toLowerCase() === "s") {
+				e.preventDefault();
+				handler.onExportPgn?.();
+				return;
+			}
 		}
 
 		window.addEventListener("keydown", onKey);

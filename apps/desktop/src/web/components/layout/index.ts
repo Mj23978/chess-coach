@@ -3,4 +3,4 @@
  */
 export { AppShell } from "./AppShell";
 export { NavigationRail } from "./NavigationRail";
-export { TitleBar } from "./TitleBar";
+

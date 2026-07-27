@@ -2,18 +2,19 @@
  * AppShell — the main application layout wrapper for chess-coach.
  *
  * Structure:
- *   TitleBar (top, fixed height)
+ *   DragRegion (top, for window dragging via Electrobun)
  *   └── SidebarProvider
  *       ├── NavigationRail (left, collapsible)
  *       └── SidebarInset (main content area)
  *
- * The sidebar uses @repo/ui Sidebar components with a collapsible "icon" mode.
- * This provides a narrow icon rail when collapsed, full-width sidebar when expanded.
+ * Electrobun provides native window chrome (title bar, minimize/maximize/close,
+ * File/Edit/View menus). The SPA only needs a drag region at the top so the
+ * user can move the window. All menu actions are wired to keyboard shortcuts
+ * (see useKeyboardShortcuts).
  */
 import { useState } from "react";
 import { SidebarInset, SidebarProvider } from "@repo/ui/components/sidebar";
 import { NavigationRail } from "./NavigationRail";
-import { TitleBar } from "./TitleBar";
 import { useKeyboardShortcuts } from "../../lib/useKeyboardShortcuts";
 
 interface AppShellProps {
@@ -36,23 +37,23 @@ export function AppShell({
 	useKeyboardShortcuts({
 		onToggleSidebar: () => setDefaultSidebarOpen((open) => !open),
 		onGlobalSearch: () => {
-			// Focus the search input in the title bar
+			// Focus the search input in the navigation rail header
 			const searchInput = document.querySelector<HTMLInputElement>(
-				'app-drag input[type="text"]',
+				'nav input[type="text"]',
 			);
 			searchInput?.focus();
 		},
+		onNewGame,
+		onImportPgn,
+		onExportPgn,
 	});
 
 	return (
 		<div className="flex h-screen flex-col overflow-hidden">
-			{/* Title bar */}
-			<TitleBar
-				onNewGame={onNewGame}
-				onImportPgn={onImportPgn}
-				onExportPgn={onExportPgn}
-				onToggleSidebar={() => setDefaultSidebarOpen((open) => !open)}
-			/>
+			{/* Window drag region — Electrobun provides native title bar controls.
+			    This thin strip lets the user drag the window by grabbing any part
+			    of the top area that isn't covered by interactive elements. */}
+			<div className="h-6 shrink-0 app-drag" />
 
 			{/* Main content area with sidebar */}
 			<SidebarProvider
@@ -60,7 +61,10 @@ export function AppShell({
 				open={defaultSidebarOpen}
 				onOpenChange={setDefaultSidebarOpen}
 			>
-				<NavigationRail onKeybindings={() => setKeybindingsOpen(true)} />
+				<NavigationRail
+					onKeybindings={() => setKeybindingsOpen(true)}
+					onToggleSidebar={() => setDefaultSidebarOpen((open) => !open)}
+				/>
 				<SidebarInset className="flex-1 overflow-auto">{children}</SidebarInset>
 			</SidebarProvider>
 
