@@ -30,6 +30,7 @@ import AccountsPage from "./pages/accounts";
 import TrainPage from "./pages/train";
 import { ImportPgnModal } from "./components/import-pgn-modal";
 import { ToastProvider } from "@repo/ui/components/toast";
+import { Toaster } from "./components/ui";
 
 export default function App() {
 	const [importModalOpen, setImportModalOpen] = useState(false);
@@ -56,7 +57,9 @@ export default function App() {
 				</Routes>
 			</AppShell>
 
-			<ToastProvider />
+			<ToastProvider>
+				<Toaster />
+			</ToastProvider>
 
 			{importModalOpen && (
 				<ImportPgnModal
