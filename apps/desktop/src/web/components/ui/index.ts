@@ -12,6 +12,7 @@
  * only need the `toast.*` methods.
  */
 export { BoardErrorBoundary } from "./BoardErrorBoundary";
+export { ErrorBoundary } from "./ErrorBoundary";
 export { ErrorState } from "./ErrorState";
 export { toast, TOAST_MESSAGES, Toaster } from "./toast";
 export { ViewToggle, type ViewMode } from "./ViewToggle";

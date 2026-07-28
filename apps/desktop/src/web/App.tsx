@@ -30,7 +30,7 @@ import AccountsPage from "./pages/accounts";
 import TrainPage from "./pages/train";
 import { ImportPgnModal } from "./components/import-pgn-modal";
 import { ToastProvider } from "@repo/ui/components/toast";
-import { Toaster } from "./components/ui";
+import { ErrorBoundary, Toaster } from "./components/ui";
 import { SettingsProvider } from "./lib/settings-context";
 
 export default function App() {
@@ -49,6 +49,7 @@ export default function App() {
 					// TODO: Trigger PGN export for current game
 				}}
 			>
+				<ErrorBoundary>
 				<Routes>
 					<Route
 						path="/"
@@ -65,6 +66,7 @@ export default function App() {
 					<Route path="/train" element={<TrainPage />} />
 					<Route path="/settings" element={<SettingsPage />} />
 				</Routes>
+				</ErrorBoundary>
 			</AppShell>
 
 			<ToastProvider>

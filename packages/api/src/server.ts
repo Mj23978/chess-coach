@@ -18,8 +18,29 @@ import { filesRoutes } from "./routes/files";
 import { authRoutes } from "./routes/auth";
 import { settingsRoutes } from "./routes/settings";
 
+/**
+ * CORS allow-list. Origins that may call the API from a browser.
+ *
+ * In the Electrobun desktop app the webview loads from the virtual
+ * `views://mainview/` scheme and requests are same-origin / trusted, so this
+ * list is mostly irrelevant there. It matters for `bun run dev:web`, where the
+ * SPA runs on the Vite dev server (default http://localhost:5173) and calls the
+ * Elysia API (default :4001) cross-origin. Without the dev origin in the list,
+ * every fetch from the browser fails the CORS preflight and the SPA blanks.
+ *
+ * - `NEXT_PUBLIC_APP_URL` is included for parity with server-mode deployments.
+ * - `CORS_ALLOW_ORIGINS` lets the operator add arbitrary origins via env.
+ * - The Vite dev origin (and a couple of common alt ports) are implicit so
+ *   `dev:web` works without env config.
+ */
+const VITE_DEV_ORIGINS = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
+
 const corsOrigins = [
   env.NEXT_PUBLIC_APP_URL,
+  ...VITE_DEV_ORIGINS,
   ...(process.env.CORS_ALLOW_ORIGINS?.split(",")
     .map((o) => o.trim())
     .filter(Boolean) ?? []),

@@ -62,6 +62,8 @@ interface GamesSubTableProps {
 	emptyMessage: string;
 	/** When set, the empty state shows a "sync from Accounts" CTA. */
 	emptyAction?: "connect";
+	/** Retry callback shown in the error state. */
+	onRetry?: () => void;
 }
 
 function GamesSubTable({
@@ -70,6 +72,7 @@ function GamesSubTable({
 	error,
 	emptyMessage,
 	emptyAction,
+	onRetry,
 }: GamesSubTableProps) {
 	const qc = useQueryClient();
 	const [sortKey, setSortKey] = useState<SortKey>("date");
@@ -457,6 +460,7 @@ export function GamesTable({
 						isLoading={isLoading}
 						error={error}
 						emptyMessage="No games yet. Import a PGN to begin."
+						onRetry={onRetry}
 					/>
 				</TabsContent>
 				<TabsContent value="chesscom">
@@ -466,6 +470,7 @@ export function GamesTable({
 						error={error}
 						emptyMessage="No Chess.com games synced yet."
 						emptyAction="connect"
+						onRetry={onRetry}
 					/>
 				</TabsContent>
 				<TabsContent value="lichess">
@@ -475,6 +480,7 @@ export function GamesTable({
 						error={error}
 						emptyMessage="No Lichess games synced yet."
 						emptyAction="connect"
+						onRetry={onRetry}
 					/>
 				</TabsContent>
 			</Tabs>
