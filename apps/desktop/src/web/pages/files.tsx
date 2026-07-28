@@ -38,17 +38,56 @@ const SORT_OPTIONS: SortOption[] = [
   { label: "Date created", value: "created" },
 ];
 
-/** Type card definitions for the top-row summary. */
+/**
+ * Type card definitions for the top-row summary.
+ *
+ * Each type maps to a static className set rather than a dynamic color name.
+ * Tailwind v4's scanner can't see interpolated class strings
+ * (`border-${color}-300`), so those utilities would never be generated and the
+ * cards would render unstyled. Static classes also keep us on the DESIGN.md
+ * palette (sage / terracotta / warm neutrals) instead of the cold Tailwind
+ * rainbow (blue/emerald/amber/purple).
+ */
 const TYPE_CARDS: {
   type: FileType;
   label: string;
   icon: typeof FileText;
-  color: string;
+  /** Static Tailwind classes for this type's icon chip + active ring. */
+  chipClass: string;
+  activeClass: string;
 }[] = [
-  { type: "games", label: "Games", icon: FileText, color: "blue" },
-  { type: "repertoire", label: "Repertoires", icon: BookOpen, color: "emerald" },
-  { type: "tournament", label: "Tournaments", icon: Trophy, color: "amber" },
-  { type: "puzzle", label: "Puzzles", icon: Puzzle, color: "purple" },
+  {
+    type: "games",
+    label: "Games",
+    icon: FileText,
+    // Default primary tone — sage.
+    chipClass: "bg-primary/10 text-primary",
+    activeClass: "border-primary bg-primary/10 ring-1 ring-primary/30",
+  },
+  {
+    type: "repertoire",
+    label: "Repertoires",
+    icon: BookOpen,
+    // Warm parchment tone.
+    chipClass: "bg-chess-cream text-chess-brown",
+    activeClass: "border-chess-brown bg-chess-cream ring-1 ring-chess-brown/30",
+  },
+  {
+    type: "tournament",
+    label: "Tournaments",
+    icon: Trophy,
+    // Chess gold tone.
+    chipClass: "bg-chess-gold/15 text-chess-gold",
+    activeClass: "border-chess-gold bg-chess-gold/15 ring-1 ring-chess-gold/40",
+  },
+  {
+    type: "puzzle",
+    label: "Puzzles",
+    icon: Puzzle,
+    // Tertiary terracotta tone (marginalia).
+    chipClass: "bg-tertiary/10 text-tertiary",
+    activeClass: "border-tertiary bg-tertiary/10 ring-1 ring-tertiary/30",
+  },
 ];
 
 export default function FilesPage() {
@@ -136,18 +175,18 @@ export default function FilesPage() {
 
       {/* Type summary cards */}
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {TYPE_CARDS.map(({ type, label, icon: Icon, color }) => (
+        {TYPE_CARDS.map(({ type, label, icon: Icon, chipClass, activeClass }) => (
           <button
             key={type}
             type="button"
             onClick={() => setTypeFilter(typeFilter === type ? null : type)}
-            className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-all ${
+            className={`flex items-center gap-3 rounded-md border p-3 text-left transition-all ${
               typeFilter === type
-                ? `border-${color}-300 bg-${color}-50 ring-1 ring-${color}-200`
+                ? activeClass
                 : "border-border bg-background hover:border-border hover:shadow-sm"
             }`}
           >
-            <div className={`flex size-9 items-center justify-center rounded-lg bg-${color}-100 text-${color}-600`}>
+            <div className={`flex size-9 items-center justify-center rounded-lg ${chipClass}`}>
               <Icon className="size-4" />
             </div>
             <div>
@@ -284,7 +323,7 @@ function EmptyState({
   onClearFilter: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-border p-12 text-center">
+    <div className="rounded-md border border-dashed border-border p-12 text-center">
       <FolderOpen className="mx-auto mb-4 size-12 text-muted-foreground/50" />
       <h3 className="mb-2 font-medium text-foreground">
         {hasFilter

@@ -181,6 +181,28 @@
   --sidebar-accent-foreground: #cce9da;
   --sidebar-border: #424844;
   --sidebar-ring: #b0cdbe;
+
+  /*
+   * Dark-mode mirror of the neutral-* / red-* / surface-container alias ramps
+   * declared in :root. Same idea: keep shadcn components on-palette without
+   * touching their source. Values invert with the theme.
+   */
+  --color-neutral-50: #31302d;                          /* card surface */
+  --color-neutral-100: var(--muted);                    /* hover fill */
+  --color-neutral-200: var(--border);                   /* card border */
+  --color-neutral-300: var(--input);                    /* outline border */
+  --color-neutral-400: var(--ring);                     /* focus ring (sage mist) */
+  --color-neutral-500: var(--muted-foreground);
+  --color-neutral-600: var(--muted-foreground);
+  --color-neutral-700: #b5b1aa;                         /* soft parchment */
+  --color-neutral-800: var(--primary);                  /* sage mist hover */
+  --color-neutral-900: var(--foreground);               /* cream ink */
+
+  --color-surface-container: var(--muted);
+  --color-surface-container-high: var(--card);
+
+  --color-red-500: var(--destructive);
+  --color-red-600: var(--destructive);
 }
 
 @theme {
@@ -243,6 +265,61 @@
   --color-chess-green: #3a5a40;
   --color-chess-gold: #b8860b;
   --color-chess-sage: var(--primary);
+
+  /*
+   * neutral-* alias ramp (migration rule — DESIGN.md "Do's and Don'ts").
+   *
+   * The generic shadcn components (Button, Card, …) ship hardcoded Tailwind
+   * `neutral-*` classes (bg-neutral-900, border-neutral-300, text-neutral-900,
+   * ring-neutral-400 …). Those are cold grays that bypass the warm sage/paper
+   * theme entirely. Rather than rewrite each component, we redefine the
+   * neutral ramp HERE to map onto the warm palette, so editing DESIGN.md (and
+   * the :root values above) realigns every shadcn component at once.
+   *
+   * Mapping (light):
+   *   neutral-50   → cream paper (page)        #fcf9f4
+   *   neutral-100  → muted surface (hover bg)  #f0ede9
+   *   neutral-200  → hairline border           #c2c8c3
+   *   neutral-300  → input trough (outline)    #e5e2dd
+   *   neutral-400  → sage ring                 #496458
+   *   neutral-500  → muted foreground          #424844
+   *   neutral-700  → charcoal-ink soft         #2a2a26
+   *   neutral-800  → primary hover (sage ink)  #385246
+   *   neutral-900  → charcoal ink / primary    #1c1c19  (text)
+   *
+   * The destructive red on the shadcn Button (bg-red-600) is remapped via the
+   * red-* ramp below to the warm destructive token so it also stays on-palette.
+   */
+  --color-neutral-50: var(--background);            /* cream paper */
+  --color-neutral-100: var(--muted);                /* hover fill */
+  --color-neutral-200: var(--border);               /* card border */
+  --color-neutral-300: var(--input);                /* outline border */
+  --color-neutral-400: var(--ring);                 /* focus ring (sage) */
+  --color-neutral-500: var(--muted-foreground);
+  --color-neutral-600: var(--muted-foreground);
+  --color-neutral-700: #2a2a26;                     /* soft charcoal */
+  --color-neutral-800: var(--primary-container-foreground); /* sage ink */
+  --color-neutral-900: var(--foreground);           /* charcoal ink */
+
+  /*
+   * surface-container tokens (Input "filled" variant).
+   *
+   * The Input component references bg-surface-container / bg-surface-container-high
+   * for its "filled" variant, but those Tailwind color tokens were never defined
+   * in the @theme block — so the filled input rendered transparent. Pointing
+   * them at --muted / --card makes the variant work and keeps it on the warm
+   * paper palette.
+   */
+  --color-surface-container: var(--muted);          /* resting fill */
+  --color-surface-container-high: var(--card);      /* focus fill */
+
+  /*
+   * red-* alias ramp — shadcn Button destructive uses bg-red-600 / hover:bg-red-500.
+   * Remap to the warm destructive token so it stops pulling in Tailwind's cold
+   * pure red and lands on the on-brand #ba1a1a.
+   */
+  --color-red-500: var(--destructive);
+  --color-red-600: var(--destructive);
 
   /* Typography */
   --font-sans: var(--font-sans);

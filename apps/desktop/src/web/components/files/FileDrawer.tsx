@@ -265,7 +265,7 @@ function DrawerBody({
 								onClick={handleCopy}
 							>
 								{copied ? (
-									<Check className="mr-1 size-3 text-emerald-600" />
+									<Check className="mr-1 size-3 text-success" />
 								) : (
 									<Copy className="mr-1 size-3" />
 								)}

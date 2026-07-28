@@ -115,7 +115,7 @@ export function FileCard({
 					onOpen();
 				}
 			}}
-			className="group relative flex cursor-pointer flex-col rounded-xl border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md"
+			className="group relative flex cursor-pointer flex-col rounded-md border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md"
 		>
 			<div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
 				<CardMenu onRename={onRename} onDelete={onDelete} onOpen={onOpen} />

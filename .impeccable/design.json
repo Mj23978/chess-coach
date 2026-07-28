@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-28T00:00:00Z",
+  "title": "Design System: Chess Coach",
+  "extensions": {
+    "colorMeta": {
+      "cream-paper": {
+        "role": "neutral",
+        "displayName": "Cream Paper",
+        "canonical": "#fcf9f4",
+        "tonalRamp": ["#1c1c19", "#2a2926", "#3b3a36", "#5c5a53", "#8d8a82", "#c9c4b8", "#e7e0d2", "#fcf9f4"]
+      },
+      "charcoal-ink": {
+        "role": "neutral",
+        "displayName": "Charcoal Ink",
+        "canonical": "#1c1c19",
+        "tonalRamp": ["#1c1c19", "#2a2926", "#3b3a36", "#5c5a53", "#7a7872", "#a6a39b", "#d4d1c8", "#f5f2ea"]
+      },
+      "card-white": {
+        "role": "neutral",
+        "displayName": "Card White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#1f1f1d", "#333332", "#4a4a48", "#6e6e6c", "#9a9a98", "#c4c4c2", "#e5e5e3", "#ffffff"]
+      },
+      "parchment-sidebar": {
+        "role": "neutral",
+        "displayName": "Parchment",
+        "canonical": "#eae5dc",
+        "tonalRamp": ["#23211c", "#36332b", "#4c483e", "#6f6a5b", "#9a937f", "#c4bca6", "#e2dac3", "#eae5dc"]
+      },
+      "sage": {
+        "role": "primary",
+        "displayName": "Sage",
+        "canonical": "#496458",
+        "tonalRamp": ["#16241f", "#243630", "#344a40", "#496458", "#5d7a6c", "#728f81", "#a7c4b5", "#c1d8cc"]
+      },
+      "sage-mist": {
+        "role": "primary",
+        "displayName": "Sage Mist",
+        "canonical": "#a7c4b5",
+        "tonalRamp": ["#1f2e27", "#2e4239", "#3e574b", "#52745f", "#6b917a", "#8caf9a", "#a7c4b5", "#d3e3d8"]
+      },
+      "terracotta": {
+        "role": "tertiary",
+        "displayName": "Terracotta",
+        "canonical": "#8b4c50",
+        "tonalRamp": ["#2a1517", "#422326", "#5d3236", "#8b4c50", "#a35e62", "#c07a7e", "#e0a3a6", "#f8a8ab"]
+      },
+      "slate": {
+        "role": "secondary",
+        "displayName": "Slate (warm)",
+        "canonical": "#596060",
+        "tonalRamp": ["#1a1d1d", "#282d2d", "#383e3e", "#596060", "#737a7a", "#939999", "#c1c8c7", "#dae1e1"]
+      },
+      "destructive": {
+        "role": "neutral",
+        "displayName": "Destructive Red",
+        "canonical": "#ba1a1a",
+        "tonalRamp": ["#3a0606", "#5c0c0c", "#93000a", "#ba1a1a", "#d63a3a", "#e56868", "#ff9d9a", "#ffdad6"]
+      },
+      "muted-surface": {
+        "role": "neutral",
+        "displayName": "Muted Surface",
+        "canonical": "#f0ede9",
+        "tonalRamp": ["#23211e", "#35322e", "#494641", "#6b6762", "#928d86", "#bab4ab", "#ddd7cb", "#f0ede9"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#c2c8c3",
+        "tonalRamp": ["#232524", "#363a38", "#4a4f4c", "#6c716e", "#929895", "#b6bcb9", "#c2c8c3", "#e8ece9"]
+      },
+      "board-light": {
+        "role": "neutral",
+        "displayName": "Board Light (brown theme)",
+        "canonical": "#f0d9b5",
+        "tonalRamp": ["#3a3022", "#5a4a30", "#7a6644", "#9c855c", "#bca276", "#d4bf95", "#e5d2a8", "#f0d9b5"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Newsreader serif — hero headlines only, once per view at most." },
+      "headline-lg": { "displayName": "Headline Lg", "purpose": "Newsreader — page titles and major section headers." },
+      "headline-md": { "displayName": "Headline Md", "purpose": "Newsreader — section headers within a page." },
+      "headline-sm": { "displayName": "Headline Sm", "purpose": "Newsreader — subsection headers, card titles." },
+      "body-lg": { "displayName": "Body Lg", "purpose": "Hanken Grotesk — lead paragraphs, descriptive copy. ~65–75ch." },
+      "body-md": { "displayName": "Body Md", "purpose": "Hanken Grotesk — default body, move lists, PGN, table cells." },
+      "label-md": { "displayName": "Label Md", "purpose": "Hanken Grotesk uppercase tracked — eyebrows, nav, table headers, status tags." },
+      "mono": { "displayName": "Mono", "purpose": "System mono stack — code, PGN dumps, engine output." }
+    },
+    "shadows": [
+      { "name": "2xs", "value": "0 1px 2px hsl(28 28 25 / 0.04)", "purpose": "Barest separation for tight UI." },
+      { "name": "xs", "value": "0 2px 4px hsl(28 28 25 / 0.06)", "purpose": "Resting cards, inputs." },
+      { "name": "sm", "value": "0 2px 4px hsl(28 28 25 / 0.06), 0 1px 2px hsl(28 28 25 / 0.04)", "purpose": "Default card shadow; .paper-card resting state." },
+      { "name": "md", "value": "0 4px 8px hsl(28 28 25 / 0.06), 0 2px 4px hsl(28 28 25 / 0.04)", "purpose": "Card hover state (.paper-card:hover)." },
+      { "name": "lg", "value": "0 8px 16px hsl(28 28 25 / 0.06), 0 4px 8px hsl(28 28 25 / 0.04)", "purpose": "Popovers, dropdowns." },
+      { "name": "xl", "value": "0 12px 24px hsl(28 28 25 / 0.08), 0 6px 12px hsl(28 28 25 / 0.04)", "purpose": "Dialogs, modals." },
+      { "name": "2xl", "value": "0 16px 32px hsl(28 28 25 / 0.10), 0 8px 16px hsl(28 28 25 / 0.06)", "purpose": "Top of the scale; reserved." }
+    ],
+    "motion": [
+      { "name": "color-transition", "value": "transition: colors 0.2s ease", "purpose": "Default button/card state transitions." },
+      { "name": "card-lift", "value": "transition: box-shadow 0.2s ease, transform 0.2s ease; hover: translateY(-2px)", "purpose": ".paper-card hover lift." },
+      { "name": "dialog-in", "value": "fade-in-0 zoom-in-95 0.2s", "purpose": "Dialog/modal open." },
+      { "name": "sketch-underline", "value": "sketch-underline 0.6s ease-out", "purpose": "Animated underline draw." },
+      { "name": "organic-float", "value": "organic-float 3s ease-in-out infinite", "purpose": "Gentle float on .organic-blob shapes." },
+      { "name": "bg-shine", "value": "bg-shine 2.2s linear infinite", "purpose": "Shimmer on gradient text/accents." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px", "purpose": "Sidebar switches to mobile (18rem) behavior below this." },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1400px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single committed action style — sage ground, white text, soft radius. Use for the primary action on any surface.",
+      "html": "<button class=\"ds-btn-primary\">Analyze Game</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 40px; padding: 0 1rem; background: var(--primary, #496458); color: var(--primary-foreground, #ffffff); font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 0.3rem; cursor: pointer; transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease; } .ds-btn-primary:hover { background: #385246; box-shadow: 0 4px 8px hsl(28 28 25 / 0.06), 0 2px 4px hsl(28 28 25 / 0.04); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, #496458), 0 0 0 6px hsl(153 16% 35% / 0.18); } .ds-btn-primary:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Pill Button (signature CTA)",
+      "kind": "button",
+      "refersTo": "button-pill",
+      "description": "Fully-round sage CTA for hero actions. Wider padding than the default primary. Optionally pairs with an animated → glyph.",
+      "html": "<button class=\"ds-btn-pill\">Start Review <span class=\"ds-btn-pill-arrow\">→</span></button>",
+      "css": ".ds-btn-pill { display: inline-flex; align-items: center; gap: 0.5rem; height: 44px; padding: 0 1.5rem; background: var(--primary, #496458); color: var(--primary-foreground, #ffffff); font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 15px; font-weight: 600; border: none; border-radius: 9999px; cursor: pointer; transition: background 0.2s ease, box-shadow 0.2s ease; } .ds-btn-pill:hover { background: #385246; box-shadow: 0 8px 16px hsl(28 28 25 / 0.06), 0 4px 8px hsl(28 28 25 / 0.04); } .ds-btn-pill:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, #496458); } .ds-btn-pill-arrow { transition: transform 0.2s ease; } .ds-btn-pill:hover .ds-btn-pill-arrow { transform: translateX(3px); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary/tertiary action — transparent with a hairline border, charcoal ink text. Hover fills subtle.",
+      "html": "<button class=\"ds-btn-outline\">Cancel</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; height: 40px; padding: 0 1rem; background: transparent; color: var(--foreground, #1c1c19); font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--border, #c2c8c3); border-radius: 0.3rem; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; } .ds-btn-outline:hover { background: var(--muted, #f0ede9); border-color: var(--primary, #496458); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, #496458); }"
+    },
+    {
+      "name": "Paper Card",
+      "kind": "card",
+      "refersTo": "paper-card",
+      "description": "The default container for grouped content — white on cream, hairline border, soft warm shadow, lifts on hover.",
+      "html": "<div class=\"ds-paper-card\"><h3 class=\"ds-paper-card-title\">Italian Game</h3><p class=\"ds-paper-card-body\">A classical open game starting 1.e4 e5 2.Nf3 Nc6 3.Bc4.</p></div>",
+      "css": ".ds-paper-card { background: var(--card, #ffffff); color: var(--card-foreground, #1c1c19); border: 1px solid var(--border, #c2c8c3); border-radius: 0.55rem; padding: 1.5rem; box-shadow: 0 2px 4px hsl(28 28 25 / 0.06), 0 1px 2px hsl(28 28 25 / 0.04); transition: box-shadow 0.2s ease, transform 0.2s ease; } .ds-paper-card:hover { box-shadow: 0 4px 8px hsl(28 28 25 / 0.06), 0 2px 4px hsl(28 28 25 / 0.04); transform: translateY(-2px); } .ds-paper-card-title { margin: 0 0 0.5rem; font-family: \"Newsreader\", ui-serif, Georgia, serif; font-size: 24px; font-weight: 600; line-height: 1.4; } .ds-paper-card-body { margin: 0; font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: var(--muted-foreground, #424844); }"
+    },
+    {
+      "name": "Featured Card",
+      "kind": "card",
+      "refersTo": "featured-card",
+      "description": "The one emphasized card in a grid — sage-mist ground, sage border, generous padding. For 'start here' or featured game.",
+      "html": "<div class=\"ds-featured-card\"><span class=\"ds-featured-eyebrow\">Featured</span><h3 class=\"ds-featured-title\">Your Last Game</h3><p class=\"ds-featured-body\">3 blunders found. Review the critical moment on move 17.</p></div>",
+      "css": ".ds-featured-card { background: var(--primary-container, #a7c4b5); color: var(--primary-container-foreground, #385246); border: 2px solid var(--primary, #496458); border-radius: 0.55rem; padding: 2rem; } .ds-featured-eyebrow { display: block; font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.8; margin-bottom: 0.5rem; } .ds-featured-title { margin: 0 0 0.5rem; font-family: \"Newsreader\", ui-serif, Georgia, serif; font-size: 24px; font-weight: 600; line-height: 1.4; } .ds-featured-body { margin: 0; font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Default form field — cream ground, 2px input border, sage focus with a soft halo. Errors shift to destructive.",
+      "html": "<input class=\"ds-input\" placeholder=\"Paste PGN here…\" />",
+      "css": ".ds-input { width: 100%; height: 40px; padding: 0.5rem 1rem; background: var(--background, #fcf9f4); color: var(--foreground, #1c1c19); font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 16px; border: 2px solid var(--input, #e5e2dd); border-radius: 0.8rem; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease; } .ds-input::placeholder { color: var(--muted-foreground, #424844); } .ds-input:focus { border-color: var(--primary, #496458); box-shadow: 0 0 0 4px hsl(153 16% 35% / 0.1); } .ds-input[aria-invalid=\"true\"] { border-color: var(--destructive, #ba1a1a); box-shadow: 0 0 0 4px hsl(0 75% 42% / 0.1); }"
+    },
+    {
+      "name": "Sidebar Nav Button",
+      "kind": "nav",
+      "refersTo": "sidebar-button",
+      "description": "Parchment-sidebar nav item — transparent at rest, sage-mist fill on hover/active. Sentence-case sans, not uppercase.",
+      "html": "<a class=\"ds-nav-item ds-nav-item-active\" href=\"#\"><span class=\"ds-nav-icon\" aria-hidden=\"true\">♧</span><span>Dashboard</span></a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; background: transparent; color: var(--sidebar-foreground, #1c1c19); font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 0.3rem; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; } .ds-nav-item:hover { background: var(--sidebar-accent, #a7c4b5); color: var(--sidebar-accent-foreground, #385246); } .ds-nav-item-active { background: var(--sidebar-accent, #a7c4b5); color: var(--sidebar-accent-foreground, #385246); } .ds-nav-icon { display: inline-flex; width: 1.25rem; justify-content: center; opacity: 0.8; }"
+    },
+    {
+      "name": "Status Chip",
+      "kind": "chip",
+      "refersTo": "button-pill",
+      "description": "Pill-shaped tag — sage-mist ground for neutral labels, terracotta-blush for warnings. Uppercase tracked sans.",
+      "html": "<span class=\"ds-chip ds-chip-warning\">Blunder</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; height: 24px; padding: 0 0.75rem; background: var(--primary-container, #a7c4b5); color: var(--primary-container-foreground, #385246); font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 9999px; } .ds-chip-warning { background: var(--tertiary-container, #f8a8ab); color: var(--tertiary-container-foreground, #753b3e); }"
+    },
+    {
+      "name": "Dialog",
+      "kind": "custom",
+      "refersTo": "paper-card",
+      "description": "Modal — cream surface, hairline border, xl warm shadow, serif title. Centered, fades+zooms in.",
+      "html": "<div class=\"ds-dialog\"><div class=\"ds-dialog-overlay\"></div><div class=\"ds-dialog-panel\"><h2 class=\"ds-dialog-title\">Import Game</h2><p class=\"ds-dialog-desc\">Paste a PGN to add it to your database.</p></div></div>",
+      "css": ".ds-dialog { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; } .ds-dialog-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); animation: ds-fade 0.2s ease; } .ds-dialog-panel { position: relative; width: min(32rem, calc(100% - 2rem)); padding: 1.5rem; background: var(--background, #fcf9f4); border: 1px solid var(--border, #c2c8c3); border-radius: 0.8rem; box-shadow: 0 12px 24px hsl(28 28 25 / 0.08), 0 6px 12px hsl(28 28 25 / 0.04); animation: ds-zoom 0.2s ease; } .ds-dialog-title { margin: 0 0 0.5rem; font-family: \"Newsreader\", ui-serif, Georgia, serif; font-size: 24px; font-weight: 600; line-height: 1.4; color: var(--foreground, #1c1c19); } .ds-dialog-desc { margin: 0; font-family: \"Hanken Grotesk\", ui-sans-serif, system-ui, sans-serif; font-size: 16px; line-height: 1.6; color: var(--muted-foreground, #424844); } @keyframes ds-fade { from { opacity: 0; } to { opacity: 1; } } @keyframes ds-zoom { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Annotated Scorebook",
+    "overview": "Chess Coach is a quiet study tool, not a flashy game UI. It reads like a thoughtful chess journal — cream paper, sage-green ink, and the occasional terracotta note in the margin. The board is the centerpiece; the interface around it recedes. Every surface should feel like something you'd be comfortable sitting with for an hour of post-game review.\n\nThe palette is warm and restrained. Sage green (#496458) is the single committed accent — it carries every primary action, every success state, every active sidebar item, and the board's own move highlights. Terracotta (#8b4c50) is the marginalia: it marks warnings, tertiary emphasis, and the rare accent that isn't sage. The cream paper (#fcf9f4) and warm parchment sidebar (#eae5dc) hold everything. Nothing is pure white except cards sitting on the cream page; nothing is pure gray.\n\nTypography pairs Newsreader (a warm transitional serif) for headlines with Hanken Grotesk (a friendly humanist sans) for body and labels. The serif headlines give the app its \"worth reading closely\" character; the sans body keeps dense move lists and PGN scannable. Decorative utilities — sketch-underline, sketch-border, paper-texture, organic-blob — are used sparingly to reinforce the hand-annotated feel. They are accent, never structure.",
+    "keyCharacteristics": [
+      "Warm cream paper background, never neutral gray; pure white only for elevated cards",
+      "Sage green as the single committed accent (primary, success, focus ring, board highlights)",
+      "Terracotta as marginalia only — warnings, tertiary emphasis, the rare non-sage accent",
+      "Newsreader serif headlines + Hanken Grotesk body; labels are uppercase, tracked, sans",
+      "Hand-annotated decorative utilities (sketch-*, paper-texture, organic-blob) as accent, not structure",
+      "Full dark mode where surfaces shift to charcoal and sage lightens to mist; same identity, inverted values",
+      "Restraint: the board commands attention, chrome recedes"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Sage is the primary accent for the entire system — buttons, focus, success, sidebar active, board highlights all draw from #496458. Do not introduce a second action hue. Terracotta is marginalia, not a competing action color.", "section": "colors" },
+      { "name": "The Warm Paper Rule", "body": "Backgrounds are warm (#fcf9f4 cream, #eae5dc parchment, #ffffff only for elevated cards). Never use neutral gray (neutral-*, gray-*, slate-* Tailwind defaults) — they break the paper metaphor.", "section": "colors" },
+      { "name": "The Serif-For-Meaning Rule", "body": "Newsreader (serif) is reserved for headlines and display. Body, labels, inputs, and tables are always Hanken Grotesk (sans). Do not set body copy in serif; do not set headlines in sans.", "section": "typography" },
+      { "name": "The Uppercase-Label Rule", "body": "Structural labels (eyebrows, nav, table headers, status tags) are uppercase, tracked 0.05em, weight 600, sans. Prose metadata stays sentence-case.", "section": "typography" },
+      { "name": "The Warm-Shadow Rule", "body": "Every shadow uses the warm charcoal ink color (hsl(28 28 25 / α)), never neutral black or default Tailwind shadow-* (which use gray).", "section": "elevation" },
+      { "name": "The Shadow-For-State Rule", "body": "Cards rest at sm; they lift to md and translate y:-2px on hover. Shadows respond to interaction state. Dialogs and popovers are the only surfaces licensed for lg/xl at rest.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use sage (#496458 / --primary) for every primary action, focus ring, success state, and active sidebar item.",
+      "Do keep backgrounds warm: cream paper (#fcf9f4), parchment sidebar (#eae5dc), pure white only for elevated cards.",
+      "Do pair Newsreader (serif) for headlines with Hanken Grotesk (sans) for body — and load the fonts (add a Google Fonts import or self-host).",
+      "Do use the warm shadow tokens (--shadow-*, all hsl(28 28 25 / α)); cards rest at sm, lift to md + translateY(-2px) on hover.",
+      "Do reserve uppercase tracked Label Md for structural labels; keep prose metadata sentence-case.",
+      "Do use decorative utilities (sketch-underline, paper-texture, organic-blob) sparingly — one or two per view.",
+      "Do let the chess board command its page; surrounding panels defer to it."
+    ],
+    "donts": [
+      "Don't use Tailwind neutral-*, gray-*, or slate-* defaults for backgrounds, text, borders, or shadows — they are cold and break the warm-paper metaphor.",
+      "Don't introduce a second action hue. Terracotta is marginalia (warnings, tertiary emphasis), not a competing button color.",
+      "Don't set body copy in Newsreader or headlines in Hanken Grotesk. The serif/sans split is load-bearing.",
+      "Don't restyle the chessboard highlights to match the sage palette — the lichess-standard signals are recognition-critical.",
+      "Don't use shadow-xl/shadow-2xl at rest outside dialogs and popovers.",
+      "Don't apply paper-texture or organic-blob to working UI (forms, tables, controls) — hero/landing decoration only."
+    ]
+  }
+}
