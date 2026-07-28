@@ -20,6 +20,7 @@ import {
 	AddAccountModal,
 	PlayerDatabaseDrawer,
 } from "../components/accounts";
+import { PageContainer } from "../components/layout";
 import { fetchAccounts, type AccountDTO } from "../lib/api";
 
 export default function AccountsPage() {
@@ -39,7 +40,7 @@ export default function AccountsPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-3xl p-8">
+		<PageContainer>
 			<header className="mb-6 flex items-start justify-between">
 				<div>
 					<Link to="/" className="text-xs text-blue-600">
@@ -111,6 +112,6 @@ export default function AccountsPage() {
 				open={drawerOpen}
 				onOpenChange={setDrawerOpen}
 			/>
-		</div>
+		</PageContainer>
 	);
 }

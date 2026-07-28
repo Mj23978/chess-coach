@@ -23,6 +23,7 @@ import {
 import { Button } from "@repo/ui/components/button";
 import { FileCard, FileDrawer, CreateFileModal } from "../components/files";
 import { GenericHeader, type SortOption } from "../components/databases";
+import { PageContainer } from "../components/layout";
 import { fetchFiles, deleteFile, type FileDTO, type FileType } from "../lib/api";
 
 type ViewMode = "grid" | "list";
@@ -111,7 +112,7 @@ export default function FilesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <PageContainer>
       <GenericHeader
         title="Files"
         subtitle="Import and organize your PGN files, repertoires, and puzzles."
@@ -257,7 +258,7 @@ export default function FilesPage() {
           }}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }
 

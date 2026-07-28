@@ -408,6 +408,50 @@ export async function dedupDatabase(
 }
 
 // ============================================================================
+// Settings API
+// ============================================================================
+
+/** Shape returned by GET /settings — the full settings map. */
+export interface SettingsDTO {
+  theme: "light" | "dark" | "system";
+  boardStyle: "brown" | "blue" | "green" | "purple";
+  showCoords: boolean;
+  highlightLastMove: boolean;
+  defaultEngine: string;
+  autoAnalyze: boolean;
+  analysisDepth: number;
+  syncOnStart: boolean;
+  syncInterval: number;
+  autoImportChessCom: boolean;
+  autoImportLichess: boolean;
+}
+
+/** `GET /settings` — load all settings (merged with defaults). */
+export async function fetchSettings(): Promise<SettingsDTO> {
+  const data = await api<{ settings: SettingsDTO }>("/settings");
+  return data.settings;
+}
+
+/** `PATCH /settings` — partial update. Returns the full merged map. */
+export async function updateSettings(
+  patch: Partial<SettingsDTO>,
+): Promise<SettingsDTO> {
+  const data = await api<{ settings: SettingsDTO }>("/settings", {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+  return data.settings;
+}
+
+/** `DELETE /settings` — reset to defaults. */
+export async function resetSettings(): Promise<SettingsDTO> {
+  const data = await api<{ settings: SettingsDTO }>("/settings", {
+    method: "DELETE",
+  });
+  return data.settings;
+}
+
+// ============================================================================
 // Accounts & Sync API
 // ============================================================================
 

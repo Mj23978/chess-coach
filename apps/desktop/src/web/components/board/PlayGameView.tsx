@@ -28,6 +28,7 @@ import {
 } from "./PlayerConfigCard";
 import { GameActionsBar } from "./GameActionsBar";
 import { Button } from "@repo/ui/components/button";
+import { useSettings } from "../../lib/settings-context";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { startPlay, type TimeControl, type PlayerColor } from "../../lib/play-api";
@@ -46,6 +47,7 @@ export interface PlayGameViewProps {
 }
 
 export function PlayGameView({ initialFen, onTitleChange }: PlayGameViewProps) {
+  const { settings } = useSettings();
   const [white, setWhite] = useState<PlayerConfig>({
     kind: "human",
     name: "Player",
@@ -211,6 +213,9 @@ export function PlayGameView({ initialFen, onTitleChange }: PlayGameViewProps) {
               dests={interactive ? dests : null}
               turnColor={turn ?? undefined}
               onMove={interactive ? handleMove : undefined}
+              boardStyle={settings.boardStyle}
+              showCoords={settings.showCoords}
+              highlightLastMove={settings.highlightLastMove}
             />
           </div>
         </div>

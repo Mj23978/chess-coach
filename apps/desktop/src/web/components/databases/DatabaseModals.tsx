@@ -5,9 +5,9 @@
  *  - `AddGamesModal`: lets the user add games to a database either by pasting
  *    PGN blobs or by selecting from their existing local games.
  *
- * Both are simple controlled overlays (matching the existing ImportPgnModal
- * style) — a fixed full-screen dimmer with a centered card. They call back to
- * the parent on success so the parent can close + refetch.
+ * Both use ModalShell (Radix Dialog) for proper outside-click and Escape
+ * handling. They call back to the parent on success so the parent can close
+ * + refetch.
  */
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -29,35 +29,7 @@ import {
   type DatabaseDTO,
   type DatabaseType,
 } from "../../lib/api";
-
-/** Shared overlay shell — matches the ImportPgnModal look. */
-function ModalShell({
-  title,
-  onClose,
-  children,
-  footer,
-}: {
-  title: string;
-  onClose: () => void;
-  children: React.ReactNode;
-  footer: React.ReactNode;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-4 text-lg font-semibold">{title}</h2>
-        {children}
-        <div className="mt-4 flex justify-end gap-2">{footer}</div>
-      </div>
-    </div>
-  );
-}
+import { ModalShell } from "../ui/modal-shell";
 
 // ---------------------------------------------------------------------------
 // CreateDatabaseModal
@@ -102,8 +74,9 @@ export function CreateDatabaseModal({
 
   return (
     <ModalShell
+      open
+      onOpenChange={(open) => !open && onClose()}
       title="New Database"
-      onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={busy}>
@@ -159,7 +132,7 @@ export function CreateDatabaseModal({
           />
         </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
     </ModalShell>
   );
@@ -247,8 +220,9 @@ export function AddGamesModal({
 
   return (
     <ModalShell
+      open
+      onOpenChange={(open) => !open && onClose()}
       title={`Add games to "${database.name}"`}
-      onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={busy}>

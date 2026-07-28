@@ -32,6 +32,7 @@ import {
 	updateAccount,
 	type AccountDTO,
 } from "../../lib/api";
+import { ModalShell } from "../ui/modal-shell";
 
 interface AccountCardProps {
 	account: AccountDTO;
@@ -234,33 +235,33 @@ function RenameModal({
 }) {
 	const [name, setName] = useState(initial);
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<Card className="w-full max-w-sm">
-				<CardContent className="space-y-3 p-4">
-					<label className="block text-sm font-medium">Rename account</label>
-					<Input
-						autoFocus
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" && name.trim()) onSubmit(name.trim());
-						}}
-					/>
-					{error && <p className="text-sm text-rose-600">{error}</p>}
-					<div className="flex justify-end gap-2">
-						<Button variant="outline" onClick={onCancel}>
-							Cancel
-						</Button>
-						<Button
-							disabled={!name.trim() || submitting}
-							onClick={() => onSubmit(name.trim())}
-						>
-							{submitting ? "Saving…" : "Save"}
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+		<ModalShell
+			open
+			onOpenChange={(open) => !open && onCancel()}
+			title="Rename account"
+			className="max-w-sm"
+		>
+			<Input
+				autoFocus
+				value={name}
+				onChange={(e) => setName(e.target.value)}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" && name.trim()) onSubmit(name.trim());
+				}}
+			/>
+			{error && <p className="text-sm text-rose-600">{error}</p>}
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" onClick={onCancel}>
+					Cancel
+				</Button>
+				<Button
+					disabled={!name.trim() || submitting}
+					onClick={() => onSubmit(name.trim())}
+				>
+					{submitting ? "Saving…" : "Save"}
+				</Button>
+			</div>
+		</ModalShell>
 	);
 }
 
@@ -278,26 +279,26 @@ function ConfirmModal({
 	onConfirm: () => void;
 }) {
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<Card className="w-full max-w-sm">
-				<CardContent className="space-y-3 p-4">
-					<p className="font-medium">{title}</p>
-					<p className="text-sm text-neutral-600">{body}</p>
-					<div className="flex justify-end gap-2">
-						<Button variant="outline" onClick={onCancel}>
-							Cancel
-						</Button>
-						<Button
-							variant="destructive"
-							disabled={submitting}
-							onClick={onConfirm}
-						>
-							{submitting ? "Removing…" : "Remove"}
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+		<ModalShell
+			open
+			onOpenChange={(open) => !open && onCancel()}
+			title={title}
+			className="max-w-sm"
+		>
+			<p className="text-sm text-neutral-600">{body}</p>
+			<div className="flex justify-end gap-2">
+				<Button variant="outline" onClick={onCancel}>
+					Cancel
+				</Button>
+				<Button
+					variant="destructive"
+					disabled={submitting}
+					onClick={onConfirm}
+				>
+					{submitting ? "Removing…" : "Remove"}
+				</Button>
+			</div>
+		</ModalShell>
 	);
 }
 

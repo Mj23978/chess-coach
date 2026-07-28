@@ -3,4 +3,5 @@
  */
 export { AppShell } from "./AppShell";
 export { NavigationRail } from "./NavigationRail";
+export { PageContainer } from "./PageContainer";
 

@@ -7,6 +7,8 @@
  *
  * The modal also has a type picker (games / repertoire / tournament / puzzle)
  * and optional name + description fields.
+ *
+ * Uses ModalShell (Radix Dialog) for proper outside-click and Escape handling.
  */
 import { useState, useRef } from "react";
 import { Upload, FileText } from "lucide-react";
@@ -22,35 +24,7 @@ import {
   SelectValue,
 } from "@repo/ui/components/select";
 import { createFile, type FileType, type FileDTO } from "../../lib/api";
-
-/** Shared overlay shell — matches the existing ImportPgnModal / DatabaseModals look. */
-function ModalShell({
-  title,
-  onClose,
-  children,
-  footer,
-}: {
-  title: string;
-  onClose: () => void;
-  children: React.ReactNode;
-  footer: React.ReactNode;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="mb-4 text-lg font-semibold">{title}</h2>
-        {children}
-        <div className="mt-4 flex justify-end gap-2">{footer}</div>
-      </div>
-    </div>
-  );
-}
+import { ModalShell } from "../ui/modal-shell";
 
 // ---------------------------------------------------------------------------
 // CreateFileModal
@@ -118,8 +92,9 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
 
   return (
     <ModalShell
+      open
+      onOpenChange={(open) => !open && onClose()}
       title="Import PGN File"
-      onClose={onClose}
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={busy}>

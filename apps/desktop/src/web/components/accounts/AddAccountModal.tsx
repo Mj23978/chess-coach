@@ -9,8 +9,7 @@
  *    popup may open in a system browser outside the webview, so polling is the
  *    robust path). Times out after 2 minutes.
  *
- * Uses a raw overlay (matching the engines-page modal convention) rather than
- * the @repo/ui Dialog, to stay consistent with the rest of the SPA.
+ * Uses ModalShell (Radix Dialog) for proper outside-click and Escape handling.
  */
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -27,6 +26,7 @@ import {
 	fetchAccounts,
 	type AccountPlatform,
 } from "../../lib/api";
+import { ModalShell } from "../ui/modal-shell";
 
 type Platform = AccountPlatform;
 
@@ -133,12 +133,13 @@ export function AddAccountModal({ onClose, onSuccess }: AddAccountModalProps) {
 	}
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<Card className="w-full max-w-md">
-				<CardHeader>
-					<CardTitle>Connect an account</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
+		<ModalShell
+			open
+			onOpenChange={(open) => !open && onClose()}
+			title="Connect an account"
+			className="max-w-md"
+		>
+			<div className="space-y-4">
 					{!platform && (
 						<div className="grid grid-cols-2 gap-3">
 							<PlatformChoice
@@ -232,9 +233,8 @@ export function AddAccountModal({ onClose, onSuccess }: AddAccountModalProps) {
 							</Button>
 						</div>
 					)}
-				</CardContent>
-			</Card>
-		</div>
+			</div>
+		</ModalShell>
 	);
 }
 

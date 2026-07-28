@@ -41,6 +41,8 @@ import {
 } from "../lib/export";
 import { BoardErrorBoundary, toast, TOAST_MESSAGES } from "../components/ui";
 import { AnalysisPanel } from "../components/board/AnalysisPanel";
+import { PageContainer } from "../components/layout";
+import { useSettings } from "../lib/settings-context";
 
 /** Square pair for `lastMove`, derived from the UCI string ("e2e4" → ["e2","e4"]). */
 function uciLastMove(uci: string): [string, string] | null {
@@ -51,6 +53,7 @@ function uciLastMove(uci: string): [string, string] | null {
 export default function GameReviewPage() {
 	const { id } = useParams<{ id: string }>();
 	const qc = useQueryClient();
+	const { settings } = useSettings();
 
 	const {
 		data: game,
@@ -63,7 +66,8 @@ export default function GameReviewPage() {
 	});
 
 	const analyzeMut = useMutation({
-		mutationFn: () => analyzeGame(id!),
+		mutationFn: () =>
+			analyzeGame(id!, { depth: settings.analysisDepth }),
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["game", id] }),
 	});
 
@@ -140,7 +144,7 @@ export default function GameReviewPage() {
 	const hasAnalysis = analysis.length > 0;
 
 	return (
-		<div className="mx-auto max-w-screen-xl p-6">
+		<PageContainer variant="wide" className="py-6">
 			<header className="mb-4 flex items-center justify-between">
 				<div>
 					<h1 className="text-xl font-bold">
@@ -223,6 +227,9 @@ export default function GameReviewPage() {
 								fen={displayFen}
 								orientation={game.side ?? "white"}
 								lastMove={lastMove as [Key, Key] | null}
+								boardStyle={settings.boardStyle}
+								showCoords={settings.showCoords}
+								highlightLastMove={settings.highlightLastMove}
 							/>
 						</BoardErrorBoundary>
 					</div>
@@ -314,7 +321,7 @@ export default function GameReviewPage() {
 				onNavigate={(p) => setPly(p)}
 				className="hidden lg:flex"
 			/>
-		</div>
+		</PageContainer>
 	);
 }
 

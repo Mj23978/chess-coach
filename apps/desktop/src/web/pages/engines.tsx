@@ -15,15 +15,10 @@ import { Cpu, Plus, Search } from "lucide-react";
 import { Input } from "@repo/ui/components/input";
 import { Button } from "@repo/ui/components/button";
 import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@repo/ui/components/card";
-import {
 	EngineCard,
 	EngineDetailSheet,
 } from "../components/engines";
+import { PageContainer } from "../components/layout";
 import {
 	fetchEngines,
 	fetchEngineCatalog,
@@ -33,6 +28,7 @@ import {
 	deleteEngine,
 	type EngineDTO,
 } from "../lib/api";
+import { ModalShell } from "../components/ui/modal-shell";
 
 type ViewMode = "grid" | "list";
 
@@ -83,7 +79,7 @@ export default function EnginesPage() {
 	}
 
 	return (
-		<div className="mx-auto max-w-6xl p-8">
+		<PageContainer>
 			{/* Header */}
 			<header className="mb-6">
 				<div className="flex items-start justify-between gap-4">
@@ -253,7 +249,7 @@ export default function EnginesPage() {
 					onClose={() => setDetailEngine(null)}
 				/>
 			)}
-		</div>
+		</PageContainer>
 	);
 }
 
@@ -359,15 +355,12 @@ function CatalogModal({
 	};
 
 	return (
-		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-			onClick={onClose}
+		<ModalShell
+			open
+			onOpenChange={(open) => !open && onClose()}
+			title="Download Engine"
+			className="max-w-md"
 		>
-			<Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-				<CardHeader>
-					<CardTitle>Download Engine</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
 					{isLoading && <p className="text-neutral-500">Loading catalog…</p>}
 					{error && (
 						<p className="text-red-600">
@@ -428,14 +421,7 @@ function CatalogModal({
 						</p>
 					)}
 
-					<div className="flex justify-end">
-						<Button variant="outline" onClick={onClose}>
-							Close
-						</Button>
-					</div>
-				</CardContent>
-			</Card>
-		</div>
+			</ModalShell>
 	);
 }
 
@@ -455,15 +441,12 @@ function AddEngineModal({
 	});
 
 	return (
-		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-			onClick={onClose}
+		<ModalShell
+			open
+			onOpenChange={(open) => !open && onClose()}
+			title="Add Local Engine"
+			className="max-w-md"
 		>
-			<Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-				<CardHeader>
-					<CardTitle>Add Local Engine</CardTitle>
-				</CardHeader>
-				<CardContent className="space-y-4">
 					<div>
 						<label className="mb-1 block text-sm font-medium">
 							Engine Path
@@ -512,8 +495,6 @@ function AddEngineModal({
 							{addMut.isPending ? "Adding…" : "Add Engine"}
 						</Button>
 					</div>
-				</CardContent>
-			</Card>
-		</div>
+			</ModalShell>
 	);
 }

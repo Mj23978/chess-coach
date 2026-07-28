@@ -1,9 +1,10 @@
 /**
- * Settings page — `/settings` (Phase 8: S1-001 … S1-006).
+ * Settings page — `/settings` (PLAN-015).
  *
  * App-level configuration with sections for Appearance, Engine defaults,
- * Sync preferences, Keyboard shortcuts, and About. Uses local state to
- * persist preferences (would be backed by a settings table in production).
+ * Sync preferences, Keyboard shortcuts, and About. All settings are backed
+ * by the settings table via SettingsContext — changes persist to the DB
+ * immediately and survive app restarts.
  */
 import { useState } from "react";
 import {
@@ -14,63 +15,24 @@ import {
 	Keyboard,
 	Info,
 	ChevronRight,
-	Chess,
 	Monitor,
 	Moon,
 	Sun,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
-import { Button } from "@repo/ui/components/button";
+import { Card, CardContent } from "@repo/ui/components/card";
 import { Switch } from "@repo/ui/components/switch";
+import { useSettings } from "../lib/settings-context";
 import { ALL_SHORTCUTS } from "../lib/useKeyboardShortcuts";
+import { PageContainer } from "../components/layout";
 
 type Theme = "light" | "dark" | "system";
 
-interface SettingsState {
-	// Appearance
-	theme: Theme;
-	boardStyle: "brown" | "blue" | "green" | "purple";
-	showCoords: boolean;
-	highlightLastMove: boolean;
-	// Engine defaults
-	defaultEngine: string;
-	autoAnalyze: boolean;
-	analysisDepth: number;
-	// Sync
-	syncOnStart: boolean;
-	syncInterval: number;
-	autoImportChessCom: boolean;
-	autoImportLichess: boolean;
-}
-
-const DEFAULT_SETTINGS: SettingsState = {
-	theme: "system",
-	boardStyle: "brown",
-	showCoords: true,
-	highlightLastMove: true,
-	defaultEngine: "Stockfish",
-	autoAnalyze: true,
-	analysisDepth: 20,
-	syncOnStart: true,
-	syncInterval: 60,
-	autoImportChessCom: true,
-	autoImportLichess: true,
-};
-
 export default function SettingsPage() {
-	const [settings, setSettings] = useState<SettingsState>(DEFAULT_SETTINGS);
+	const { settings, updateSettings } = useSettings();
 	const [activeSection, setActiveSection] = useState<string | null>(null);
 
-	const update = <K extends keyof SettingsState>(
-		key: K,
-		value: SettingsState[K],
-	) => {
-		setSettings((prev) => ({ ...prev, [key]: value }));
-		// In production, persist to settings table here
-	};
-
 	return (
-		<div className="mx-auto max-w-4xl p-8">
+		<PageContainer>
 			<header className="mb-6">
 				<div className="flex items-center gap-3">
 					<div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
@@ -91,9 +53,11 @@ export default function SettingsPage() {
 					title="Appearance"
 					description="Theme, board style, and visual preferences"
 					isOpen={activeSection === "appearance"}
-					onToggle={() => setActiveSection(activeSection === "appearance" ? null : "appearance")}
+					onToggle={() =>
+						setActiveSection(activeSection === "appearance" ? null : "appearance")
+					}
 				>
-					<AppearanceSection settings={settings} onUpdate={update} />
+					<AppearanceSection onUpdate={updateSettings} />
 				</SectionCard>
 
 				<SectionCard
@@ -101,9 +65,11 @@ export default function SettingsPage() {
 					title="Engine Defaults"
 					description="Default engine settings for analysis and play"
 					isOpen={activeSection === "engine"}
-					onToggle={() => setActiveSection(activeSection === "engine" ? null : "engine")}
+					onToggle={() =>
+						setActiveSection(activeSection === "engine" ? null : "engine")
+					}
 				>
-					<EngineSection settings={settings} onUpdate={update} />
+					<EngineSection onUpdate={updateSettings} />
 				</SectionCard>
 
 				<SectionCard
@@ -111,9 +77,11 @@ export default function SettingsPage() {
 					title="Sync"
 					description="Automatic game synchronization preferences"
 					isOpen={activeSection === "sync"}
-					onToggle={() => setActiveSection(activeSection === "sync" ? null : "sync")}
+					onToggle={() =>
+						setActiveSection(activeSection === "sync" ? null : "sync")
+					}
 				>
-					<SyncSection settings={settings} onUpdate={update} />
+					<SyncSection onUpdate={updateSettings} />
 				</SectionCard>
 
 				<SectionCard
@@ -121,7 +89,9 @@ export default function SettingsPage() {
 					title="Keyboard Shortcuts"
 					description="View and customize keyboard shortcuts"
 					isOpen={activeSection === "shortcuts"}
-					onToggle={() => setActiveSection(activeSection === "shortcuts" ? null : "shortcuts")}
+					onToggle={() =>
+						setActiveSection(activeSection === "shortcuts" ? null : "shortcuts")
+					}
 				>
 					<ShortcutsSection />
 				</SectionCard>
@@ -131,12 +101,14 @@ export default function SettingsPage() {
 					title="About"
 					description="App version and information"
 					isOpen={activeSection === "about"}
-					onToggle={() => setActiveSection(activeSection === "about" ? null : "about")}
+					onToggle={() =>
+						setActiveSection(activeSection === "about" ? null : "about")
+					}
 				>
 					<AboutSection />
 				</SectionCard>
 			</div>
-		</div>
+		</PageContainer>
 	);
 }
 
@@ -160,7 +132,7 @@ function SectionCard({
 	children: React.ReactNode;
 }) {
 	return (
-		<Card>
+		<Card className="overflow-hidden">
 			<button
 				type="button"
 				onClick={onToggle}
@@ -179,7 +151,16 @@ function SectionCard({
 					className={`size-5 text-neutral-400 transition-transform ${isOpen ? "rotate-90" : ""}`}
 				/>
 			</button>
-			{isOpen && <CardContent className="border-t border-neutral-100 pt-4">{children}</CardContent>}
+			<div
+				className="grid transition-[grid-template-rows] duration-200 ease-in-out"
+				style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+			>
+				<div className="overflow-hidden">
+					<CardContent className="border-t border-neutral-100 pt-4">
+						{children}
+					</CardContent>
+				</div>
+			</div>
 		</Card>
 	);
 }
@@ -189,12 +170,12 @@ function SectionCard({
 // ---------------------------------------------------------------------------
 
 function AppearanceSection({
-	settings,
 	onUpdate,
 }: {
-	settings: SettingsState;
-	onUpdate: <K extends keyof SettingsState>(key: K, value: SettingsState[K]) => void;
+	onUpdate: (patch: Record<string, unknown>) => Promise<void>;
 }) {
+	const { settings } = useSettings();
+
 	const themes: Array<{ value: Theme; label: string; icon: React.ReactNode }> = [
 		{ value: "light", label: "Light", icon: <Sun className="size-4" /> },
 		{ value: "dark", label: "Dark", icon: <Moon className="size-4" /> },
@@ -218,7 +199,7 @@ function AppearanceSection({
 						<button
 							key={t.value}
 							type="button"
-							onClick={() => onUpdate("theme", t.value)}
+							onClick={() => onUpdate({ theme: t.value })}
 							className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-colors ${
 								settings.theme === t.value
 									? "border-blue-500 bg-blue-50 text-blue-700"
@@ -240,7 +221,7 @@ function AppearanceSection({
 						<button
 							key={s.value}
 							type="button"
-							onClick={() => onUpdate("boardStyle", s.value)}
+							onClick={() => onUpdate({ boardStyle: s.value })}
 							className={`flex items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-colors ${
 								settings.boardStyle === s.value
 									? "border-blue-500 bg-blue-50 text-blue-700"
@@ -260,13 +241,13 @@ function AppearanceSection({
 					label="Show coordinates"
 					description="Display rank and file labels on the board"
 					checked={settings.showCoords}
-					onCheckedChange={(v) => onUpdate("showCoords", v)}
+					onCheckedChange={(v) => onUpdate({ showCoords: v })}
 				/>
 				<ToggleRow
 					label="Highlight last move"
 					description="Show the last played move with a colored highlight"
 					checked={settings.highlightLastMove}
-					onCheckedChange={(v) => onUpdate("highlightLastMove", v)}
+					onCheckedChange={(v) => onUpdate({ highlightLastMove: v })}
 				/>
 			</div>
 		</div>
@@ -278,19 +259,19 @@ function AppearanceSection({
 // ---------------------------------------------------------------------------
 
 function EngineSection({
-	settings,
 	onUpdate,
 }: {
-	settings: SettingsState;
-	onUpdate: <K extends keyof SettingsState>(key: K, value: SettingsState[K]) => void;
+	onUpdate: (patch: Record<string, unknown>) => Promise<void>;
 }) {
+	const { settings } = useSettings();
+
 	return (
 		<div className="space-y-4">
 			<div>
 				<label className="mb-1 block text-sm font-medium">Default Engine</label>
 				<select
 					value={settings.defaultEngine}
-					onChange={(e) => onUpdate("defaultEngine", e.target.value)}
+					onChange={(e) => onUpdate({ defaultEngine: e.target.value })}
 					className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
 				>
 					<option value="Stockfish">Stockfish</option>
@@ -303,7 +284,7 @@ function EngineSection({
 				label="Auto-analyze games"
 				description="Automatically run engine analysis after importing or completing a game"
 				checked={settings.autoAnalyze}
-				onCheckedChange={(v) => onUpdate("autoAnalyze", v)}
+				onCheckedChange={(v) => onUpdate({ autoAnalyze: v })}
 			/>
 
 			<div>
@@ -315,7 +296,9 @@ function EngineSection({
 					min={10}
 					max={40}
 					value={settings.analysisDepth}
-					onChange={(e) => onUpdate("analysisDepth", Number(e.target.value))}
+					onChange={(e) =>
+						onUpdate({ analysisDepth: Number(e.target.value) })
+					}
 					className="w-full"
 				/>
 				<div className="flex justify-between text-xs text-neutral-500">
@@ -332,19 +315,19 @@ function EngineSection({
 // ---------------------------------------------------------------------------
 
 function SyncSection({
-	settings,
 	onUpdate,
 }: {
-	settings: SettingsState;
-	onUpdate: <K extends keyof SettingsState>(key: K, value: SettingsState[K]) => void;
+	onUpdate: (patch: Record<string, unknown>) => Promise<void>;
 }) {
+	const { settings } = useSettings();
+
 	return (
 		<div className="space-y-3">
 			<ToggleRow
 				label="Sync on app start"
 				description="Automatically sync games when the app launches"
 				checked={settings.syncOnStart}
-				onCheckedChange={(v) => onUpdate("syncOnStart", v)}
+				onCheckedChange={(v) => onUpdate({ syncOnStart: v })}
 			/>
 
 			<div>
@@ -357,7 +340,9 @@ function SyncSection({
 					max={360}
 					step={15}
 					value={settings.syncInterval}
-					onChange={(e) => onUpdate("syncInterval", Number(e.target.value))}
+					onChange={(e) =>
+						onUpdate({ syncInterval: Number(e.target.value) })
+					}
 					className="w-full"
 				/>
 				<div className="flex justify-between text-xs text-neutral-500">
@@ -372,13 +357,13 @@ function SyncSection({
 					label="Chess.com"
 					description="Automatically import new games from Chess.com"
 					checked={settings.autoImportChessCom}
-					onCheckedChange={(v) => onUpdate("autoImportChessCom", v)}
+					onCheckedChange={(v) => onUpdate({ autoImportChessCom: v })}
 				/>
 				<ToggleRow
 					label="Lichess"
 					description="Automatically import new games from Lichess"
 					checked={settings.autoImportLichess}
-					onCheckedChange={(v) => onUpdate("autoImportLichess", v)}
+					onCheckedChange={(v) => onUpdate({ autoImportLichess: v })}
 				/>
 			</div>
 		</div>
@@ -402,10 +387,14 @@ function ShortcutsSection() {
 							<div
 								key={shortcut.keys}
 								className={`flex items-center justify-between px-3 py-2 text-sm ${
-									i !== group.shortcuts.length - 1 ? "border-b border-neutral-100" : ""
+									i !== group.shortcuts.length - 1
+										? "border-b border-neutral-100"
+										: ""
 								}`}
 							>
-								<span className="text-neutral-600">{shortcut.description}</span>
+								<span className="text-neutral-600">
+									{shortcut.description}
+								</span>
 								<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs text-neutral-700">
 									{shortcut.keys}
 								</kbd>
@@ -415,8 +404,8 @@ function ShortcutsSection() {
 				</div>
 			))}
 			<p className="text-xs text-neutral-500">
-				Shortcuts are active globally. Game navigation shortcuts (←/→, Home/End, F)
-				only work when a board is visible.
+				Shortcuts are active globally. Game navigation shortcuts (←/→,
+				Home/End, F) only work when a board is visible.
 			</p>
 		</div>
 	);
@@ -447,10 +436,12 @@ function AboutSection() {
 			</p>
 			<div className="rounded-lg bg-neutral-50 p-3 text-xs text-neutral-500">
 				<p>
-					<strong>Engine:</strong> Stockfish (included) — the strongest open-source chess engine.
+					<strong>Engine:</strong> Stockfish (included) — the strongest
+					open-source chess engine.
 				</p>
 				<p className="mt-1">
-					<strong>Database:</strong> Embedded PGlite (PostgreSQL) — all data stays on your machine.
+					<strong>Database:</strong> Embedded PGlite (PostgreSQL) — all
+					data stays on your machine.
 				</p>
 			</div>
 		</div>

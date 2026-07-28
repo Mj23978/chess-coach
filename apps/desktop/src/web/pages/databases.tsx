@@ -23,6 +23,7 @@ import {
   GenericHeader,
   type SortOption,
 } from "../components/databases";
+import { PageContainer } from "../components/layout";
 import {
   fetchDatabases,
   deleteDatabase,
@@ -94,7 +95,7 @@ export default function DatabasesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
+    <PageContainer>
       <GenericHeader
         title="Databases"
         subtitle="Organize your game collections and opening repertoires."
@@ -215,7 +216,7 @@ export default function DatabasesPage() {
           }}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }
 

@@ -8,10 +8,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@repo/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@repo/ui/components/card";
 import { GraduationCap, Puzzle, Target, Brain, Clock } from "lucide-react";
+import { PageContainer } from "../components/layout";
 
 export default function TrainPage() {
 	return (
-		<div className="mx-auto max-w-4xl p-8">
+		<PageContainer>
 			<header className="mb-6">
 				<Link to="/" className="text-xs text-blue-600">
 					← Dashboard
@@ -91,6 +92,6 @@ export default function TrainPage() {
 					Training features are planned for a future release.
 				</p>
 			</div>
-		</div>
+		</PageContainer>
 	);
 }

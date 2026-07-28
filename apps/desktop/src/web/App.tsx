@@ -31,6 +31,7 @@ import TrainPage from "./pages/train";
 import { ImportPgnModal } from "./components/import-pgn-modal";
 import { ToastProvider } from "@repo/ui/components/toast";
 import { Toaster } from "./components/ui";
+import { SettingsProvider } from "./lib/settings-context";
 
 export default function App() {
 	const [importModalOpen, setImportModalOpen] = useState(false);
@@ -38,6 +39,7 @@ export default function App() {
 
 	return (
 		<DesignSystemProvider>
+			<SettingsProvider>
 			<AppShell
 				onNewGame={() => {
 					// TODO: Navigate to board page or create new game
@@ -79,6 +81,7 @@ export default function App() {
 					}}
 				/>
 			)}
+			</SettingsProvider>
 		</DesignSystemProvider>
 	);
 }

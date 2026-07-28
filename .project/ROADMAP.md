@@ -76,15 +76,15 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 | T12-003 | Ensure smooth transition when sidebar toggles | DONE | — |
 | T12-004 | Test sidebar behavior at all viewport sizes | DONE | — |
 
-#### PLAN-013: Dialog & Modal Improvements
+#### PLAN-013: Dialog & Modal Improvements ✅
 > Modals don't close on outside click.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| T13-001 | Audit all modals/dialogs for outside-click behavior | TODO | — |
-| T13-002 | Replace raw overlay divs with proper Dialog components | TODO | — |
-| T13-003 | Ensure all Dialogs use `onOpenChange` | TODO | — |
-| T13-004 | Add Escape key handling to all modals | TODO | — |
+| T13-001 | Audit all modals/dialogs for outside-click behavior | DONE | — |
+| T13-002 | Replace raw overlay divs with proper Dialog components | DONE | — |
+| T13-003 | Ensure all Dialogs use `onOpenChange` | DONE | — |
+| T13-004 | Add Escape key handling to all modals | DONE | — |
 
 #### PLAN-014: Layout Consistency
 > Pages don't take full width. Settings page layout shifts.
@@ -98,31 +98,31 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 | T14-005 | Fix Databases/Files pages layout | TODO | — |
 | T14-006 | Ensure sidebar push doesn't break page widths | TODO | — |
 
-#### PLAN-015: Settings Persistence
+#### PLAN-015: Settings Persistence ✅
 > Settings changes don't persist or apply.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| T15-001 | Create `settings` table schema | TODO | — |
-| T15-002 | Add GET/PATCH /settings API routes | TODO | — |
-| T15-003 | Create SettingsContext provider | TODO | — |
-| T15-004 | Apply theme (light/dark/system) via CSS | TODO | — |
-| T15-005 | Apply board style to Chessboard component | TODO | — |
-| T15-006 | Apply show-coordinates/highlight-last-move | TODO | — |
-| T15-007 | Wire Settings page to use SettingsContext | TODO | — |
-| T15-008 | Persist engine defaults | TODO | — |
+| T15-001 | Create `settings` table schema | DONE | — |
+| T15-002 | Add GET/PATCH /settings API routes | DONE | — |
+| T15-003 | Create SettingsContext provider | DONE | — |
+| T15-004 | Apply theme (light/dark/system) via CSS | DONE | — |
+| T15-005 | Apply board style to Chessboard component | DONE | — |
+| T15-006 | Apply show-coordinates/highlight-last-move | DONE | — |
+| T15-007 | Wire Settings page to use SettingsContext | DONE | — |
+| T15-008 | Persist engine defaults | DONE | — |
 
-#### PLAN-016: Board Tabs Persistence
+#### PLAN-016: Board Tabs Persistence ✅
 > Tabs don't survive navigation. "+" opens modal instead of new tab.
 
 | Task ID | Title | Status | Dependencies |
 |---------|-------|--------|--------------|
-| T16-001 | Persist board tabs to localStorage | TODO | — |
-| T16-002 | Change "+" to directly create a new Play tab | TODO | — |
-| T16-003 | Add tab type selector as dropdown | TODO | — |
-| T16-004 | Fix tab content isolation | TODO | — |
-| T16-005 | Add tab reordering | TODO | — |
-| T16-006 | Restore active tab from localStorage | TODO | — |
+| T16-001 | Persist board tabs to localStorage | DONE | — |
+| T16-002 | Change "+" to directly create a new Play tab | DONE | — |
+| T16-003 | Add tab type selector as dropdown | DONE | — |
+| T16-004 | Fix tab content isolation | DONE | — |
+| T16-005 | Add tab reordering | DONE | — |
+| T16-006 | Restore active tab from localStorage | DONE | — |
 
 ### P3: Board Engine & Analysis (Needs P1)
 
@@ -187,11 +187,11 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 | Category | Tasks | TODO | DEFERRED |
 |----------|-------|------|----------|
 | P1: Engine Pipeline | 6 | 0 | 0 |
-| P2: UI/UX Fixes | 29 | 25 | 0 |
+| P2: UI/UX Fixes | 29 | 17 | 0 |
 | P3: Board & Analysis | 15 | 15 | 0 |
 | Deferred: Training | 8 | 0 | 8 |
 | Deferred: Online Play | 5 | 0 | 5 |
-| **Total** | **63** | **40** | **13** |
+| **Total** | **63** | **32** | **13** |
 
 ---
 

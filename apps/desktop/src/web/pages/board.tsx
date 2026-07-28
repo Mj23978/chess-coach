@@ -2,17 +2,17 @@
  * BoardPage — `/board`. The tabbed board interface (PLAN-003 B1).
  *
  * Browser-like tabs along the top, each holding a play session (PlayGameView).
- * Tab state lives here in React `useState` — ephemeral, not persisted (matches
- * the "browser-like tabs" intent). The empty state surfaces the four-card
- * picker inline; the "+" opens the same picker as a modal.
+ * Tab state persists to localStorage so tabs survive navigation (PLAN-016).
+ * The "+" button directly creates a new Play tab; a dropdown menu offers other
+ * tab types (FEN, Analysis, Import). Tabs support drag-to-reorder.
  *
  * Functional tab kinds (v1): "play" (standard start) and "fen" (custom FEN →
  * also a PlayGameView seeded with that position). Analysis & Import are
- * deferred (see NewTabModal).
+ * deferred (see the dropdown menu).
  */
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
+import { usePersistentState } from "../lib/usePersistentState";
 import { TabBar, type BoardTab } from "../components/board/TabBar";
-import { NewTabModal, type NewTabKind } from "../components/board/NewTabModal";
 import { PlayGameView } from "../components/board/PlayGameView";
 import { Dices, FileText, Search, PencilRuler } from "lucide-react";
 
@@ -24,12 +24,17 @@ interface TabState extends BoardTab {
 let tabSeq = 0;
 const newId = () => `tab-${Date.now()}-${tabSeq++}`;
 
-export default function BoardPage() {
-  const [tabs, setTabs] = useState<TabState[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+const STORAGE_KEY = "chess-coach.board-tabs";
 
-  const openTab = useCallback((kind: NewTabKind, opts?: { fen?: string }) => {
+export default function BoardPage() {
+  // Persist tabs and active tab ID to localStorage.
+  const [tabs, setTabs] = usePersistentState<TabState[]>(STORAGE_KEY, []);
+  const [activeId, setActiveId] = usePersistentState<string | null>(
+    `${STORAGE_KEY}.active`,
+    null,
+  );
+
+  const openTab = useCallback((kind: BoardTab["kind"], opts?: { fen?: string }) => {
     const id = newId();
     const tab: TabState = {
       id,
@@ -58,6 +63,19 @@ export default function BoardPage() {
     [activeId],
   );
 
+  /** Move a tab from one index to another (drag-to-reorder). */
+  const moveTab = useCallback((fromIndex: number, toIndex: number) => {
+    setTabs((prev) => {
+      if (fromIndex < 0 || fromIndex >= prev.length) return prev;
+      if (toIndex < 0 || toIndex >= prev.length) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  }, []);
+
+  /** Validate that the active tab still exists; clear if orphaned. */
   const activeTab = tabs.find((t) => t.id === activeId) ?? null;
 
   return (
@@ -67,7 +85,8 @@ export default function BoardPage() {
         activeId={activeId}
         onSelect={setActiveId}
         onClose={closeTab}
-        onNewTab={() => setModalOpen(true)}
+        onCreateTab={openTab}
+        onMoveTab={moveTab}
       />
 
       <div className="flex-1 overflow-auto">
@@ -86,12 +105,6 @@ export default function BoardPage() {
           <EmptyState onPick={(kind) => openTab(kind)} />
         )}
       </div>
-
-      <NewTabModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onPick={(kind) => openTab(kind)}
-      />
     </div>
   );
 }
@@ -100,7 +113,7 @@ export default function BoardPage() {
 function EmptyState({
   onPick,
 }: {
-  onPick: (kind: NewTabKind, opts?: { fen?: string }) => void;
+  onPick: (kind: BoardTab["kind"], opts?: { fen?: string }) => void;
 }) {
   return (
     <div className="mx-auto max-w-3xl p-8">

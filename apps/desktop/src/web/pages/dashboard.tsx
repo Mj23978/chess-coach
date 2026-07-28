@@ -47,7 +47,7 @@ export default function DashboardPage({ onImportPgn }: DashboardPageProps) {
 	const gamesCount = data?.length ?? 0;
 
 	return (
-		<div className="mx-auto max-w-6xl space-y-4 p-8">
+		<PageContainer className="space-y-4">
 			<WelcomeCard onImportPgn={() => onImportPgn?.()} />
 
 			<div className="grid gap-4 md:grid-cols-3">
@@ -65,6 +65,6 @@ export default function DashboardPage({ onImportPgn }: DashboardPageProps) {
 				</div>
 				<DailyGoalsCard gamesCount={gamesCount} />
 			</div>
-		</div>
+		</PageContainer>
 	);
 }

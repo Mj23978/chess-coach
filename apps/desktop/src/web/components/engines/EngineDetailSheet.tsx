@@ -4,6 +4,7 @@
  * Shows the engine's binary path, existence status, UCI options, and a live
  * health check result. Opened when clicking on an EngineCard.
  */
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
 	Cpu,
@@ -35,11 +36,21 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 		staleTime: 30_000,
 	});
 
+	// Close on Escape key (document-level, since this isn't a Radix Dialog).
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") onClose();
+		}
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [onClose]);
+
 	return (
 		<>
-			{/* Backdrop */}
+			{/* Backdrop — handles click-to-close and Escape key */}
 			<div
 				className="fixed inset-0 z-50 bg-black/30 transition-opacity"
+				tabIndex={-1}
 				onClick={onClose}
 				onKeyDown={(e) => e.key === "Escape" && onClose()}
 			/>

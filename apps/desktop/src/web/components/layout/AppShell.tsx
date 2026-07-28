@@ -16,6 +16,7 @@ import { useState } from "react";
 import { SidebarInset, SidebarProvider } from "@repo/ui/components/sidebar";
 import { NavigationRail } from "./NavigationRail";
 import { useKeyboardShortcuts } from "../../lib/useKeyboardShortcuts";
+import { ModalShell } from "../ui/modal-shell";
 
 interface AppShellProps {
 	children: React.ReactNode;
@@ -82,40 +83,43 @@ export function AppShell({
  */
 function KeybindingsModal({ onClose }: { onClose: () => void }) {
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-lg">
-				<h2 className="mb-4 text-lg font-semibold">Keyboard Shortcuts</h2>
-				<p className="mb-4 text-sm text-neutral-600">
-					Keybindings configuration will be implemented in Phase 8.
-				</p>
-				<div className="space-y-2 text-sm">
-					<div className="flex justify-between gap-8">
-						<span>Toggle Sidebar</span>
-						<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
-							Ctrl+B
-						</kbd>
-					</div>
-					<div className="flex justify-between gap-8">
-						<span>Global Search</span>
-						<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
-							Ctrl+F
-						</kbd>
-					</div>
-					<div className="flex justify-between gap-8">
-						<span>Flip Board</span>
-						<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
-							F
-						</kbd>
-					</div>
-				</div>
+		<ModalShell
+			open
+			onOpenChange={(open) => !open && onClose()}
+			title="Keyboard Shortcuts"
+			footer={
 				<button
 					type="button"
 					onClick={onClose}
-					className="mt-4 rounded bg-neutral-100 px-4 py-2 text-sm hover:bg-neutral-200"
+					className="rounded bg-neutral-100 px-4 py-2 text-sm hover:bg-neutral-200"
 				>
 					Close
 				</button>
+			}
+		>
+			<p className="text-sm text-neutral-600">
+				Keybindings configuration will be implemented in Phase 8.
+			</p>
+			<div className="space-y-2 text-sm">
+				<div className="flex justify-between gap-8">
+					<span>Toggle Sidebar</span>
+					<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
+						Ctrl+B
+					</kbd>
+				</div>
+				<div className="flex justify-between gap-8">
+					<span>Global Search</span>
+					<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
+						Ctrl+F
+					</kbd>
+				</div>
+				<div className="flex justify-between gap-8">
+					<span>Flip Board</span>
+					<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
+						F
+					</kbd>
+				</div>
 			</div>
-		</div>
+		</ModalShell>
 	);
 }
