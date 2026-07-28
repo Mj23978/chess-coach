@@ -22,10 +22,12 @@ import { UciEngine } from "../engine/process";
 import { resetEngine } from "../engine";
 import type { UciOption } from "../engine/uci-types";
 
-// Engine catalog — predefined downloadable engines
-// Simplified from pawn-appetite's ENGINES array
+// Engine catalog — predefined downloadable engines.
+// Each OS entry is filtered to show only what the current platform supports.
+// "lite" suffix indicates a build with fewer CPU instruction sets (SSE4.1
+// instead of AVX2) — compatible with older CPUs at slightly lower performance.
 const ENGINE_CATALOG = [
-  // Windows
+  // ── Windows ──────────────────────────────────────────────────────────
   {
     name: "Stockfish",
     version: "18",
@@ -36,7 +38,17 @@ const ENGINE_CATALOG = [
     downloadSize: 76_955_020,
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/NewLogoSF.png",
   },
-  // macOS ARM
+  {
+    name: "Stockfish",
+    version: "18 Lite",
+    os: "windows",
+    downloadUrl: "https://github.com/official-stockfish/Stockfish/releases/latest/download/stockfish-windows-x86-64-sse41-popcnt.zip",
+    pathInArchive: "stockfish/stockfish-windows-x86-64-sse41-popcnt.exe",
+    elo: 3635,
+    downloadSize: 72_000_000,
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/NewLogoSF.png",
+  },
+  // ── macOS ARM ────────────────────────────────────────────────────────
   {
     name: "Stockfish",
     version: "18",
@@ -47,7 +59,7 @@ const ENGINE_CATALOG = [
     downloadSize: 75_000_000,
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/NewLogoSF.png",
   },
-  // macOS Intel
+  // ── macOS Intel ──────────────────────────────────────────────────────
   {
     name: "Stockfish",
     version: "18",
@@ -58,7 +70,7 @@ const ENGINE_CATALOG = [
     downloadSize: 75_000_000,
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/NewLogoSF.png",
   },
-  // Linux
+  // ── Linux ────────────────────────────────────────────────────────────
   {
     name: "Stockfish",
     version: "18",
@@ -67,6 +79,16 @@ const ENGINE_CATALOG = [
     pathInArchive: "stockfish/stockfish-ubuntu-x86-64-avx2",
     elo: 3635,
     downloadSize: 79_953_920,
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/NewLogoSF.png",
+  },
+  {
+    name: "Stockfish",
+    version: "18 Lite",
+    os: "linux",
+    downloadUrl: "https://github.com/official-stockfish/Stockfish/releases/latest/download/stockfish-ubuntu-x86-64-sse41-popcnt.tar",
+    pathInArchive: "stockfish/stockfish-ubuntu-x86-64-sse41-popcnt",
+    elo: 3635,
+    downloadSize: 72_000_000,
     image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/NewLogoSF.png",
   },
 ];

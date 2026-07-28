@@ -20,6 +20,7 @@
  * of hanging the request.
  */
 import { Subprocess } from "bun";
+import { Readable } from "node:stream";
 import { parseBestmove, parseInfoLine } from "./uci";
 import type { AnalyzeOptions, LineEval, PositionEval } from "./types";
 
@@ -119,12 +120,17 @@ export class UciEngine {
       // Keep the engine attached to this process so it dies with the app.
       onExit: () => {},
     });
-    // Bun.spawn returns Subprocess with .stdin/.stdout as Web streams in some
-    // versions and Node streams in others; normalize via the node:stream
-    // reader/writer interfaces. We read with `.on("data")` so we need a Node
-    // Readable; cast through unknown to satisfy the types.
+    // Bun.spawn returns .stdin/.stdout as Web ReadableStream / WritableStream,
+    // not Node.js streams. Convert them so we can use the Node.js
+    // EventEmitter API (.on("data"), .on("end")) in the constructor.
+    //
+    // Readable.fromWeb() wraps a Web ReadableStream into a Node.js Readable,
+    // and process.stdin-style .write() works on the Web WritableStream directly
+    // (Bun's WritableStream implements the Node.js .write() interface).
     const stdin = proc.stdin as unknown as import("node:stream").Writable;
-    const stdout = proc.stdout as unknown as import("node:stream").Readable;
+    const stdout = Readable.fromWeb(
+      proc.stdout as unknown as import("node:stream/web").ReadableStream<Uint8Array>,
+    );
 
     const eng = new UciEngine(proc, stdin, stdout);
 

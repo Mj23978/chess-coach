@@ -78,6 +78,11 @@ const APP_DATA_DIR = Utils.paths.userData;
 const STORAGE_DIR = join(APP_DATA_DIR, "storage");
 const ENV_FILE = join(APP_DATA_DIR, ".env");
 
+// Expose APP_DATA_DIR to process.env so backend packages (@repo/api routes)
+// that read process.env.APP_DATA_DIR (e.g. engine downloads) resolve to the
+// correct app data location instead of falling back to process.cwd().
+process.env.APP_DATA_DIR = APP_DATA_DIR;
+
 mkdirSync(APP_DATA_DIR, { recursive: true });
 mkdirSync(STORAGE_DIR, { recursive: true });
 
