@@ -31,6 +31,7 @@ import {
 	TrainingSuggestionsCard,
 	WelcomeCard,
 } from "../components/dashboard";
+import { PageContainer } from "../components/layout";
 import { fetchGames, type GameDTO } from "../lib/api";
 
 interface DashboardPageProps {
