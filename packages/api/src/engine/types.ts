@@ -30,6 +30,12 @@ export interface PositionEval {
   nodes?: number;
   /** Nodes per second, if reported. */
   nps?: number;
+  /**
+   * True if this is a terminal position (checkmate/stalemate) — the engine
+   * returned no legal moves. `lines` will be empty; the classifier synthesizes
+   * a mate/draw eval from the game state instead of reading `lines[0]`.
+   */
+  terminal?: boolean;
 }
 
 /** Options for analyzing a single position. */

@@ -44,7 +44,7 @@ export interface GameAnalysis {
 }
 
 export interface ClassifyGameOptions {
-  /** Search depth per position (default 18). */
+  /** Search depth per position (default 15 — the "fast" tier). */
   depth?: number;
   /** MultiPV (default 3 — enables Brilliant/Great/Best). */
   multiPv?: number;
@@ -59,37 +59,91 @@ export async function classifyGame(
   pgn: string,
   opts: ClassifyGameOptions = {},
 ): Promise<GameAnalysis> {
-  const { depth = 18, multiPv = 3, onProgress } = opts;
+  const { depth = 15, multiPv = 3, onProgress } = opts;
 
   // 1. Parse the PGN and build the FEN/move lists in chess-kit's convention:
-  //    fens has N+1 entries (start + before each move), uciMoves has N.
+  //    fensFixed has N+1 entries: [before move 1, before move 2, ..., after last move].
+  //    uciMoves has N entries.
+  //
+  //    We replay the game with a Chess instance so we can detect terminal
+  //    positions (checkmate/stalemate/draw) directly — the engine prints
+  //    `bestmove (none)` on those and returns empty lines, so we must NOT ask
+  //    it to search them (it would also waste time and previously aborted the
+  //    whole game with a 60s timeout on the final mating ply).
   const game = new Chess();
   game.loadPgn(pgn);
   const verbose = game.history({ verbose: true });
   if (verbose.length === 0) {
     return { moves: [], accuracy: { white: 100, black: 100 } };
   }
-  const fens: string[] = [verbose[0]!.before];
-  const uciMoves: string[] = [];
-  for (const m of verbose) {
-    uciMoves.push(`${m.from}${m.to}${m.promotion ?? ""}`);
-    fens.push(m.before === fens[fens.length - 1] ? m.after : m.before);
-  }
-  // The last position (after the final move) is needed by the classifier's
-  // per-position win-% array; chess-kit pushes history[last].after as the
-  // final element. Fix the fens array to match:
-  fens[fens.length - 1] = verbose[verbose.length - 1]!.after;
-  // And we need one more "before" — rebuild cleanly:
+  const uciMoves: string[] = verbose.map(
+    (m) => `${m.from}${m.to}${m.promotion ?? ""}`,
+  );
   const fensFixed: string[] = verbose.map((m) => m.before);
   fensFixed.push(verbose[verbose.length - 1]!.after);
 
-  // 2. Evaluate each position with the engine.
+  // Re-walk the game to know each position's game-over state. chess.js only
+  // reports isCheckmate()/isDraw() for the CURRENT position, so we replay move
+  // by move (on a fresh instance) and snapshot the flags into a parallel array.
+  const replay = new Chess();
+  const terminalFlags: Array<{
+    checkmate: boolean;
+    stalemate: boolean;
+    draw: boolean;
+  }> = [];
+  // Position 0 is the start position (never terminal in a real game).
+  terminalFlags.push({
+    checkmate: replay.isCheckmate(),
+    stalemate: replay.isStalemate(),
+    draw: replay.isDraw(),
+  });
+  for (const m of verbose) {
+    replay.move({ from: m.from, to: m.to, promotion: m.promotion });
+    terminalFlags.push({
+      checkmate: replay.isCheckmate(),
+      stalemate: replay.isStalemate(),
+      draw: replay.isDraw(),
+    });
+  }
+
+  // 2. Evaluate each position. Terminal positions (checkmate/stalemate/draw)
+  //    are synthesized locally — the engine has nothing to say about them and
+  //    asking wastes time (and previously timed out the whole analysis).
   const rawPositions: PositionEval[] = [];
   for (let i = 0; i < fensFixed.length; i++) {
-    const eval_ = await analyze(fensFixed[i]!, { depth, multiPv });
+    const fen = fensFixed[i]!;
+    const t = terminalFlags[i]!;
+    if (t.checkmate || t.stalemate || t.draw) {
+      let mate: number | undefined;
+      let cp: number | undefined;
+      if (t.checkmate) {
+        // Side to move is checkmated → mate=0 from side-to-move's perspective
+        // (the side to move has been mated; 0 plies because it's over now).
+        mate = 0;
+      } else {
+        // Stalemate / other draw → equal eval.
+        cp = 0;
+      }
+      rawPositions.push({
+        fen,
+        lines: [
+          {
+            multiPv: 1,
+            depth: 0,
+            cp,
+            mate,
+            pv: [],
+          },
+        ],
+        terminal: true,
+      });
+      onProgress?.((i + 1) / fensFixed.length);
+      continue;
+    }
+    const eval_ = await analyze(fen, { depth, multiPv });
     // Ensure at least one line exists (the classifier reads lines[0]).
     if (eval_.lines.length === 0) {
-      throw new Error(`Engine returned no lines for position ${i}`);
+      throw new Error(`Engine returned no lines for position ${i}: ${fen}`);
     }
     rawPositions.push(eval_);
     onProgress?.((i + 1) / fensFixed.length);

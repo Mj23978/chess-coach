@@ -245,8 +245,8 @@ function EngineSection() {
 				</label>
 				<input
 					type="range"
-					min={10}
-					max={40}
+					min={8}
+					max={22}
 					value={settings.analysisDepth}
 					onChange={(e) =>
 						updateSettings({ analysisDepth: Number(e.target.value) })
@@ -254,9 +254,14 @@ function EngineSection() {
 					className="w-full"
 				/>
 				<div className="flex justify-between text-xs text-muted-foreground">
-					<span>Fast (10)</span>
-					<span>Deep (40)</span>
+					<span>Fast (8)</span>
+					<span>Default (15)</span>
+					<span>Deep (22)</span>
 				</div>
+				<p className="mt-1 text-xs text-muted-foreground">
+					Lower = faster analysis (a few seconds per move). Higher = stronger
+					but much slower on Stockfish Lite.
+				</p>
 			</div>
 		</div>
 	);

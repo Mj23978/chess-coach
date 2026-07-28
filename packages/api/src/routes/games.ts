@@ -161,7 +161,7 @@ export const gamesRoutes = new Elysia({ prefix: "/games" })
    * per-move `MoveAnalysis[]` into the existing `analysis` JSON column, and
    * return the fresh analysis + per-side accuracy.
    *
-   * Body (all optional): `{ depth?, multiPv? }`. Defaults: depth 18, multiPv 3
+   * Body (all optional): `{ depth?, multiPv? }`. Defaults: depth 15, multiPv 3
    * (multiPv ≥ 2 is required for Brilliant/Great/Best to be reachable).
    *
    * Returns 503 if no Stockfish binary is staged under `binaries/` — see

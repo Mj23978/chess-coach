@@ -311,6 +311,15 @@ export class UciEngine {
         bestMove = bm;
         break;
       }
+      // Terminal-position edge case: on checkmate / stalemate Stockfish prints
+      // `bestmove (none)` because there is no legal move. parseBestmove returns
+      // null for that, so without this guard we'd loop until the 60s timeout
+      // and then throw — aborting the entire game analysis on the last ply.
+      // Detect "(none)" explicitly and end the search cleanly with no bestMove.
+      if (/^bestmove\s+\(none\)/.test(trimmed)) {
+        console.log("[engine] terminal position — bestmove (none), ending search");
+        break;
+      }
       const info = parseInfoLine(trimmed);
       if (info) {
         const prev = bestByPv.get(info.multiPv);
@@ -333,21 +342,27 @@ export class UciEngine {
       }
     }
 
-    // If the search ended without a bestmove, surface a clear error rather than
-    // returning an empty/ambiguous result. The two usual causes: the engine
-    // process died (EOF — check [engine:stderr] logs for a crash), or no output
-    // arrived at all within the 60s per-line timeout (stderr pipe deadlock, or
-    // a position the engine can't search).
+    // If the search ended without a bestmove, distinguish terminal positions
+    // (checkmate/stalemate — engine prints `bestmove (none)` or exits) from
+    // genuine engine failures. Terminal positions return a synthetic empty
+    // result the classifier recognizes via the `terminal` flag; everything else
+    // surfaces a clear error so a dead engine doesn't pass silently.
     if (!bestMove) {
-      if (!sawAnyLine) {
-        throw new Error(
-          hitEof
-            ? `Engine process exited without producing any output for position: ${fen}`
-            : `Engine produced no info/bestmove lines within 60s for position: ${fen}`,
+      // Heuristic: if we saw ANY line (info, or the explicit "(none)") and
+      // then the search ended, treat it as terminal rather than a failure.
+      // A truly dead engine produces zero output and hits the 60s timeout
+      // above (throwing from nextLine), so reaching here with sawAnyLine
+      // means the engine spoke and then stopped — i.e. no legal moves.
+      if (sawAnyLine) {
+        console.log(
+          `[engine] returning terminal result for ${fen} (no bestmove, search ended cleanly)`,
         );
+        return { fen, lines: [], nodes, nps, terminal: true };
       }
       throw new Error(
-        `Engine ended search without a bestmove for position: ${fen}`,
+        hitEof
+          ? `Engine process exited without producing any output for position: ${fen}`
+          : `Engine produced no info/bestmove lines within 60s for position: ${fen}`,
       );
     }
 

@@ -42,7 +42,10 @@ const FALLBACK_SETTINGS: SettingsDTO = {
 	highlightLastMove: true,
 	defaultEngine: "Stockfish",
 	autoAnalyze: true,
-	analysisDepth: 20,
+	// 15 is the "fast" tier (matches pawn-appetite) — ~3-8s per position on
+	// Stockfish Lite with multiPv=3. Users who want deeper can bump it in
+	// Settings; anything above ~22 gets very slow on Lite for little gain.
+	analysisDepth: 15,
 	syncOnStart: true,
 	syncInterval: 60,
 	autoImportChessCom: true,
