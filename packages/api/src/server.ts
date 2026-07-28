@@ -75,26 +75,66 @@ export const app = new Elysia()
 export type App = typeof app;
 
 /**
- * Log engine health at server startup. Non-blocking — runs in the background
- * so it doesn't delay the server from accepting requests.
+ * Check engine health at server startup and self-heal a broken active row.
+ *
+ * Non-blocking — runs in the background so it doesn't delay the server from
+ * accepting requests. If the active engine's binary is missing on disk (a
+ * common failure when an older install layout left a stale `path` in the DB,
+ * e.g. pointing into `build/.../bin/engines/...` after the user re-downloaded
+ * a different build to the current APP_DATA_DIR location), this promotes the
+ * first still-existing engine to active so analysis works on the first try.
  */
 export async function logEngineHealth(): Promise<void> {
   try {
     const { engineRepository } = await import("@repo/db");
     const { existsSync } = await import("node:fs");
     const active = await engineRepository.getActive();
+
+    const existingWithUsablePath = async () => {
+      const all = await engineRepository.list();
+      return all.find((e) => !!e.path && existsSync(e.path)) ?? null;
+    };
+
     if (!active) {
-      console.warn("[server] ⚠ No active engine configured. Analysis will 503.");
+      // No active engine — auto-activate the first usable one, if any.
+      const usable = await existingWithUsablePath();
+      if (usable) {
+        await engineRepository.setActive(usable.id);
+        console.log(
+          `[server] ✓ Auto-activated existing engine: ${usable.name} at ${usable.path}`
+        );
+      } else {
+        console.warn("[server] ⚠ No active engine configured. Analysis will 503.");
+      }
       return;
     }
+
     if (!active.path) {
-      console.warn(`[server] ⚠ Active engine \"${active.name}\" has no binary path.`);
+      console.warn(`[server] ⚠ Active engine "${active.name}" has no binary path.`);
+      const usable = await existingWithUsablePath();
+      if (usable && usable.id !== active.id) {
+        await engineRepository.setActive(usable.id);
+        console.log(
+          `[server] ✓ Re-activated usable engine: ${usable.name} at ${usable.path}`
+        );
+      }
       return;
     }
+
     if (!existsSync(active.path)) {
-      console.warn(`[server] ⚠ Active engine \"${active.name}\" binary not found: ${active.path}`);
+      console.warn(
+        `[server] ⚠ Active engine "${active.name}" binary not found: ${active.path}`
+      );
+      const usable = await existingWithUsablePath();
+      if (usable && usable.id !== active.id) {
+        await engineRepository.setActive(usable.id);
+        console.log(
+          `[server] ✓ Active engine binary missing — re-activated ${usable.name} at ${usable.path}`
+        );
+      }
       return;
     }
+
     console.log(`[server] ✓ Active engine: ${active.name} at ${active.path}`);
   } catch (err) {
     console.warn("[server] Could not check engine health:", err);

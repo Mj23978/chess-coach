@@ -21,6 +21,12 @@ import type { AnalyzeOptions, PositionEval } from "./types";
 
 export type { PositionEval, LineEval, AnalyzeOptions } from "./types";
 
+// NOTE: `enginePromise` only ever caches a *successful* boot. A failed
+// resolution/spawn is intentionally NOT cached — otherwise the singleton keeps
+// re-throwing the same stale error (e.g. an active engine whose path no longer
+// exists) until the app restarts, even after the user fixes the config via the
+// Engines page. By nulling the promise on failure, the next `analyze()` call
+// re-runs resolution and picks up the corrected state.
 let enginePromise: Promise<UciEngine> | null = null;
 
 /** Serialize analyze() calls so the single engine process is never concurrent. */
@@ -36,10 +42,18 @@ let chain: Promise<unknown> = Promise.resolve();
  */
 function getEngine(): Promise<UciEngine> {
   if (!enginePromise) {
-    enginePromise = (async () => {
+    // Wrap the boot so a failure does NOT get cached in `enginePromise`.
+    // See the comment near the `enginePromise` declaration for why.
+    const boot = (async (): Promise<UciEngine> => {
       const triedPaths: string[] = [];
 
       // --- Step 1: try the active engine from the database ---
+      // If the active row's path is missing on disk, self-heal: scan the rest
+      // of the configured engines for one whose binary still exists, and if
+      // found, re-activate it so we don't repeat this scan every call. This
+      // recovers cleanly from stale DB rows (e.g. an older install layout
+      // whose path no longer exists after the user re-downloaded a different
+      // build to the current APP_DATA_DIR location).
       let enginePath: string | null = null;
       try {
         const { engineRepository } = await import("@repo/db");
@@ -49,21 +63,34 @@ function getEngine(): Promise<UciEngine> {
             `[engine] Active engine from DB: ${activeEngine.name}` +
               ` (path=${activeEngine.path ?? "(none)"}, exists=${activeEngine.exists})`
           );
-          if (activeEngine.path) {
+          if (activeEngine.path && existsSync(activeEngine.path)) {
+            enginePath = activeEngine.path;
+          } else if (activeEngine.path) {
+            // Active row points to a missing file — record it for the error
+            // message and try to self-heal below.
             triedPaths.push(activeEngine.path);
-            // Re-verify existence at startup — the file may have been deleted
-            // since the DB flag was last set.
-            const fileExists = existsSync(activeEngine.path);
-            if (fileExists) {
-              enginePath = activeEngine.path;
-            } else {
-              console.warn(
-                `[engine] DB path does not exist on disk: ${activeEngine.path}`
-              );
-            }
+            console.warn(
+              `[engine] Active engine path does not exist on disk: ${activeEngine.path}`
+            );
           }
         } else {
           console.log("[engine] No active engine in database");
+        }
+
+        // --- Self-heal: pick any other existing engine if active is broken ---
+        if (!enginePath) {
+          const all = await engineRepository.list();
+          const usable = all.find(
+            (e) => e.id !== activeEngine?.id && !!e.path && existsSync(e.path)
+          );
+          if (usable) {
+            console.log(
+              `[engine] Self-healing: re-activating existing engine ` +
+                `${usable.name} (${usable.path})`
+            );
+            await engineRepository.setActive(usable.id);
+            enginePath = usable.path;
+          }
         }
       } catch (err) {
         console.warn("[engine] Failed to query active engine from DB:", err);
@@ -94,20 +121,18 @@ function getEngine(): Promise<UciEngine> {
 
       // Sensible desktop defaults. Threads/Hash are tuned low so the engine
       // doesn't hog the machine during review; MultiPV is set per-analyze.
-      try {
-        const eng = await UciEngine.create(enginePath);
-        await eng.setOption("Threads", "2");
-        await eng.setOption("Hash", "128");
-        console.log(`[engine] Engine ready: ${enginePath}`);
-        return eng;
-      } catch (err) {
-        console.error(`[engine] Failed to start engine at ${enginePath}:`, err);
-        throw new EngineUnavailableError(
-          `Engine binary exists but failed to start: ${enginePath}. ` +
-            `${err instanceof Error ? err.message : String(err)}`
-        );
-      }
+      const eng = await UciEngine.create(enginePath);
+      await eng.setOption("Threads", "2");
+      await eng.setOption("Hash", "128");
+      console.log(`[engine] Engine ready: ${enginePath}`);
+      return eng;
     })();
+
+    // Cache only success; on failure drop the promise so the next call retries.
+    enginePromise = boot.catch((err) => {
+      enginePromise = null;
+      throw err;
+    });
   }
   return enginePromise;
 }
