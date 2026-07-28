@@ -131,6 +131,31 @@ export class UciEngine {
     const stdout = Readable.fromWeb(
       proc.stdout as unknown as import("node:stream/web").ReadableStream<Uint8Array>,
     );
+    // CRITICAL: drain stderr continuously. Stockfish (and other UCI engines)
+    // write diagnostics to stderr — e.g. Stockfish 18 prints a sizable
+    // `INFO: ... NNUE evaluation ...` block at startup and may emit more during
+    // search. The OS pipe buffer is small (~4KB on Windows); if nobody reads
+    // stderr, it fills and the engine BLOCKS on its next stderr write, which
+    // also stalls its stdout output. The observable symptom is exactly the
+    // handshake succeeding (the initial stderr burst fits in the buffer) but
+    // the first `go` producing no `info`/`bestmove` lines until the 60s
+    // analyze timeout fires. Draining stderr prevents this deadlock.
+    const stderr = Readable.fromWeb(
+      proc.stderr as unknown as import("node:stream/web").ReadableStream<Uint8Array>,
+    );
+    let stderrBuf = "";
+    stderr.on("data", (chunk: Buffer) => {
+      stderrBuf += chunk.toString("utf-8");
+      let idx: number;
+      while ((idx = stderrBuf.indexOf("\n")) >= 0) {
+        const line = stderrBuf.slice(0, idx).replace(/\r$/, "").trim();
+        stderrBuf = stderrBuf.slice(idx + 1);
+        if (line) console.log(`[engine:stderr] ${line}`);
+      }
+    });
+    stderr.on("end", () => {
+      if (stderrBuf.trim()) console.log(`[engine:stderr] ${stderrBuf.trim()}`);
+    });
 
     const eng = new UciEngine(proc, stdin, stdout);
 
@@ -206,10 +231,16 @@ export class UciEngine {
     let bestMove: string | undefined;
     let nodes: number | undefined;
     let nps: number | undefined;
+    let sawAnyLine = false;
+    let hitEof = false;
 
     while (true) {
       const line = await this.nextLine(60_000);
-      if (line === null) break; // EOF
+      if (line === null) {
+        hitEof = true; // process exited / closed stdout
+        break;
+      }
+      sawAnyLine = true;
       const trimmed = line.trim();
       const bm = parseBestmove(trimmed);
       if (bm !== null) {
@@ -236,6 +267,24 @@ export class UciEngine {
         const s = / nps (\d+)/.exec(trimmed);
         if (s) nps = Number(s[1]);
       }
+    }
+
+    // If the search ended without a bestmove, surface a clear error rather than
+    // returning an empty/ambiguous result. The two usual causes: the engine
+    // process died (EOF — check [engine:stderr] logs for a crash), or no output
+    // arrived at all within the 60s per-line timeout (stderr pipe deadlock, or
+    // a position the engine can't search).
+    if (!bestMove) {
+      if (!sawAnyLine) {
+        throw new Error(
+          hitEof
+            ? `Engine process exited without producing any output for position: ${fen}`
+            : `Engine produced no info/bestmove lines within 60s for position: ${fen}`,
+        );
+      }
+      throw new Error(
+        `Engine ended search without a bestmove for position: ${fen}`,
+      );
     }
 
     const lines = [...bestByPv.values()].sort((a, b) => a.multiPv - b.multiPv);
