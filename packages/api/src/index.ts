@@ -6,5 +6,5 @@
  *  - Standalone runner: src/standalone.ts → `app.listen(port)`.
  *  - Desktop host: apps/desktop/src/bun/server.ts → `startElysiaServer(port)`.
  */
-export { app } from "./server";
+export { app, logEngineHealth } from "./server";
 export type { App } from "./server";

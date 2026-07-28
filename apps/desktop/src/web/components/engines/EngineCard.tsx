@@ -42,6 +42,7 @@ export function EngineCard({
 }: EngineCardProps) {
 	if (view === "list") {
 		return (
+			<div>
 			<button
 				type="button"
 				onClick={onShowDetails}
