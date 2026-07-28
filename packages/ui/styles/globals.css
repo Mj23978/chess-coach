@@ -195,8 +195,17 @@
   --color-neutral-500: var(--muted-foreground);
   --color-neutral-600: var(--muted-foreground);
   --color-neutral-700: #b5b1aa;                         /* soft parchment */
-  --color-neutral-800: var(--primary);                  /* sage mist hover */
-  --color-neutral-900: var(--foreground);               /* cream ink */
+  --color-neutral-800: #2c4339;                          /* sage-ink hover (darker than -900) */
+	/*
+	 * neutral-900 is consumed as FOREGROUND text across the shadcn components
+	 * (Card, Table, etc. ship text-neutral-900). Its dark value must therefore
+	 * be the light parchment foreground token, NOT a sage fill — otherwise
+	 * every such surface renders near-invisible dark-on-dark text.
+	 *
+	 * Components that need a dark sage *fill* (Button default variant) use
+	 * neutral-800 below, which stays #2c4339 (dark enough for text-white).
+	 */
+	--color-neutral-900: var(--foreground);                /* light parchment text on dark */
 
   --color-surface-container: var(--muted);
   --color-surface-container-high: var(--card);
@@ -392,20 +401,6 @@
     }
   }
 
-  @keyframes text-gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
   @keyframes sketch-underline {
     0% {
       width: 0%;
@@ -430,7 +425,6 @@
 
   /* Animations */
   --animate-bg-shine: bg-shine 2.2s linear infinite;
-  --animate-text-gradient: text-gradient 6s ease infinite alternate;
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-sketch-underline: sketch-underline 0.6s ease-out;

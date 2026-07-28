@@ -31,7 +31,11 @@ export function WelcomeCard({ onImportPgn, greeting }: WelcomeCardProps) {
 	const navigate = useNavigate();
 
 	return (
-		<Card className="border-chess-brown/10 bg-gradient-to-br from-chess-cream to-background">
+		// bg-gradient-to-br from-chess-cream hardcoded a fixed light cream
+		// (#f5f0e8) that didn't flip in dark mode, rendering a bright slab.
+		// Dropped — the Card's default bg-card now respects the theme. Keep
+		// the subtle chess-brown hairline border for a touch of warmth.
+		<Card className="border-chess-brown/10">
 			<CardHeader>
 				<div className="flex items-start gap-3">
 					<div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-chess-brown/10">

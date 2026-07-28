@@ -77,7 +77,7 @@ export function FileCard({
 						onOpen();
 					}
 				}}
-				className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 transition-colors hover:border-border hover:bg-muted/50"
+				className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 transition-colors hover:border-primary/40 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
 				<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
 					<Icon className="size-4" />
@@ -115,7 +115,7 @@ export function FileCard({
 					onOpen();
 				}
 			}}
-			className="group relative flex cursor-pointer flex-col rounded-md border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md"
+			className="group relative flex cursor-pointer flex-col rounded-xl border border-border bg-background p-4 transition-[transform,border-color,box-shadow] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 		>
 			<div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
 				<CardMenu onRename={onRename} onDelete={onDelete} onOpen={onOpen} />

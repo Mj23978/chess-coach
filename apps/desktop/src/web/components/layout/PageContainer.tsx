@@ -1,9 +1,15 @@
 /**
  * PageContainer — standard page layout wrapper for chess-coach.
  *
- * Provides consistent max-width, padding, and centering across all content
- * pages. Eliminates the ad-hoc `mx-auto max-w-{3xl,4xl,6xl} p-8` patterns
- * scattered throughout the app.
+ * Provides consistent max-width + padding across all content pages. Eliminates
+ * the ad-hoc `mx-auto max-w-{3xl,4xl,6xl} p-8` patterns scattered throughout.
+ *
+ * Layout context: this sits inside `<SidebarInset>`, which already pushes the
+ * content column right of the sidebar (`pl-(--sidebar-width)`). We therefore do
+ * NOT re-center with `mx-auto` on the default/wide variants — centering a
+ * near-full-width block inside an already-pushed column only adds asymmetric
+ * dead margin on the right. `max-w-*` stays as a ceiling for ultra-wide
+ * monitors so content doesn't stretch past a readable measure.
  *
  * Variants:
  *   default  → max-w-7xl (1280px) — most pages (dashboard, accounts, engines, etc.)
@@ -21,8 +27,8 @@ interface PageContainerProps {
 }
 
 const VARIANT_CLASSES = {
-	default: "mx-auto max-w-7xl",
-	wide: "mx-auto max-w-screen-xl",
+	default: "max-w-7xl mx-auto",
+	wide: "max-w-screen-xl mx-auto",
 	full: "",
 } as const;
 
@@ -32,9 +38,7 @@ export function PageContainer({
 	className,
 }: PageContainerProps) {
 	return (
-		<div
-			className={`${VARIANT_CLASSES[variant]} px-8 py-8 ${className ?? ""}`}
-		>
+		<div className={`${VARIANT_CLASSES[variant]} px-6 py-8 ${className ?? ""}`}>
 			{children}
 		</div>
 	);

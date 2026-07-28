@@ -8,7 +8,15 @@ export const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border border-neutral-200 bg-white text-neutral-900 shadow-sm",
+      // bg-white was hardcoded — it bypassed the theme tokens and rendered
+      // pure #ffffff in dark mode. bg-card resolves to --card, which flips
+      // with .dark (#ffffff light / #31302d dark). border stays on the
+      // neutral-* alias ramp (remapped in globals.css @theme block).
+      // text-card-foreground (NOT text-neutral-900): the neutral-900 dark
+      // alias is #385246 (a fill, not a text color), so it rendered as
+      // near-invisible dark-on-dark text. card-foreground flips correctly
+      // (#1c1c19 light / #e5e2dd dark).
+      "rounded-lg border border-neutral-200 bg-card text-card-foreground shadow-sm",
       className,
     )}
     {...props}

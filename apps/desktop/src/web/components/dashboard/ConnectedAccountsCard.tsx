@@ -41,7 +41,7 @@ export function ConnectedAccountsCard() {
 			<CardContent className="space-y-3">
 				<AccountRow
 					name="Chess.com"
-					dotClass="bg-emerald-500"
+					dotClass="bg-success"
 					detail={
 						chessCom
 							? `${chessCom.username} · ${chessCom.gamesCount} games`

@@ -18,6 +18,7 @@ import {
 	Trash2,
 	Copy,
 	Check,
+	Pencil,
 	Gamepad2,
 	HardDrive,
 } from "lucide-react";
@@ -246,7 +247,7 @@ function DrawerBody({
 						onClick={() => setEditing(true)}
 						className="w-full"
 					>
-						<Copy className="mr-1.5 size-3.5" />
+						<Pencil className="mr-1.5 size-3.5" />
 						Rename / Edit details
 					</Button>
 				)}

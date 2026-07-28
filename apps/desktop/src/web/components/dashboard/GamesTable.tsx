@@ -364,11 +364,13 @@ function ColorChip({ side }: { side: "white" | "black" }) {
 function resultToneClass(tone: "win" | "loss" | "draw" | "unknown"): string {
 	switch (tone) {
 		case "win":
-			return "text-emerald-600 font-medium";
+			// Win = success = sage (DESIGN.md "Success = Sage").
+			return "text-success font-medium";
 		case "loss":
-			return "text-rose-600 font-medium";
+			// Loss = marginalia = terracotta warning token (DESIGN.md "Warning = Terracotta").
+			return "text-warning font-medium";
 		case "draw":
-			return "text-muted-foreground/500";
+			return "text-muted-foreground/70";
 		default:
 			return "text-muted-foreground";
 	}

@@ -1,15 +1,3 @@
-/**
- * Files page — `/files` (PLAN-009 / FL2).
- *
- * Grid/list of imported PGN files with search + sort, an "Import File"
- * action, and a detail drawer (rename, view PGN, export, delete). Fully
- * wired to the `/files` API surface.
- *
- * Data flow:
- *  - `useQuery(["files"])` is the single source of truth for the grid.
- *  - All mutations (create / update / delete) invalidate `["files"]` so the
- *    grid and drawer stay consistent.
- */
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -38,16 +26,6 @@ const SORT_OPTIONS: SortOption[] = [
   { label: "Date created", value: "created" },
 ];
 
-/**
- * Type card definitions for the top-row summary.
- *
- * Each type maps to a static className set rather than a dynamic color name.
- * Tailwind v4's scanner can't see interpolated class strings
- * (`border-${color}-300`), so those utilities would never be generated and the
- * cards would render unstyled. Static classes also keep us on the DESIGN.md
- * palette (sage / terracotta / warm neutrals) instead of the cold Tailwind
- * rainbow (blue/emerald/amber/purple).
- */
 const TYPE_CARDS: {
   type: FileType;
   label: string;
@@ -180,10 +158,11 @@ export default function FilesPage() {
             key={type}
             type="button"
             onClick={() => setTypeFilter(typeFilter === type ? null : type)}
-            className={`flex items-center gap-3 rounded-md border p-3 text-left transition-all ${
+            aria-pressed={typeFilter === type}
+            className={`flex items-center gap-3 rounded-lg border p-3 text-left transition-[color,background-color,border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
               typeFilter === type
                 ? activeClass
-                : "border-border bg-background hover:border-border hover:shadow-sm"
+                : "border-border bg-background hover:border-primary/40 hover:bg-muted/30"
             }`}
           >
             <div className={`flex size-9 items-center justify-center rounded-lg ${chipClass}`}>
@@ -226,7 +205,7 @@ export default function FilesPage() {
                 onClick={() => setTypeFilter(null)}
                 className="ml-1 text-primary hover:underline"
               >
-                clear filter
+                Clear filter
               </button>
             </>
           )}
@@ -323,15 +302,15 @@ function EmptyState({
   onClearFilter: () => void;
 }) {
   return (
-    <div className="rounded-md border border-dashed border-border p-12 text-center">
+    <div className="rounded-xl border border-dashed border-border p-12 text-center">
       <FolderOpen className="mx-auto mb-4 size-12 text-muted-foreground/50" />
-      <h3 className="mb-2 font-medium text-foreground">
+      <h2 className="mb-2 font-medium text-foreground">
         {hasFilter
           ? "No files match your search"
           : hasAny
             ? "No files of this type"
             : "No files imported"}
-      </h3>
+      </h2>
       <p className="mb-4 text-sm text-muted-foreground">
         {hasFilter
           ? "Try a different search term or clear the filter."

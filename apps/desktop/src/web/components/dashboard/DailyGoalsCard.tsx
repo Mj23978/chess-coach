@@ -28,20 +28,22 @@ export function DailyGoalsCard({ gamesCount }: DailyGoalsCardProps) {
 		<Card className="h-full">
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
 				<CardTitle className="text-base">Daily Goals</CardTitle>
-				<Trophy className="size-4 text-amber-500" />
+				<Trophy className="size-4 text-warning" />
 			</CardHeader>
 			<CardContent className="space-y-4">
 				<GoalBar
 					label="Games played"
 					current={goals.gamesPlayed}
 					target={gamesTarget}
-					color="#10b981"
+					/** Primary goal → sage success token (DESIGN.md "Success = Sage"). */
+					barClass="bg-success"
 				/>
 				<GoalBar
 					label="Puzzles solved"
 					current={goals.puzzlesPlayed}
 					target={puzzlesTarget}
-					color="#0ea5e9"
+					/** Secondary goal → lighter sage from the chart ramp. */
+					barClass="bg-chart-3"
 					note="Puzzles arrive with Training."
 				/>
 			</CardContent>
@@ -53,14 +55,14 @@ function GoalBar({
 	label,
 	current,
 	target,
-	/** Inline color for the filled portion (avoids Tailwind dynamic-class pitfalls). */
-	color,
+	/** Tailwind class for the filled portion (token-driven, e.g. "bg-success"). */
+	barClass,
 	note,
 }: {
 	label: string;
 	current: number;
 	target: number;
-	color: string;
+	barClass: string;
 	note?: string;
 }) {
 	const pct =
@@ -71,15 +73,15 @@ function GoalBar({
 			<div className="mb-1 flex items-baseline justify-between">
 				<span className="text-sm font-medium">{label}</span>
 				<span
-					className={`text-xs ${done ? "text-emerald-600" : "text-muted-foreground/500"}`}
+					className={`text-xs ${done ? "text-success" : "text-muted-foreground"}`}
 				>
 					{current}/{target}
 				</span>
 			</div>
 			<div className="h-2 w-full overflow-hidden rounded-full bg-muted">
 				<div
-					className="h-full rounded-full transition-[width] duration-300"
-					style={{ width: `${pct}%`, backgroundColor: color }}
+					className={`h-full rounded-full transition-[width] duration-300 ${barClass}`}
+					style={{ width: `${pct}%` }}
 				/>
 			</div>
 			{note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}

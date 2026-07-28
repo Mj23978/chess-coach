@@ -2,20 +2,24 @@
  * AppShell — the main application layout wrapper for chess-coach.
  *
  * Structure:
- *   DragRegion (top, for window dragging via Electrobun)
- *   └── SidebarProvider
- *       ├── NavigationRail (left, collapsible)
- *       └── SidebarInset (main content area)
+ *   SidebarProvider
+ *   ├── NavigationRail (left, collapsible)
+ *   └── SidebarInset (main content area)
  *
- * Electrobun provides native window chrome (title bar, minimize/maximize/close,
- * File/Edit/View menus). The SPA only needs a drag region at the top so the
- * user can move the window. All menu actions are wired to keyboard shortcuts
- * (see useKeyboardShortcuts).
+ * Electrobun provides native window chrome (title bar with minimize/maximize/
+ * close and the File/Edit/View menus), so the SPA renders no drag region or
+ * window controls of its own. All menu actions are wired to keyboard shortcuts
+ * (see useKeyboardShortcuts); the keybindings modal here reflects the same
+ * ALL_SHORTCUTS catalogue the Settings page renders.
  */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SidebarInset, SidebarProvider } from "@repo/ui/components/sidebar";
-import { NavigationRail } from "./NavigationRail";
-import { useKeyboardShortcuts } from "../../lib/useKeyboardShortcuts";
+import { Button } from "@repo/ui/components/button";
+import {
+	NavigationRail,
+	type NavigationRailHandle,
+} from "./NavigationRail";
+import { useKeyboardShortcuts, ALL_SHORTCUTS } from "../../lib/useKeyboardShortcuts";
 import { ModalShell } from "../ui/modal-shell";
 
 interface AppShellProps {
@@ -33,17 +37,13 @@ export function AppShell({
 }: AppShellProps) {
 	const [keybindingsOpen, setKeybindingsOpen] = useState(false);
 	const [defaultSidebarOpen, setDefaultSidebarOpen] = useState(true);
+	const railRef = useRef<NavigationRailHandle>(null);
 
-	// Global keyboard shortcuts
+	// Global keyboard shortcuts. Ctrl+F focuses the rail's search input via the
+	// rail's imperative handle — no DOM querySelector reach-in.
 	useKeyboardShortcuts({
 		onToggleSidebar: () => setDefaultSidebarOpen((open) => !open),
-		onGlobalSearch: () => {
-			// Focus the search input in the navigation rail header
-			const searchInput = document.querySelector<HTMLInputElement>(
-				'nav input[type="text"]',
-			);
-			searchInput?.focus();
-		},
+		onGlobalSearch: () => railRef.current?.focusSearch(),
 		onNewGame,
 		onImportPgn,
 		onExportPgn,
@@ -51,28 +51,37 @@ export function AppShell({
 
 	return (
 		<div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-			{/* Window drag region — Electrobun provides native title bar controls.
-			    This thin strip lets the user drag the window by grabbing any part
-			    of the top area that isn't covered by interactive elements. */}
-			{/* Window drag region — Electrobun provides native title bar controls.
-			    This thin strip lets the user drag the window by grabbing any part
-			    of the top area that isn't covered by interactive elements. */}
-			<div className="h-6 shrink-0 app-drag bg-background" />
-
-			{/* Main content area with sidebar */}
 			<SidebarProvider
 				defaultOpen={defaultSidebarOpen}
 				open={defaultSidebarOpen}
 				onOpenChange={setDefaultSidebarOpen}
 			>
 				<NavigationRail
+					ref={railRef}
 					onKeybindings={() => setKeybindingsOpen(true)}
 					onToggleSidebar={() => setDefaultSidebarOpen((open) => !open)}
 				/>
-				<SidebarInset className="flex-1 overflow-auto">{children}</SidebarInset>
-			</SidebarProvider>
+				{/*
+					Page content wrapper — DO NOT use <SidebarInset> here.
+					SidebarInset injects extra margin/padding (the "inset" card
+					variant: m-2, rounded-xl, shadow) and a pl-(--sidebar-width)
+					push that this layout doesn't want — PageContainer + the rail's
+					own positioning already handle spacing. Instead this bare <main>
+					owns the vertical scroll:
+					  • The AppShell root (h-screen overflow-hidden) clips body
+					    double-scroll, so scroll MUST live one level down.
+					  • flex-1 + min-h-0: let it fill the column beside the rail
+					    AND shrink below content height so overflow engages.
+					    (min-h-0 is load-bearing — without it a flex child won't
+					    scroll, which was the original "page not scrollable" bug.)
+					  • min-w-0: keep wide tables/boards from forcing horizontal
+					    blowout of the flex row.
+				*/}
+				<main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+					{children}
+				</main>
+		</SidebarProvider>
 
-			{/* Keybindings modal placeholder - would be implemented later */}
 			{keybindingsOpen && (
 				<KeybindingsModal onClose={() => setKeybindingsOpen(false)} />
 			)}
@@ -81,8 +90,8 @@ export function AppShell({
 }
 
 /**
- * Placeholder keybindings modal.
- * Will be implemented properly in Phase 8 (Settings & Keybindings).
+ * Keybindings modal. Renders the live ALL_SHORTCUTS catalogue (same source the
+ * Settings page uses), grouped by category — no hand-maintained duplicate list.
  */
 function KeybindingsModal({ onClose }: { onClose: () => void }) {
 	return (
@@ -90,38 +99,45 @@ function KeybindingsModal({ onClose }: { onClose: () => void }) {
 			open
 			onOpenChange={(open) => !open && onClose()}
 			title="Keyboard Shortcuts"
+			description="Quick actions available anywhere in the app."
 			footer={
-				<button
-					type="button"
-					onClick={onClose}
-					className="rounded bg-muted px-4 py-2 text-sm hover:bg-muted/80"
-				>
+				<Button type="button" variant="outline" onClick={onClose}>
 					Close
-				</button>
+				</Button>
 			}
 		>
-			<p className="text-sm text-muted-foreground">
-				Keybindings configuration will be implemented in Phase 8.
-			</p>
-			<div className="space-y-2 text-sm">
-				<div className="flex justify-between gap-8">
-					<span>Toggle Sidebar</span>
-					<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
-						Ctrl+B
-					</kbd>
-				</div>
-				<div className="flex justify-between gap-8">
-					<span>Global Search</span>
-					<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
-						Ctrl+F
-					</kbd>
-				</div>
-				<div className="flex justify-between gap-8">
-					<span>Flip Board</span>
-					<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
-						F
-					</kbd>
-				</div>
+			<div className="space-y-4">
+				{ALL_SHORTCUTS.map((group) => (
+					<div key={group.category}>
+						<h3 className="mb-2 text-sm font-medium text-foreground">
+							{group.category}
+						</h3>
+						<div className="rounded-lg border border-border">
+							{group.shortcuts.map((shortcut, i) => (
+								<div
+									key={shortcut.keys}
+									className={`flex items-center justify-between px-3 py-2 text-sm ${
+										i !== group.shortcuts.length - 1
+											? "border-b border-border"
+											: ""
+									}`}
+								>
+									<span className="text-muted-foreground">
+										{shortcut.description}
+									</span>
+									<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
+										{shortcut.keys}
+									</kbd>
+								</div>
+							))}
+						</div>
+					</div>
+				))}
+
+				<p className="text-xs text-muted-foreground">
+					Shortcuts are active globally. Game navigation shortcuts only work
+					when a board is visible.
+				</p>
 			</div>
 		</ModalShell>
 	);

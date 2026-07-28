@@ -32,6 +32,11 @@ export interface TimeControl {
 	increment: number;
 	icon: LucideIcon;
 	description: string;
+	/**
+	 * Icon color. All four draw from the sage chart ramp (--chart-1..4) so the
+	 * time controls differentiate by lightness within the single committed
+	 * accent family — no second hue (DESIGN.md "One Accent Rule").
+	 */
 	accent: string;
 }
 
@@ -44,7 +49,7 @@ export const TIME_CONTROLS: TimeControl[] = [
 		increment: 10,
 		icon: Hourglass,
 		description: "Deep thinking, long games.",
-		accent: "text-sky-600",
+		accent: "text-chart-1",
 	},
 	{
 		id: "rapid",
@@ -54,7 +59,7 @@ export const TIME_CONTROLS: TimeControl[] = [
 		increment: 0,
 		icon: Clock,
 		description: "Balanced pace for most players.",
-		accent: "text-teal-600",
+		accent: "text-chart-2",
 	},
 	{
 		id: "blitz",
@@ -64,7 +69,7 @@ export const TIME_CONTROLS: TimeControl[] = [
 		increment: 2,
 		icon: Zap,
 		description: "Fast and tactical.",
-		accent: "text-amber-600",
+		accent: "text-chart-3",
 	},
 	{
 		id: "bullet",
@@ -74,7 +79,7 @@ export const TIME_CONTROLS: TimeControl[] = [
 		increment: 0,
 		icon: Rocket,
 		description: "Lightning quick — instinct over calculation.",
-		accent: "text-rose-600",
+		accent: "text-chart-4",
 	},
 ];
 

@@ -239,9 +239,9 @@ function EmptyState({
   return (
     <div className="rounded-xl border border-dashed border-border p-12 text-center">
       <Database className="mx-auto mb-4 size-12 text-muted-foreground/50" />
-      <h3 className="mb-2 font-medium text-foreground">
+      <h2 className="mb-2 font-medium text-foreground">
         {hasAny ? "No databases match your search" : "No databases yet"}
-      </h3>
+      </h2>
       <p className="mb-4 text-sm text-muted-foreground">
         {hasAny
           ? "Try a different search term."

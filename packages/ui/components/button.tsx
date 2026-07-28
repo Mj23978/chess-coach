@@ -4,15 +4,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-neutral-900 text-white hover:bg-neutral-800",
+        // Every variant uses SEMANTIC theme tokens (--primary, --accent,
+        // --destructive, --muted, --foreground …), which all flip correctly
+        // in .dark via globals.css. Do NOT use raw text-white / bg-white /
+        // bg-neutral-* here — those bypass the theme and force per-button
+        // overrides at every call site. If you need a new look, add a new
+        // variant below instead of className-overriding at the call site.
+        default:
+          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         outline:
-          "border border-neutral-300 bg-transparent hover:bg-neutral-100",
-        ghost: "hover:bg-neutral-100",
-        destructive: "bg-red-600 text-white hover:bg-red-500",
+          "border border-input bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground",
+        ghost:
+          "text-foreground hover:bg-accent hover:text-accent-foreground",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
