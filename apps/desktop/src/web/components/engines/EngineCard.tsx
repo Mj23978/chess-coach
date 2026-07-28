@@ -46,18 +46,18 @@ export function EngineCard({
 			<button
 				type="button"
 				onClick={onShowDetails}
-				className="flex w-full items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 text-left transition-colors hover:border-neutral-300 hover:bg-neutral-50"
+				className="flex w-full items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-left transition-colors hover:border-border hover:bg-muted/50"
 			>
 				<Avatar engine={engine} size="sm" />
 				<div className="min-w-0 flex-1">
 					<div className="flex items-center gap-2">
 						<span className="truncate font-medium">{engine.name}</span>
 						{engine.version && (
-							<span className="text-xs text-neutral-400">v{engine.version}</span>
+							<span className="text-xs text-muted-foreground">v{engine.version}</span>
 						)}
 						{engine.isActive && <ActiveBadge />}
 					</div>
-					<div className="font-mono text-[11px] text-neutral-500">
+					<div className="font-mono text-[11px] text-muted-foreground/500">
 						{engine.elo ? `${engine.elo} ELO` : "ELO unknown"}
 						{!engine.exists && " · missing binary"}
 					</div>
@@ -76,11 +76,11 @@ export function EngineCard({
 					<div className="flex items-center gap-2">
 						<span className="truncate font-medium">{engine.name}</span>
 						{engine.version && (
-							<span className="text-xs text-neutral-400">v{engine.version}</span>
+							<span className="text-xs text-muted-foreground">v{engine.version}</span>
 						)}
 						{engine.isActive && <ActiveBadge />}
 					</div>
-					<div className="font-mono text-[11px] text-neutral-500">
+					<div className="font-mono text-[11px] text-muted-foreground/500">
 						{engine.elo ? `${engine.elo} ELO` : "ELO unknown"}
 						{!engine.exists && " · missing binary"}
 					</div>
@@ -101,7 +101,7 @@ export function EngineCard({
 		<button
 			type="button"
 			onClick={onShowDetails}
-			className="flex flex-col rounded-xl border border-neutral-200 bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-md"
+			className="flex flex-col rounded-xl border border-border bg-background p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md"
 		>
 			<div className="mb-3 flex items-start gap-3">
 				<Avatar engine={engine} size="lg" />
@@ -111,7 +111,7 @@ export function EngineCard({
 						{engine.isActive && <ActiveBadge />}
 					</div>
 					{engine.version && (
-						<p className="text-xs text-neutral-400">Version {engine.version}</p>
+						<p className="text-xs text-muted-foreground">Version {engine.version}</p>
 					)}
 				</div>
 			</div>
@@ -163,7 +163,7 @@ function Avatar({
 	}
 	return (
 		<div
-			className={`flex ${dim} shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600`}
+			className={`flex ${dim} shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground`}
 		>
 			<Cpu className={icon} />
 		</div>
@@ -192,11 +192,11 @@ function Stat({
 		tone === "ok"
 			? "text-emerald-700"
 			: tone === "warn"
-				? "text-red-600"
-				: "text-neutral-700";
+				? "text-destructive"
+				: "text-foreground";
 	return (
-		<div className="rounded-md bg-neutral-50 px-2 py-1.5">
-			<div className="text-[10px] uppercase tracking-wide text-neutral-400">
+		<div className="rounded-md bg-muted/50 px-2 py-1.5">
+			<div className="text-[10px] uppercase tracking-wide text-muted-foreground">
 				{label}
 			</div>
 			<div className={`font-mono text-xs font-medium ${valueTone}`}>{value}</div>
@@ -248,7 +248,7 @@ function Actions({
 				size="sm"
 				onClick={onDelete}
 				disabled={isDeleting}
-				className={`text-neutral-400 hover:text-red-600 ${stacked ? "w-full justify-center" : ""}`}
+				className={`text-muted-foreground hover:text-destructive ${stacked ? "w-full justify-center" : ""}`}
 				aria-label={`Remove ${engine.name}`}
 			>
 				{isDeleting ? (

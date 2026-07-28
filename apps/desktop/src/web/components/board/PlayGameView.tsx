@@ -129,7 +129,7 @@ export function PlayGameView({ initialFen, onTitleChange }: PlayGameViewProps) {
       <div className="mx-auto max-w-3xl space-y-4 p-6">
         <header>
           <h1 className="text-lg font-bold">New Game</h1>
-          <p className="text-xs text-neutral-500">
+          <p className="text-xs text-muted-foreground">
             Configure both sides, then start. Untimed games skip the clock.
           </p>
         </header>
@@ -151,7 +151,7 @@ export function PlayGameView({ initialFen, onTitleChange }: PlayGameViewProps) {
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs text-neutral-500">
+          <Label className="text-xs text-muted-foreground">
             Starting FEN (optional — leave blank for the standard position)
           </Label>
           <Input
@@ -161,15 +161,17 @@ export function PlayGameView({ initialFen, onTitleChange }: PlayGameViewProps) {
             className="font-mono text-xs"
           />
           {fenInvalid && (
-            <p className="text-xs text-red-600">That FEN isn't valid.</p>
+            <p className="text-xs text-destructive">
+              That position (FEN) isn't valid. Check the format and try again.
+            </p>
           )}
         </div>
 
         {(startError || startMut.isError) && (
-          <p className="text-xs text-red-600">
+          <p className="text-xs text-destructive">
             {startError ??
               (startMut.error as Error | undefined)?.message ??
-              "Couldn't start the game."}
+              "Couldn't start the game. Please try again."}
           </p>
         )}
 
@@ -253,24 +255,24 @@ export function PlayGameView({ initialFen, onTitleChange }: PlayGameViewProps) {
           />
 
           {session.error && (
-            <p className="rounded-md bg-red-50 px-2 py-1 text-xs text-red-700">
+            <p className="rounded-md bg-destructive/10 px-2 py-1 text-xs text-destructive">
               {session.error}
             </p>
           )}
 
           {finished ? (
-            <div className="rounded-md border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm">
+            <div className="rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
               <p className="font-medium">{resultLabel(snap.result, snap.winner)}</p>
-              <p className="text-xs text-neutral-500">
+              <p className="text-xs text-muted-foreground">
                 {endLabel(snap.endReason)} · game saved to your library
               </p>
             </div>
           ) : session.pending ? (
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-muted-foreground">
               {turn === humanSide ? "Thinking…" : "Engine is thinking…"}
             </p>
           ) : (
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-muted-foreground">
               {turn === humanSide
                 ? "Your move"
                 : `Waiting for ${turn === "white" ? white.name : black.name}`}

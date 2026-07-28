@@ -53,7 +53,7 @@ export function ImportPgnModal({ onCreated, onClose }: ImportPgnModalProps) {
       title="Import PGN"
       className="max-w-2xl"
     >
-      <label className="mb-1 block text-xs font-medium text-neutral-600">
+      <label className="mb-1 block text-xs font-medium text-muted-foreground">
         Title (optional)
       </label>
       <input
@@ -61,9 +61,9 @@ export function ImportPgnModal({ onCreated, onClose }: ImportPgnModalProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="e.g. Caro-Kann vs. Magnus"
-        className="mb-3 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+        className="mb-3 w-full rounded-md border border-border px-3 py-2 text-sm outline-none focus:border-primary"
       />
-      <label className="mb-1 block text-xs font-medium text-neutral-600">
+      <label className="mb-1 block text-xs font-medium text-muted-foreground">
         PGN
       </label>
       <textarea
@@ -71,9 +71,9 @@ export function ImportPgnModal({ onCreated, onClose }: ImportPgnModalProps) {
         onChange={(e) => setPgn(e.target.value)}
         placeholder='[Event "..."]\n[White "..."]\n...\n1. e4 e6 2. d4 d5 ...'
         rows={12}
-        className="w-full resize-y rounded-md border border-neutral-300 p-3 font-mono text-xs outline-none focus:border-neutral-500"
+        className="w-full resize-y rounded-md border border-border p-3 font-mono text-xs outline-none focus:border-primary"
       />
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
       <div className="mt-4 flex justify-end gap-2">
         <Button variant="ghost" onClick={onClose} disabled={busy}>
           Cancel

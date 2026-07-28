@@ -128,14 +128,14 @@ function OverviewTab({
 	return (
 		<div className="space-y-4">
 			<div>
-				<div className="mb-1 flex items-center justify-between text-xs text-neutral-500">
+				<div className="mb-1 flex items-center justify-between text-xs text-muted-foreground/500">
 					<span>Win / Draw / Loss</span>
 					<span>{total} decided</span>
 				</div>
 				<ResultBar wins={w} draws={d} losses={l} />
 				<div className="mt-2 grid grid-cols-3 gap-2 text-center">
 					<Stat label="Wins" value={w} tone="text-emerald-600" />
-					<Stat label="Draws" value={d} tone="text-neutral-500" />
+					<Stat label="Draws" value={d} tone="text-muted-foreground/500" />
 					<Stat label="Losses" value={l} tone="text-rose-600" />
 				</div>
 			</div>
@@ -163,12 +163,12 @@ function RatingsTab({ stats }: { stats: AccountStatsDTO | undefined }) {
 		);
 	}
 	if (stats.ratings.length === 0) {
-		return <p className="text-sm text-neutral-500">No ratings available.</p>;
+		return <p className="text-sm text-muted-foreground/500">No ratings available.</p>;
 	}
 	return (
 		<table className="w-full text-sm">
 			<thead>
-				<tr className="text-left text-xs text-neutral-500">
+				<tr className="text-left text-xs text-muted-foreground/500">
 					<th className="py-1 font-medium">Time control</th>
 					<th className="py-1 text-right font-medium">Rating</th>
 					<th className="py-1 text-right font-medium">Games</th>
@@ -179,10 +179,10 @@ function RatingsTab({ stats }: { stats: AccountStatsDTO | undefined }) {
 					.slice()
 					.sort((a, b) => b.rating - a.rating)
 					.map((r) => (
-						<tr key={r.key} className="border-t border-neutral-100">
+						<tr key={r.key} className="border-t border-border/50">
 							<td className="capitalize py-1.5">{r.key}</td>
 							<td className="py-1.5 text-right font-mono">{r.rating}</td>
-							<td className="py-1.5 text-right font-mono text-neutral-500">
+							<td className="py-1.5 text-right font-mono text-muted-foreground/500">
 								{r.games ?? "—"}
 							</td>
 						</tr>
@@ -246,10 +246,10 @@ function OpeningsTab({
 			{sorted.map((row) => {
 				const total = row.wins + row.draws + row.losses;
 				return (
-					<div key={row.key} className="rounded-md border border-neutral-200 p-2.5">
+					<div key={row.key} className="rounded-md border border-border p-2.5">
 						<div className="flex items-baseline justify-between gap-2">
 							<span className="truncate text-sm font-medium">{row.opening}</span>
-							<span className="shrink-0 font-mono text-xs text-neutral-400">
+							<span className="shrink-0 font-mono text-xs text-muted-foreground">
 								{row.eco}
 							</span>
 						</div>
@@ -261,7 +261,7 @@ function OpeningsTab({
 								height="h-1.5"
 							/>
 						</div>
-						<div className="mt-1 flex gap-3 font-mono text-[11px] text-neutral-500">
+						<div className="mt-1 flex gap-3 font-mono text-[11px] text-muted-foreground/500">
 							<span className="text-emerald-600">{row.wins}W</span>
 							<span>{row.draws}D</span>
 							<span className="text-rose-600">{row.losses}L</span>
@@ -291,13 +291,13 @@ function ResultBar({
 }) {
 	const total = Math.max(1, wins + draws + losses);
 	return (
-		<div className={`flex w-full overflow-hidden rounded-full bg-neutral-100 ${height}`}>
+		<div className={`flex w-full overflow-hidden rounded-full bg-muted ${height}`}>
 			<div
 				className="bg-emerald-500"
 				style={{ width: `${(wins / total) * 100}%` }}
 			/>
 			<div
-				className="bg-neutral-300"
+				className="bg-muted"
 				style={{ width: `${(draws / total) * 100}%` }}
 			/>
 			<div
@@ -318,17 +318,17 @@ function Stat({
 	tone?: string;
 }) {
 	return (
-		<div className="rounded-md border border-neutral-200 py-2">
+		<div className="rounded-md border border-border py-2">
 			<div className={`text-lg font-semibold ${tone ?? ""}`}>{value}</div>
-			<div className="text-xs text-neutral-500">{label}</div>
+			<div className="text-xs text-muted-foreground/500">{label}</div>
 		</div>
 	);
 }
 
 function InfoRow({ label, value }: { label: string; value: string }) {
 	return (
-		<div className="flex items-center justify-between border-t border-neutral-100 py-2 text-sm">
-			<span className="text-neutral-500">{label}</span>
+		<div className="flex items-center justify-between border-t border-border/50 py-2 text-sm">
+			<span className="text-muted-foreground/500">{label}</span>
 			<span className="font-medium">{value}</span>
 		</div>
 	);
@@ -336,7 +336,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 function Skeleton({ label }: { label: string }) {
 	return (
-		<div className="flex items-center gap-2 py-6 text-sm text-neutral-500">
+		<div className="flex items-center gap-2 py-6 text-sm text-muted-foreground/500">
 			<RefreshCw className="size-4 animate-spin" />
 			{label}
 		</div>
@@ -344,7 +344,7 @@ function Skeleton({ label }: { label: string }) {
 }
 
 function PlatformDot({ platform }: { platform: AccountDTO["platform"] }) {
-	const cls = platform === "chess.com" ? "bg-emerald-500" : "bg-neutral-800";
+	const cls = platform === "chess.com" ? "bg-emerald-500" : "bg-foreground";
 	return <span className={`inline-block size-2.5 rounded-full ${cls}`} />;
 }
 

@@ -18,7 +18,8 @@ import {
 	EngineCard,
 	EngineDetailSheet,
 } from "../components/engines";
-import { PageContainer } from "../components/layout";
+import { PageContainer, PageHeader } from "../components/layout";
+import { ViewToggle, ErrorState } from "../components/ui";
 import {
 	fetchEngines,
 	fetchEngineCatalog,
@@ -80,26 +81,14 @@ export default function EnginesPage() {
 
 	return (
 		<PageContainer>
-			{/* Header */}
-			<header className="mb-6">
-				<div className="flex items-start justify-between gap-4">
-					<div className="min-w-0">
-						<div className="mt-1 flex items-center gap-3">
-							<div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
-								<Cpu className="size-5" />
-							</div>
-							<div className="min-w-0">
-								<h1 className="truncate text-2xl font-bold">Engines</h1>
-								<p className="mt-0.5 text-sm text-neutral-500">
-									Manage your chess engines for analysis and play.
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="flex shrink-0 items-center gap-2">
+			<PageHeader
+				title="Engines"
+				subtitle="Manage your chess engines for analysis and play."
+				icon={<Cpu className="size-5" />}
+				actions={
+					<>
 						<div className="relative w-56">
-							<Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+							<Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 							<Input
 								variant="minimal"
 								placeholder="Search engines…"
@@ -119,13 +108,13 @@ export default function EnginesPage() {
 							<Plus className="mr-1.5 size-4" />
 							Add Engine
 						</Button>
-					</div>
-				</div>
-			</header>
+					</>
+				}
+			/>
 
 			{/* View toggle + count */}
 			<div className="mb-4 flex items-center justify-between">
-				<div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
+				<div className="flex gap-1 rounded-lg border border-border p-1">
 					<ViewToggle
 						mode="grid"
 						active={view === "grid"}
@@ -137,7 +126,7 @@ export default function EnginesPage() {
 						onClick={() => setView("list")}
 					/>
 				</div>
-				<span className="text-sm text-neutral-500">
+				<span className="text-sm text-muted-foreground">
 					{visible.length} engine{visible.length === 1 ? "" : "s"}
 					{search && engines && visible.length !== engines.length && (
 						<> of {engines.length}</>
@@ -147,21 +136,21 @@ export default function EnginesPage() {
 
 			{/* Loading */}
 			{isLoading && (
-				<p className="py-12 text-center text-sm text-neutral-500">
+				<p className="py-12 text-center text-sm text-muted-foreground">
 					Loading engines…
 				</p>
 			)}
 
 			{/* Empty state */}
 			{!isLoading && visible.length === 0 && (
-				<div className="rounded-xl border border-dashed border-neutral-300 p-12 text-center">
-					<Cpu className="mx-auto mb-4 size-12 text-neutral-300" />
-					<h3 className="mb-2 font-medium text-neutral-700">
+				<div className="rounded-xl border border-dashed border-border p-12 text-center">
+					<Cpu className="mx-auto mb-4 size-12 text-muted-foreground/50" />
+					<h3 className="mb-2 font-medium text-foreground">
 						{engines && engines.length > 0
 							? "No engines match your search"
 							: "No engines configured"}
 					</h3>
-					<p className="mb-4 text-sm text-neutral-500">
+					<p className="mb-4 text-sm text-muted-foreground">
 						{engines && engines.length > 0
 							? "Try a different search term."
 							: "Download Stockfish or add a local engine to enable analysis."}
@@ -254,77 +243,6 @@ export default function EnginesPage() {
 }
 
 // ---------------------------------------------------------------------------
-// View toggle icons
-// ---------------------------------------------------------------------------
-
-function ViewToggle({
-	mode,
-	active,
-	onClick,
-}: {
-	mode: ViewMode;
-	active: boolean;
-	onClick: () => void;
-}) {
-	const Icon = mode === "grid" ? GridIcon : ListIcon;
-	return (
-		<button
-			type="button"
-			onClick={onClick}
-			className={`flex items-center justify-center rounded px-2 py-1 text-sm transition-colors ${
-				active
-					? "bg-neutral-100 text-neutral-900"
-					: "text-neutral-500 hover:bg-neutral-50"
-			}`}
-			aria-label={`${mode} view`}
-			aria-pressed={active}
-		>
-			<Icon className="size-4" />
-		</button>
-	);
-}
-
-function GridIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			className={className}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<rect x="3" y="3" width="7" height="7" rx="1" />
-			<rect x="14" y="3" width="7" height="7" rx="1" />
-			<rect x="3" y="14" width="7" height="7" rx="1" />
-			<rect x="14" y="14" width="7" height="7" rx="1" />
-		</svg>
-	);
-}
-
-function ListIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			className={className}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		>
-			<line x1="8" y1="6" x2="21" y2="6" />
-			<line x1="8" y1="12" x2="21" y2="12" />
-			<line x1="8" y1="18" x2="21" y2="18" />
-			<circle cx="3.5" cy="6" r="1" />
-			<circle cx="3.5" cy="12" r="1" />
-			<circle cx="3.5" cy="18" r="1" />
-		</svg>
-	);
-}
-
-// ---------------------------------------------------------------------------
 // Modals
 // ---------------------------------------------------------------------------
 
@@ -361,16 +279,16 @@ function CatalogModal({
 			title="Download Engine"
 			className="max-w-md"
 		>
-					{isLoading && <p className="text-neutral-500">Loading catalog…</p>}
+					{isLoading && <p className="text-muted-foreground">Loading catalog…</p>}
 					{error && (
-						<p className="text-red-600">
-							Failed to load catalog: {String(error)}
+						<p className="text-sm text-destructive">
+							{error instanceof Error ? error.message : "Couldn't load the engine catalog."}
 						</p>
 					)}
 
 					{catalog && (
 						<>
-							<p className="text-sm text-neutral-600">
+							<p className="text-sm text-muted-foreground">
 								Platform: <span className="font-mono">{catalog.platform}</span>
 							</p>
 							<div className="space-y-2">
@@ -387,7 +305,7 @@ function CatalogModal({
 													className="h-10 w-10 rounded-lg object-contain"
 												/>
 											) : (
-												<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500">
+												<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground">
 													<Cpu className="size-5" />
 												</div>
 											)}
@@ -395,7 +313,7 @@ function CatalogModal({
 												<div className="font-medium">
 													{engine.name} {engine.version}
 												</div>
-												<div className="text-xs text-neutral-500">
+												<div className="text-xs text-muted-foreground">
 													{formatBytes(engine.downloadSize)} · ELO: {engine.elo}
 												</div>
 											</div>
@@ -414,7 +332,7 @@ function CatalogModal({
 					)}
 
 					{downloadMut.isError && (
-						<p className="text-red-600">
+						<p className="text-destructive">
 							{downloadMut.error instanceof Error
 								? downloadMut.error.message
 								: "Download failed"}
@@ -456,9 +374,9 @@ function AddEngineModal({
 							value={path}
 							onChange={(e) => setPath(e.target.value)}
 							placeholder="C:\path\to\stockfish.exe"
-							className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+							className="w-full rounded-md border border-border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
 						/>
-						<p className="mt-1 text-xs text-neutral-500">
+						<p className="mt-1 text-xs text-muted-foreground">
 							Full path to the engine executable (e.g., Stockfish)
 						</p>
 					</div>
@@ -472,15 +390,15 @@ function AddEngineModal({
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 							placeholder="Stockfish 18"
-							className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+							className="w-full rounded-md border border-border px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
 						/>
 					</div>
 
 					{addMut.isError && (
-						<p className="text-red-600">
+						<p className="text-sm text-destructive">
 							{addMut.error instanceof Error
 								? addMut.error.message
-								: "Failed to add engine"}
+								: "Failed to add engine. Please check the path and try again."}
 						</p>
 					)}
 

@@ -18,7 +18,7 @@ export function Clock({ ms, active, className }: ClockProps) {
   if (ms == null) {
     // Untimed game — render an unobtrusive dash so the layout stays even.
     return (
-      <span className={cn("font-mono text-sm text-neutral-400", className)}>—</span>
+      <span className={cn("font-mono text-sm text-muted-foreground", className)}>—</span>
     );
   }
   const low = ms <= 30_000;
@@ -26,8 +26,8 @@ export function Clock({ ms, active, className }: ClockProps) {
     <span
       className={cn(
         "font-mono text-sm tabular-nums",
-        active ? "text-neutral-900" : "text-neutral-400",
-        low && active && "text-red-600",
+        active ? "text-foreground" : "text-muted-foreground",
+        low && active && "text-destructive",
         className,
       )}
     >

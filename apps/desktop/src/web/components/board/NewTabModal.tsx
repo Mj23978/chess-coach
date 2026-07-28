@@ -92,23 +92,23 @@ function Card({ icon, title, description, onClick, disabled, badge }: CardProps)
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "group flex flex-col items-start gap-2 rounded-lg border border-neutral-200 p-4 text-left transition-colors",
+        "group flex flex-col items-start gap-2 rounded-lg border border-border p-4 text-left transition-colors",
         disabled
-          ? "cursor-not-allowed bg-neutral-50 opacity-60"
+          ? "cursor-not-allowed bg-muted/50 opacity-60"
           : "hover:border-blue-300 hover:bg-blue-50/40",
       )}
     >
       <div className="flex w-full items-center justify-between">
-        <span className="text-neutral-700">{icon}</span>
+        <span className="text-foreground">{icon}</span>
         {badge && (
-          <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-neutral-600">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
             {badge}
           </span>
         )}
       </div>
       <div>
-        <div className="text-sm font-semibold text-neutral-900">{title}</div>
-        <div className="text-xs text-neutral-500">{description}</div>
+        <div className="text-sm font-semibold text-foreground">{title}</div>
+        <div className="text-xs text-muted-foreground">{description}</div>
       </div>
     </button>
   );

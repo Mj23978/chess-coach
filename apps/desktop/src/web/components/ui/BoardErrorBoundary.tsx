@@ -40,17 +40,17 @@ export class BoardErrorBoundary extends Component<Props, State> {
 		if (!error) return this.props.children;
 		if (this.props.fallback) return this.props.fallback(error, this.reset);
 		return (
-			<div className="flex aspect-square w-full flex-col items-center justify-center gap-3 rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-				<p className="text-sm font-medium text-red-800">
+			<div className="flex aspect-square w-full flex-col items-center justify-center gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
+				<p className="text-sm font-medium text-destructive">
 					Board failed to render
 				</p>
-				<p className="max-w-xs text-xs text-red-600">
+				<p className="max-w-xs text-xs text-destructive">
 					{error.message || "Unknown error"}
 				</p>
 				<button
 					type="button"
 					onClick={this.reset}
-					className="rounded-md border border-red-300 bg-white px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100"
+					className="rounded-md border border-destructive/30 bg-background px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10"
 				>
 					Try again
 				</button>

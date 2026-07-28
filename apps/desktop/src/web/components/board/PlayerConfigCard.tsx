@@ -83,14 +83,14 @@ export function PlayerConfigCard({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-lg border border-neutral-200 px-3 py-2",
-        isWhite ? "bg-white" : "bg-neutral-50",
+        "flex items-center gap-3 rounded-lg border border-border px-3 py-2",
+        isWhite ? "bg-background" : "bg-muted/50",
         className,
       )}
     >
       <div className="flex w-16 shrink-0 items-center gap-1.5">
         <span className="text-lg leading-none">{PIECE_GLYPH[color]}</span>
-        <span className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {color}
         </span>
       </div>
@@ -98,7 +98,7 @@ export function PlayerConfigCard({
       {/* Live mode: just name + clock, read-only. */}
       {live ? (
         <>
-          <span className="flex-1 truncate text-sm font-medium text-neutral-800">
+          <span className="flex-1 truncate text-sm font-medium text-foreground">
             {config.name}
           </span>
           <Clock ms={live.msRemaining} active={live.active} />
@@ -118,17 +118,17 @@ export function PlayerConfigCard({
                   : (config.name || defaultName(color));
               onChange({ ...config, kind: v, name });
             }}
-            className="rounded-md border border-neutral-200 bg-neutral-100 p-0.5"
+            className="rounded-md border border-border bg-muted p-0.5"
           >
             <ToggleGroupItem
               value="human"
-              className="h-6 px-2 text-xs data-[state=on]:bg-white"
+              className="h-6 px-2 text-xs data-[state=on]:bg-background"
             >
               Human
             </ToggleGroupItem>
             <ToggleGroupItem
               value="engine"
-              className="h-6 px-2 text-xs data-[state=on]:bg-white"
+              className="h-6 px-2 text-xs data-[state=on]:bg-background"
             >
               Engine
             </ToggleGroupItem>
@@ -176,7 +176,7 @@ export function PlayerConfigCard({
           {/* Time control — rendered on one card only (white). */}
           {showTimeControl && timeControl && onTimeControlChange && (
             <div className="flex items-center gap-1.5">
-              <Label className="text-xs text-neutral-500">TC</Label>
+              <Label className="text-xs text-muted-foreground">TC</Label>
               <Select
                 value={tcKey(timeControl)}
                 onValueChange={(k) => {

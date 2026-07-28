@@ -64,7 +64,7 @@ export function TabBar({
   return (
     <div
       className={cn(
-        "flex items-center gap-1 border-b border-neutral-200 bg-neutral-50 px-2 py-1.5",
+        "flex items-center gap-1 border-b border-border bg-muted/50 px-2 py-1.5",
         className,
       )}
     >
@@ -91,7 +91,7 @@ export function TabBar({
           onClick={() => onCreateTab("play")}
           aria-label="New Play tab"
           title="New Play tab"
-          className="flex size-6 items-center justify-center rounded-l-md text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800"
+          className="flex size-6 items-center justify-center rounded-l-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           <Plus className="size-4" />
         </button>
@@ -100,7 +100,7 @@ export function TabBar({
           onClick={() => setDropdownOpen((v) => !v)}
           aria-label="New tab options"
           title="More tab types"
-          className="flex size-6 items-center justify-center rounded-r-md text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800"
+          className="flex size-6 items-center justify-center rounded-r-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
         >
           <ChevronDown className="size-3" />
         </button>
@@ -177,8 +177,8 @@ function Tab({
       className={cn(
         "group flex max-w-[200px] cursor-pointer items-center gap-2 rounded-md border px-3 py-1 text-xs transition-colors",
         active
-          ? "border-neutral-300 bg-white text-neutral-900 shadow-sm"
-          : "border-transparent text-neutral-600 hover:bg-neutral-100",
+          ? "border-border bg-background text-foreground shadow-sm"
+          : "border-transparent text-muted-foreground hover:bg-muted",
         onMoveTab && "cursor-grab active:cursor-grabbing",
       )}
     >
@@ -190,7 +190,7 @@ function Tab({
           e.stopPropagation();
           onClose(tab.id);
         }}
-        className="shrink-0 rounded p-0.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-200 hover:text-neutral-700 group-hover:opacity-100"
+        className="shrink-0 rounded p-0.5 text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover:opacity-100"
       >
         <X className="size-3" />
       </button>
@@ -207,21 +207,21 @@ function DropdownMenu({
   onClose: () => void;
 }) {
   return (
-    <div className="absolute left-0 top-full z-50 mt-1 w-48 rounded-md border border-neutral-200 bg-white py-1 shadow-lg">
+    <div className="absolute left-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-background py-1 shadow-lg">
       <button
         type="button"
         onClick={() => onPick("play")}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-neutral-100"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted"
       >
-        <Dices className="size-4 text-neutral-500" />
+        <Dices className="size-4 text-muted-foreground" />
         <span>New Play tab</span>
       </button>
       <button
         type="button"
         onClick={() => onPick("fen")}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-neutral-100"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted"
       >
-        <FileText className="size-4 text-neutral-500" />
+        <FileText className="size-4 text-muted-foreground" />
         <span>Enter FEN...</span>
       </button>
     </div>

@@ -64,10 +64,10 @@ export function AnalyzeTab({
         <div className="flex items-center gap-3">
           <EvalMiniBar whiteWin={winPct} />
           <div>
-            <div className="text-sm font-medium text-neutral-900">
+            <div className="text-sm font-medium text-foreground">
               {formatEval(moveAnalysis ?? {})}
             </div>
-            <div className="text-xs text-neutral-500">
+            <div className="text-xs text-muted-foreground">
               {winPct != null ? `${winPct.toFixed(1)}% white` : "—"}
             </div>
           </div>
@@ -87,10 +87,10 @@ export function AnalyzeTab({
             >
               {style.glyph}
             </span>
-            <span className="text-sm text-neutral-700">{style.label}</span>
+            <span className="text-sm text-foreground">{style.label}</span>
           </div>
           {moveAnalysis?.avgCentipawnLoss != null && (
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Avg centipawn loss: {Math.round(moveAnalysis.avgCentipawnLoss)}
             </p>
           )}
@@ -99,7 +99,7 @@ export function AnalyzeTab({
 
       {/* Engine lines placeholder */}
       <Section title="Engine Lines">
-        <div className="rounded-md bg-neutral-50 p-3 text-xs text-neutral-500">
+        <div className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
           <p>
             Live engine lines will appear here once the engine pipeline is
             connected (PLAN-011).
@@ -116,7 +116,7 @@ export function AnalyzeTab({
         <Section title="Accuracy">
           <div className="space-y-1.5">
             {avgLoss != null && (
-              <div className="text-sm text-neutral-700">
+              <div className="text-sm text-foreground">
                 Avg centipawn loss:{" "}
                 <span className="font-medium">{Math.round(avgLoss)}</span>
               </div>
@@ -147,7 +147,7 @@ export function AnalyzeTab({
 
       {/* Move navigation hint */}
       <Section title="Navigate">
-        <p className="text-xs text-neutral-500">
+        <p className="text-xs text-muted-foreground">
           Use ← → arrow keys or click moves in the list to navigate.
           {totalPlies > 0 && (
             <span className="ml-1">
@@ -164,9 +164,9 @@ export function AnalyzeTab({
 function EvalMiniBar({ whiteWin }: { whiteWin: number | null }) {
   const pct = whiteWin ?? 50;
   return (
-    <div className="relative h-12 w-3 overflow-hidden rounded-sm bg-neutral-900">
+    <div className="relative h-12 w-3 overflow-hidden rounded-sm bg-foreground">
       <div
-        className="absolute inset-x-0 bottom-0 bg-white transition-[height] duration-200"
+        className="absolute inset-x-0 bottom-0 bg-background transition-[height] duration-200"
         style={{ height: `${pct}%` }}
       />
     </div>
@@ -182,7 +182,7 @@ function Section({
 }) {
   return (
     <div>
-      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-neutral-400">
+      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
       {children}

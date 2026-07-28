@@ -41,7 +41,7 @@ import {
 } from "../lib/export";
 import { BoardErrorBoundary, toast, TOAST_MESSAGES } from "../components/ui";
 import { AnalysisPanel } from "../components/board/AnalysisPanel";
-import { PageContainer } from "../components/layout";
+import { PageContainer, PageHeader } from "../components/layout";
 import { useSettings } from "../lib/settings-context";
 
 /** Square pair for `lastMove`, derived from the UCI string ("e2e4" → ["e2","e4"]). */
@@ -102,16 +102,25 @@ export default function GameReviewPage() {
 	}, [positions.length]);
 
 	if (isLoading) {
-		return <div className="p-8 text-neutral-500">Loading game…</div>;
+		return <div className="p-8 text-muted-foreground">Loading game…</div>;
 	}
 	if (error || !game) {
 		return (
-			<div className="p-8">
-				<p className="text-red-600">
-					Failed to load game: {error ? String(error) : "not found"}
+			<div className="flex flex-col items-center justify-center p-12 text-center">
+				<div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-muted">
+					<span className="text-2xl">♚</span>
+				</div>
+				<h2 className="text-lg font-semibold">Game not found</h2>
+				<p className="mt-1 max-w-sm text-sm text-muted-foreground">
+					{error
+						? `Could not load this game: ${String(error)}`
+						: "This game may have been deleted or the link is invalid."}
 				</p>
-				<Link to="/" className="mt-3 inline-block text-sm text-blue-600">
-					Back to dashboard
+				<Link
+					to="/"
+					className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+				>
+					← Back to Dashboard
 				</Link>
 			</div>
 		);
@@ -119,10 +128,20 @@ export default function GameReviewPage() {
 
 	if (positions.length === 0) {
 		return (
-			<div className="p-8">
-				<p className="text-red-600">This game's PGN could not be parsed.</p>
-				<Link to="/" className="mt-3 inline-block text-sm text-blue-600">
-					Back to dashboard
+			<div className="flex flex-col items-center justify-center p-12 text-center">
+				<div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-muted">
+					<span className="text-2xl">⚠️</span>
+				</div>
+				<h2 className="text-lg font-semibold">Could not parse this game</h2>
+				<p className="mt-1 max-w-sm text-sm text-muted-foreground">
+					The PGN data for this game appears to be malformed. Try re-importing the
+					game from the original source.
+				</p>
+				<Link
+					to="/"
+					className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+				>
+					← Back to Dashboard
 				</Link>
 			</div>
 		);
@@ -145,72 +164,70 @@ export default function GameReviewPage() {
 
 	return (
 		<PageContainer variant="wide" className="py-6">
-			<header className="mb-4 flex items-center justify-between">
-				<div>
-					<h1 className="text-xl font-bold">
-						{game.title ?? `${game.white ?? "?"} vs ${game.black ?? "?"}`}
-					</h1>
-					<p className="text-xs text-neutral-500">
-						{game.result ?? "*"} · {positions.length} plies
-					</p>
-				</div>
-				<div className="flex items-center gap-2">
-					{analyzeMut.isError && (
-						<span className="text-xs text-red-600">
-							{analyzeMut.error instanceof Error
-								? analyzeMut.error.message
-								: "Analysis failed"}
-						</span>
-					)}
+			<PageHeader
+				title={game.title ?? `${game.white ?? "?"} vs ${game.black ?? "?"}`}
+				subtitle={`${game.result ?? "*"} · ${positions.length} moves`}
+				backTo="/"
+				backLabel="Dashboard"
+				actions={
+					<>
+						{analyzeMut.isError && (
+							<span className="text-xs text-destructive">
+								{analyzeMut.error instanceof Error
+									? analyzeMut.error.message
+									: "Analysis failed"}
+							</span>
+						)}
 
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => {
-							const fen = displayFen;
-							copyFenToClipboard(fen).then((ok) => {
-								if (ok) toast.success(TOAST_MESSAGES.FEN_COPIED);
-								else toast.error("Failed to copy FEN");
-							});
-						}}
-					>
-						<Copy className="mr-1.5 size-3.5" />
-						FEN
-					</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => {
+								const fen = displayFen;
+								copyFenToClipboard(fen).then((ok) => {
+									if (ok) toast.success(TOAST_MESSAGES.FEN_COPIED);
+									else toast.error("Failed to copy FEN");
+								});
+							}}
+						>
+							<Copy className="mr-1.5 size-3.5" />
+							FEN
+						</Button>
 
-					<Button
-						variant="outline"
-						size="sm"
-						onClick={() => {
-							const pgn = exportPgnWithAnnotations({
-								pgn: game!.pgn,
-								analysis,
-								includeEval: true,
-								includeClassification: true,
-							});
-							downloadText(pgn, generatePgnFilename(game!), "text/x-chess-pgn");
-							toast.success(TOAST_MESSAGES.PGN_EXPORTED);
-						}}
-					>
-						<Download className="mr-1.5 size-3.5" />
-						PGN
-					</Button>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => {
+								const pgn = exportPgnWithAnnotations({
+									pgn: game!.pgn,
+									analysis,
+									includeEval: true,
+									includeClassification: true,
+								});
+								downloadText(pgn, generatePgnFilename(game!), "text/x-chess-pgn");
+								toast.success(TOAST_MESSAGES.PGN_EXPORTED);
+							}}
+						>
+							<Download className="mr-1.5 size-3.5" />
+							PGN
+						</Button>
 
-					<Button
-						onClick={() => analyzeMut.mutate()}
-						disabled={analyzeMut.isPending}
-					>
-						{analyzeMut.isPending
-							? "Analyzing…"
-							: hasAnalysis
-								? "Re-analyze"
-								: "Analyze"}
-					</Button>
-				</div>
-			</header>
+						<Button
+							onClick={() => analyzeMut.mutate()}
+							disabled={analyzeMut.isPending}
+						>
+							{analyzeMut.isPending
+								? "Analyzing…"
+								: hasAnalysis
+									? "Re-analyze"
+									: "Analyze"}
+						</Button>
+					</>
+				}
+			/>
 
 			{!hasAnalysis && !analyzeMut.isPending && (
-				<p className="mb-3 rounded-md bg-neutral-100 px-3 py-2 text-xs text-neutral-600">
+				<p className="mb-3 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
 					No analysis yet — click <strong>Analyze</strong> to run the engine and
 					classify each move. Requires a Stockfish binary staged under{" "}
 					<code>binaries/</code>.
@@ -236,12 +253,12 @@ export default function GameReviewPage() {
 				</div>
 
 				{/* Move list + controls */}
-				<div className="flex min-w-[280px] flex-1 flex-col rounded-lg border border-neutral-200">
-					<div className="flex items-center justify-between border-b border-neutral-200 px-3 py-2">
-						<span className="text-xs font-medium text-neutral-500">
+				<div className="flex min-w-[280px] flex-1 flex-col rounded-lg border border-border">
+					<div className="flex items-center justify-between border-b border-border px-3 py-2">
+						<span className="text-xs font-medium text-muted-foreground">
 							Moves{" "}
 							{hasAnalysis && (
-								<span className="text-neutral-400">· classified</span>
+								<span className="text-muted-foreground">· classified</span>
 							)}
 						</span>
 						<div className="flex gap-1">
@@ -291,7 +308,7 @@ export default function GameReviewPage() {
 
 					{/* Legend */}
 					{hasAnalysis && (
-						<div className="flex flex-wrap gap-2 border-t border-neutral-200 px-3 py-2">
+						<div className="flex flex-wrap gap-2 border-t border-border px-3 py-2">
 							{(Object.keys(CLASSIFICATION_STYLES) as Classification[]).map(
 								(c) => {
 									const s = CLASSIFICATION_STYLES[c];
@@ -330,12 +347,14 @@ function EvalBar({ whiteWin }: { whiteWin: number | null }) {
 	// whiteWin is 0..100 (white win %). null → unknown (split bar).
 	const pct = whiteWin ?? 50;
 	return (
-		<div className="relative w-4 self-stretch overflow-hidden rounded-sm bg-neutral-900">
+		<div className="relative w-6 self-stretch overflow-hidden rounded-sm bg-foreground">
 			{/* White portion grows from the bottom. */}
 			<div
-				className="absolute inset-x-0 bottom-0 bg-white transition-[height] duration-200"
+				className="absolute inset-x-0 bottom-0 bg-background transition-[height] duration-200"
 				style={{ height: `${pct}%` }}
 			/>
+			{/* Center line */}
+			<div className="absolute inset-x-0 top-1/2 h-px bg-border/50" />
 		</div>
 	);
 }
@@ -384,8 +403,8 @@ function MoveList({
 		<table className="w-full border-collapse text-sm">
 			<tbody>
 				{rows.map((row) => (
-					<tr key={row.num} className="odd:bg-neutral-50">
-						<td className="w-8 py-1 pl-2 pr-1 text-right text-xs text-neutral-400">
+					<tr key={row.num} className="odd:bg-muted/50">
+						<td className="w-8 py-1 pl-2 pr-1 text-right text-xs text-muted-foreground">
 							{row.num}.
 						</td>
 						<PlyCell
@@ -424,7 +443,7 @@ function PlyCell({
 				type="button"
 				onClick={() => onSelect(entry.ply)}
 				className={`flex w-full items-center gap-1.5 rounded px-1.5 py-0.5 text-left font-mono text-[13px] ${
-					active ? "bg-blue-100 text-blue-900" : "hover:bg-neutral-100"
+					active ? "bg-chess-cream text-chess-brown" : "hover:bg-muted"
 				}`}
 			>
 				{style && (
@@ -437,7 +456,7 @@ function PlyCell({
 				)}
 				<span>{entry.pos.san}</span>
 				{ev && (
-					<span className="ml-auto text-[10px] text-neutral-400">{ev}</span>
+					<span className="ml-auto text-[10px] text-muted-foreground">{ev}</span>
 				)}
 			</button>
 		</td>

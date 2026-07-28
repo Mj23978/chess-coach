@@ -13,3 +13,4 @@ export type { TimeControl } from "./TimeControlGrid";
 export { TimeControlGrid } from "./TimeControlGrid";
 export { TrainingSuggestionsCard } from "./TrainingSuggestionsCard";
 export { WelcomeCard } from "./WelcomeCard";
+export { FirstRunOnboarding } from "./FirstRunOnboarding";

@@ -112,6 +112,13 @@ These features are complete and shipped. Plan files are in `.project/archive/`.
 | T15-007 | Wire Settings page to use SettingsContext | DONE | — |
 | T15-008 | Persist engine defaults | DONE | — |
 
+> **Note:** Settings table missing from DB migration (`0000_majestic_scream.sql`).
+> Fixed by adding localStorage persistence to SettingsContext — theme now works
+> immediately. Owner must run `bun run db:generate` to add the settings table
+> to migrations for full API persistence. All pages updated to use semantic
+> color tokens (bg-background, text-foreground, etc.) instead of hardcoded
+> neutral-* palette for proper dark mode support.
+
 #### PLAN-016: Board Tabs Persistence ✅
 > Tabs don't survive navigation. "+" opens modal instead of new tab.
 

@@ -118,11 +118,18 @@ function EmptyState({
   return (
     <div className="mx-auto max-w-3xl p-8">
       <header className="mb-6">
-        <h1 className="text-2xl font-bold">Board</h1>
-        <p className="text-sm text-neutral-500">
-          Play games, analyze positions, and review your openings. Open a new
-          tab to get started.
-        </p>
+        <div className="flex items-start gap-3">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-chess-brown/10">
+            <span className="text-2xl">♚</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Board</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Play games, analyze positions, and review your openings. Open a new
+              tab to get started.
+            </p>
+          </div>
+        </div>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -134,9 +141,10 @@ function EmptyState({
         />
         <PickCard
           icon={<FileText className="size-5" />}
-          title="Enter FEN"
+          title="Enter Position"
           description="Load a custom position to play from."
           onClick={() => onPick("fen")}
+          tooltip="FEN (Forsyth-Edwards Notation) is a way to describe a chess position"
         />
         <PickCard
           icon={<Search className="size-5" />}
@@ -147,8 +155,8 @@ function EmptyState({
         />
         <PickCard
           icon={<PencilRuler className="size-5" />}
-          title="Import PGN"
-          description="Paste a game to review move-by-move."
+          title="Import Game"
+          description="Paste a chess game to review move-by-move."
           disabled
           badge="Use Import"
         />
@@ -164,6 +172,7 @@ interface PickCardProps {
   onClick?: () => void;
   disabled?: boolean;
   badge?: string;
+  tooltip?: string;
 }
 
 function PickCard({
@@ -173,29 +182,31 @@ function PickCard({
   onClick,
   disabled,
   badge,
+  tooltip,
 }: PickCardProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-start gap-3 rounded-lg border border-neutral-200 p-4 text-left transition-colors ${
+      title={tooltip}
+      className={`flex items-start gap-3 rounded-lg border border-border p-4 text-left transition-all ${
         disabled
           ? "cursor-not-allowed opacity-60"
-          : "hover:border-blue-300 hover:bg-blue-50/40"
+          : "hover:border-chess-brown/20 hover:bg-chess-cream/50 hover:shadow-sm"
       }`}
     >
-      <span className="mt-0.5 text-neutral-700">{icon}</span>
+      <span className="mt-0.5 text-foreground">{icon}</span>
       <span className="flex-1">
         <span className="flex items-center gap-2">
-          <span className="font-semibold text-neutral-900">{title}</span>
+          <span className="font-semibold text-foreground">{title}</span>
           {badge && (
-            <span className="rounded-full bg-neutral-200 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-neutral-600">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
               {badge}
             </span>
           )}
         </span>
-        <span className="mt-0.5 block text-xs text-neutral-500">
+        <span className="mt-0.5 block text-xs text-muted-foreground">
           {description}
         </span>
       </span>

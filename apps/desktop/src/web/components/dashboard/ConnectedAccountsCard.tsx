@@ -51,7 +51,7 @@ export function ConnectedAccountsCard() {
 				/>
 				<AccountRow
 					name="Lichess"
-					dotClass="bg-neutral-800"
+					dotClass="bg-foreground"
 					detail={
 						lichess
 							? `${lichess.username} · ${lichess.gamesCount} games`
@@ -76,12 +76,12 @@ function AccountRow({
 	connected: boolean;
 }) {
 	return (
-		<div className="flex items-center justify-between rounded-md border border-neutral-200 px-3 py-2">
+		<div className="flex items-center justify-between rounded-md border border-border px-3 py-2">
 			<div className="flex items-center gap-2.5">
 				<span className={`size-2.5 rounded-full ${dotClass}`} />
 				<div>
 					<p className="text-sm font-medium">{name}</p>
-					<p className="text-xs text-neutral-500">{detail}</p>
+					<p className="text-xs text-muted-foreground">{detail}</p>
 				</div>
 			</div>
 			{!connected && (

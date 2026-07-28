@@ -24,6 +24,8 @@ import { Button } from "@repo/ui/components/button";
 import { FileCard, FileDrawer, CreateFileModal } from "../components/files";
 import { GenericHeader, type SortOption } from "../components/databases";
 import { PageContainer } from "../components/layout";
+import { ErrorState } from "../components/ui";
+import { ViewToggle } from "../components/ui";
 import { fetchFiles, deleteFile, type FileDTO, type FileType } from "../lib/api";
 
 type ViewMode = "grid" | "list";
@@ -57,6 +59,7 @@ export default function FilesPage() {
     data: files,
     isLoading,
     error,
+    refetch,
   } = useQuery<FileDTO[]>({
     queryKey: ["files"],
     queryFn: fetchFiles,
@@ -141,7 +144,7 @@ export default function FilesPage() {
             className={`flex items-center gap-3 rounded-xl border p-3 text-left transition-all ${
               typeFilter === type
                 ? `border-${color}-300 bg-${color}-50 ring-1 ring-${color}-200`
-                : "border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-sm"
+                : "border-border bg-background hover:border-border hover:shadow-sm"
             }`}
           >
             <div className={`flex size-9 items-center justify-center rounded-lg bg-${color}-100 text-${color}-600`}>
@@ -149,7 +152,7 @@ export default function FilesPage() {
             </div>
             <div>
               <div className="text-sm font-medium">{label}</div>
-              <div className="text-xs text-neutral-500">
+              <div className="text-xs text-muted-foreground">
                 {typeCounts[type]} file{typeCounts[type] === 1 ? "" : "s"}
               </div>
             </div>
@@ -159,7 +162,7 @@ export default function FilesPage() {
 
       {/* View toggle + count */}
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
+        <div className="flex gap-1 rounded-lg border border-border p-1">
           <ViewToggle
             mode="grid"
             active={view === "grid"}
@@ -171,7 +174,7 @@ export default function FilesPage() {
             onClick={() => setView("list")}
           />
         </div>
-        <span className="text-sm text-neutral-500">
+        <span className="text-sm text-muted-foreground">
           {visible.length} file{visible.length === 1 ? "" : "s"}
           {search && files && visible.length !== files.length && (
             <> of {files.length}</>
@@ -182,7 +185,7 @@ export default function FilesPage() {
               <button
                 type="button"
                 onClick={() => setTypeFilter(null)}
-                className="ml-1 text-blue-600 hover:underline"
+                className="ml-1 text-primary hover:underline"
               >
                 clear filter
               </button>
@@ -193,14 +196,17 @@ export default function FilesPage() {
 
       {/* States */}
       {isLoading && (
-        <p className="py-12 text-center text-sm text-neutral-500">
+        <p className="py-12 text-center text-sm text-muted-foreground">
           Loading files…
         </p>
       )}
       {error && (
-        <p className="py-12 text-center text-sm text-red-600">
-          Failed to load files: {String(error)}
-        </p>
+        <ErrorState
+          title="Couldn't load files"
+          description="We had trouble loading your files. Please try again."
+          detail={String(error)}
+          onRetry={() => refetch()}
+        />
       )}
       {!isLoading && !error && visible.length === 0 && (
         <EmptyState
@@ -266,73 +272,6 @@ export default function FilesPage() {
 // Small helpers
 // ---------------------------------------------------------------------------
 
-function ViewToggle({
-  mode,
-  active,
-  onClick,
-}: {
-  mode: ViewMode;
-  active: boolean;
-  onClick: () => void;
-}) {
-  const Icon = mode === "grid" ? GridIcon : ListIcon;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center justify-center rounded px-2 py-1 text-sm transition-colors ${
-        active
-          ? "bg-neutral-100 text-neutral-900"
-          : "text-neutral-500 hover:bg-neutral-50"
-      }`}
-      aria-label={`${mode} view`}
-      aria-pressed={active}
-    >
-      <Icon className="size-4" />
-    </button>
-  );
-}
-
-function GridIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
-    </svg>
-  );
-}
-
-function ListIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="8" y1="6" x2="21" y2="6" />
-      <line x1="8" y1="12" x2="21" y2="12" />
-      <line x1="8" y1="18" x2="21" y2="18" />
-      <circle cx="3.5" cy="6" r="1" />
-      <circle cx="3.5" cy="12" r="1" />
-      <circle cx="3.5" cy="18" r="1" />
-    </svg>
-  );
-}
-
 function EmptyState({
   hasAny,
   hasFilter,
@@ -345,16 +284,16 @@ function EmptyState({
   onClearFilter: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-neutral-300 p-12 text-center">
-      <FolderOpen className="mx-auto mb-4 size-12 text-neutral-300" />
-      <h3 className="mb-2 font-medium text-neutral-700">
+    <div className="rounded-xl border border-dashed border-border p-12 text-center">
+      <FolderOpen className="mx-auto mb-4 size-12 text-muted-foreground/50" />
+      <h3 className="mb-2 font-medium text-foreground">
         {hasFilter
           ? "No files match your search"
           : hasAny
             ? "No files of this type"
             : "No files imported"}
       </h3>
-      <p className="mb-4 text-sm text-neutral-500">
+      <p className="mb-4 text-sm text-muted-foreground">
         {hasFilter
           ? "Try a different search term or clear the filter."
           : hasAny

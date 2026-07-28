@@ -151,7 +151,7 @@ export function AddAccountModal({ onClose, onSuccess }: AddAccountModalProps) {
 							<PlatformChoice
 								name="Lichess"
 								desc="OAuth sign-in"
-								className="bg-neutral-800"
+								className="bg-foreground"
 								onClick={() => setPlatform("lichess")}
 							/>
 						</div>
@@ -172,12 +172,12 @@ export function AddAccountModal({ onClose, onSuccess }: AddAccountModalProps) {
 										if (e.key === "Enter" && username.trim()) connectChessCom();
 									}}
 								/>
-								<p className="mt-1 text-xs text-neutral-500">
+								<p className="mt-1 text-xs text-muted-foreground/500">
 									We use the public Chess.com API — your password is never
 									requested.
 								</p>
 							</div>
-							{error && <p className="text-sm text-red-600">{error}</p>}
+							{error && <p className="text-sm text-destructive">{error}</p>}
 							<div className="flex justify-between">
 								<Button variant="outline" onClick={() => setPlatform(null)}>
 									Back
@@ -196,23 +196,23 @@ export function AddAccountModal({ onClose, onSuccess }: AddAccountModalProps) {
 						<div className="space-y-3">
 							{lichessWaiting ? (
 								<div className="space-y-2 text-center">
-									<p className="text-sm text-neutral-600">
+									<p className="text-sm text-muted-foreground">
 										Complete the sign-in in the opened Lichess window. This dialog
 										will close automatically once connected.
 									</p>
-									<p className="text-xs text-neutral-400">
+									<p className="text-xs text-muted-foreground">
 										Waiting for authorization…
 									</p>
 								</div>
 							) : (
 								<>
-									<p className="text-sm text-neutral-600">
+									<p className="text-sm text-muted-foreground">
 										You'll be redirected to lichess.org to authorize chess-coach to
 										read your games. We only request the{" "}
-										<code className="rounded bg-neutral-100 px-1">game:read</code>{" "}
+										<code className="rounded bg-muted px-1">game:read</code>{" "}
 										scope.
 									</p>
-									{error && <p className="text-sm text-red-600">{error}</p>}
+									{error && <p className="text-sm text-destructive">{error}</p>}
 									<div className="flex justify-between">
 										<Button variant="outline" onClick={() => setPlatform(null)}>
 											Back
@@ -253,7 +253,7 @@ function PlatformChoice({
 		<button
 			type="button"
 			onClick={onClick}
-			className="flex flex-col items-start gap-2 rounded-lg border border-neutral-200 p-4 text-left transition hover:border-neutral-400 hover:bg-neutral-50"
+			className="flex flex-col items-start gap-2 rounded-lg border border-border p-4 text-left transition hover:border-border hover:bg-muted/50"
 		>
 			<span
 				className={`flex h-8 w-8 items-center justify-center rounded-md text-white ${className}`}
@@ -261,7 +261,7 @@ function PlatformChoice({
 				♟
 			</span>
 			<span className="font-medium">{name}</span>
-			<span className="text-xs text-neutral-500">{desc}</span>
+			<span className="text-xs text-muted-foreground/500">{desc}</span>
 		</button>
 	);
 }

@@ -106,8 +106,8 @@ export const TOAST_MESSAGES = {
 
 /** Variant → Tailwind classes (overlaid on the design-system base). */
 const VARIANT_CLASS: Record<ToastVariant, string> = {
-	default: "border-neutral-200 bg-white text-neutral-900",
-	destructive: "border-red-300 bg-red-50 text-red-900",
+	default: "border-border bg-background text-foreground",
+	destructive: "border-destructive/30 bg-destructive/5 text-destructive",
 	success: "border-emerald-300 bg-emerald-50 text-emerald-900",
 	info: "border-blue-300 bg-blue-50 text-blue-900",
 };

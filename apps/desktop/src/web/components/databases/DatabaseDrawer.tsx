@@ -231,7 +231,7 @@ function DrawerBody({
       <div className="flex-1 space-y-5 overflow-y-auto p-4">
         {/* Description (editable) */}
         <div>
-          <Label className="mb-1.5 block text-xs font-medium text-neutral-500">
+          <Label className="mb-1.5 block text-xs font-medium text-muted-foreground/500">
             Description
           </Label>
           {editing ? (
@@ -243,9 +243,9 @@ function DrawerBody({
               rows={3}
             />
           ) : (
-            <p className="text-sm text-neutral-700">
+            <p className="text-sm text-foreground">
               {database.description || (
-                <span className="italic text-neutral-400">No description</span>
+                <span className="italic text-muted-foreground">No description</span>
               )}
             </p>
           )}
@@ -293,8 +293,8 @@ function DrawerBody({
         )}
 
         {/* Actions */}
-        <div className="space-y-2 border-t border-neutral-100 pt-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+        <div className="space-y-2 border-t border-border/50 pt-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/500">
             Actions
           </h4>
 
@@ -376,14 +376,14 @@ function DrawerBody({
         </div>
 
         {/* Danger zone */}
-        <div className="space-y-2 border-t border-neutral-100 pt-4">
-          <h4 className="text-xs font-semibold uppercase tracking-wide text-red-500">
+        <div className="space-y-2 border-t border-border/50 pt-4">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-destructive/70">
             Danger zone
           </h4>
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start text-red-600 hover:bg-red-50"
+            className="w-full justify-start text-destructive hover:bg-destructive/10"
             onClick={() => {
               if (
                 confirm(
@@ -401,7 +401,7 @@ function DrawerBody({
         </div>
 
         {(updateMut.isError || deleteMut.isError) && (
-          <p className="text-xs text-red-600">
+          <p className="text-xs text-destructive">
             {updateMut.error instanceof Error
               ? updateMut.error.message
               : deleteMut.error instanceof Error
@@ -425,12 +425,12 @@ function StatBox({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-      <div className="mb-1 flex items-center gap-1.5 text-xs text-neutral-500">
+    <div className="rounded-lg border border-border bg-muted/50 p-3">
+      <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground/500">
         {icon}
         {label}
       </div>
-      <div className="font-mono text-sm font-semibold text-neutral-800">
+      <div className="font-mono text-sm font-semibold text-foreground">
         {value}
       </div>
     </div>
@@ -453,43 +453,43 @@ function GamesList({
 }) {
   if (isLoading) {
     return (
-      <p className="px-2 py-3 text-xs text-neutral-500">Loading games…</p>
+      <p className="px-2 py-3 text-xs text-muted-foreground/500">Loading games…</p>
     );
   }
   if (error) {
     return (
-      <p className="px-2 py-3 text-xs text-red-600">
+      <p className="px-2 py-3 text-xs text-destructive">
         Failed to load games: {String(error)}
       </p>
     );
   }
   if (games.length === 0) {
     return (
-      <p className="px-2 py-3 text-xs text-neutral-500">
+      <p className="px-2 py-3 text-xs text-muted-foreground/500">
         This database has no games yet. Add some with the "Add games" button on
         the page.
       </p>
     );
   }
   return (
-    <div className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-neutral-100 p-1">
+    <div className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-border/50 p-1">
       {games.map((g) => (
         <div
           key={g.id}
-          className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-neutral-50"
+          className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted/50"
         >
           <div className="min-w-0 flex-1">
             <div className="truncate text-xs font-medium">
               {g.white || "?"} vs. {g.black || "?"}
             </div>
-            <div className="font-mono text-[10px] text-neutral-400">
+            <div className="font-mono text-[10px] text-muted-foreground">
               {g.result ?? "*"} · {formatRelative(g.createdAt)}
             </div>
           </div>
           <Button
             variant="ghost"
             size="sm"
-            className="size-6 p-0 text-neutral-400 hover:text-red-600"
+            className="size-6 p-0 text-muted-foreground hover:text-destructive"
             onClick={() => onRemove(g.id)}
             disabled={removing}
             aria-label="Remove game from database"

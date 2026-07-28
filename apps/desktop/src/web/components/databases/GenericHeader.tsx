@@ -7,7 +7,8 @@
  * "Add" button). It owns no data — the parent supplies the search/sort state
  * via props and callbacks.
  */
-import { Search } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Input } from "@repo/ui/components/input";
 import {
   Select,
@@ -62,23 +63,24 @@ export function GenericHeader({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           {backLink && (
-            <a
-              href={backLink.to}
-              className="text-xs text-blue-600 hover:underline"
+            <Link
+              to={backLink.to}
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-              ← {backLink.label}
-            </a>
+              <ChevronLeft className="size-3" />
+              {backLink.label}
+            </Link>
           )}
-          <div className="mt-1 flex items-center gap-3">
+          <div className={`${backLink ? "mt-2" : ""} flex items-center gap-3`}>
             {icon && (
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-chess-cream text-chess-brown">
                 {icon}
               </div>
             )}
             <div className="min-w-0">
-              <h1 className="truncate text-2xl font-bold">{title}</h1>
+              <h1 className="truncate text-2xl font-bold tracking-tight">{title}</h1>
               {subtitle && (
-                <p className="mt-0.5 text-sm text-neutral-500">{subtitle}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
               )}
             </div>
           </div>
@@ -87,7 +89,7 @@ export function GenericHeader({
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           {onSearchChange && (
             <div className="relative w-56">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 variant="minimal"
                 placeholder={searchPlaceholder}

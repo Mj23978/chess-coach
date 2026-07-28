@@ -59,7 +59,7 @@ export function TrainingSuggestionsCard() {
 		<Card className="h-full">
 			<CardHeader>
 				<CardTitle className="text-base">Suggestions</CardTitle>
-				<p className="text-xs text-neutral-500">
+				<p className="text-xs text-muted-foreground">
 					Quick wins to sharpen your play.
 				</p>
 			</CardHeader>
@@ -69,12 +69,12 @@ export function TrainingSuggestionsCard() {
 					return (
 						<div
 							key={s.id}
-							className="flex items-center gap-3 rounded-md border border-neutral-200 p-3"
+							className="flex items-center gap-3 rounded-md border border-border p-3"
 						>
-							<Icon className="size-5 shrink-0 text-neutral-500" />
+							<Icon className="size-5 shrink-0 text-muted-foreground" />
 							<div className="min-w-0 flex-1">
 								<p className="truncate text-sm font-medium">{s.title}</p>
-								<p className="truncate text-xs text-neutral-500">{s.detail}</p>
+								<p className="truncate text-xs text-muted-foreground">{s.detail}</p>
 							</div>
 							<Button asChild variant="outline" size="sm">
 								<Link to={s.to}>Open</Link>

@@ -108,7 +108,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
     >
       <div className="space-y-4">
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             Name
           </Label>
           <Input
@@ -120,7 +120,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             Type
           </Label>
           <Select value={type} onValueChange={(v) => setType(v as FileType)}>
@@ -137,7 +137,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             Description (optional)
           </Label>
           <Textarea
@@ -149,7 +149,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
         </div>
 
         {/* Tab switch: paste vs upload */}
-        <div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
+        <div className="flex gap-1 rounded-lg border border-border p-1">
           {(["paste", "upload"] as const).map((t) => (
             <button
               key={t}
@@ -157,8 +157,8 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
               onClick={() => setTab(t)}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded px-3 py-1.5 text-sm ${
                 tab === t
-                  ? "bg-neutral-100 font-medium"
-                  : "text-neutral-500 hover:bg-neutral-50"
+                  ? "bg-muted font-medium"
+                  : "text-muted-foreground hover:bg-muted/50"
               }`}
             >
               {t === "paste" ? (
@@ -178,7 +178,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
 
         {tab === "paste" ? (
           <div>
-            <Label className="mb-1 block text-xs font-medium text-neutral-600">
+            <Label className="mb-1 block text-xs font-medium text-muted-foreground">
               PGN (one or more games)
             </Label>
             <Textarea
@@ -191,7 +191,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
           </div>
         ) : (
           <div>
-            <Label className="mb-1 block text-xs font-medium text-neutral-600">
+            <Label className="mb-1 block text-xs font-medium text-muted-foreground">
               Select a .pgn file
             </Label>
             <input
@@ -211,7 +211,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
               {pgn ? "File loaded — click to change" : "Choose file…"}
             </Button>
             {pgn && (
-              <p className="mt-2 text-xs text-neutral-500">
+              <p className="mt-2 text-xs text-muted-foreground">
                 {pgn.length.toLocaleString()} characters loaded. You can also
                 edit the PGN below before importing.
               </p>
@@ -227,7 +227,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
           </div>
         )}
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
     </ModalShell>
   );

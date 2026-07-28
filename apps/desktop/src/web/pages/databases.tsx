@@ -24,6 +24,8 @@ import {
   type SortOption,
 } from "../components/databases";
 import { PageContainer } from "../components/layout";
+import { ErrorState } from "../components/ui";
+import { ViewToggle } from "../components/ui";
 import {
   fetchDatabases,
   deleteDatabase,
@@ -44,7 +46,7 @@ export default function DatabasesPage() {
   const qc = useQueryClient();
 
   // List query
-  const { data: databases, isLoading, error } = useQuery<DatabaseDTO[]>({
+  const { data: databases, isLoading, error, refetch } = useQuery<DatabaseDTO[]>({
     queryKey: ["databases"],
     queryFn: fetchDatabases,
   });
@@ -116,7 +118,7 @@ export default function DatabasesPage() {
 
       {/* View toggle + count */}
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex gap-1 rounded-lg border border-neutral-200 p-1">
+        <div className="flex gap-1 rounded-lg border border-border p-1">
           <ViewToggle
             mode="grid"
             active={view === "grid"}
@@ -128,7 +130,7 @@ export default function DatabasesPage() {
             onClick={() => setView("list")}
           />
         </div>
-        <span className="text-sm text-neutral-500">
+        <span className="text-sm text-muted-foreground">
           {visible.length} database{visible.length === 1 ? "" : "s"}
           {search && databases && visible.length !== databases.length && (
             <> of {databases.length}</>
@@ -138,14 +140,17 @@ export default function DatabasesPage() {
 
       {/* States */}
       {isLoading && (
-        <p className="py-12 text-center text-sm text-neutral-500">
+        <p className="py-12 text-center text-sm text-muted-foreground">
           Loading databases…
         </p>
       )}
       {error && (
-        <p className="py-12 text-center text-sm text-red-600">
-          Failed to load databases: {String(error)}
-        </p>
+        <ErrorState
+          title="Couldn't load databases"
+          description="We had trouble loading your databases. Please try again."
+          detail={String(error)}
+          onRetry={() => refetch()}
+        />
       )}
       {!isLoading && !error && visible.length === 0 && (
         <EmptyState
@@ -224,73 +229,6 @@ export default function DatabasesPage() {
 // Small view helpers
 // ---------------------------------------------------------------------------
 
-function ViewToggle({
-  mode,
-  active,
-  onClick,
-}: {
-  mode: ViewMode;
-  active: boolean;
-  onClick: () => void;
-}) {
-  const Icon = mode === "grid" ? GridIcon : ListIcon;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex items-center justify-center rounded px-2 py-1 text-sm transition-colors ${
-        active
-          ? "bg-neutral-100 text-neutral-900"
-          : "text-neutral-500 hover:bg-neutral-50"
-      }`}
-      aria-label={`${mode} view`}
-      aria-pressed={active}
-    >
-      <Icon className="size-4" />
-    </button>
-  );
-}
-
-function GridIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
-    </svg>
-  );
-}
-
-function ListIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="8" y1="6" x2="21" y2="6" />
-      <line x1="8" y1="12" x2="21" y2="12" />
-      <line x1="8" y1="18" x2="21" y2="18" />
-      <circle cx="3.5" cy="6" r="1" />
-      <circle cx="3.5" cy="12" r="1" />
-      <circle cx="3.5" cy="18" r="1" />
-    </svg>
-  );
-}
-
 function EmptyState({
   hasAny,
   onCreate,
@@ -299,12 +237,12 @@ function EmptyState({
   onCreate: () => void;
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-neutral-300 p-12 text-center">
-      <Database className="mx-auto mb-4 size-12 text-neutral-300" />
-      <h3 className="mb-2 font-medium text-neutral-700">
+    <div className="rounded-xl border border-dashed border-border p-12 text-center">
+      <Database className="mx-auto mb-4 size-12 text-muted-foreground/50" />
+      <h3 className="mb-2 font-medium text-foreground">
         {hasAny ? "No databases match your search" : "No databases yet"}
       </h3>
-      <p className="mb-4 text-sm text-neutral-500">
+      <p className="mb-4 text-sm text-muted-foreground">
         {hasAny
           ? "Try a different search term."
           : "Create a database to organize your games by theme, opening, or event."}

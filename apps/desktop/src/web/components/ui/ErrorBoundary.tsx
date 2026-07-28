@@ -73,13 +73,13 @@ function ErrorFallback({
 }) {
 	return (
 		<div className="flex flex-col items-center justify-center p-8 text-center">
-			<div className="mb-4 flex size-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+			<div className="mb-4 flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
 				<AlertTriangle className="size-6" />
 			</div>
-			<h2 className="mb-2 text-lg font-semibold text-neutral-900">
+			<h2 className="mb-2 text-lg font-semibold text-foreground">
 				Something went wrong
 			</h2>
-			<p className="mb-4 max-w-md text-sm text-neutral-600">
+			<p className="mb-4 max-w-md text-sm text-muted-foreground">
 				{error?.message ?? "An unexpected error occurred. Please try again."}
 			</p>
 			<div className="flex gap-2">
@@ -106,11 +106,11 @@ export function BoardErrorBoundary({ children }: { children: ReactNode }) {
 		<ErrorBoundary
 			fallback={
 				<div className="flex flex-col items-center justify-center p-8 text-center">
-					<div className="mb-4 flex size-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+					<div className="mb-4 flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
 						<AlertTriangle className="size-6" />
 					</div>
 					<h2 className="mb-2 text-lg font-semibold">Board Error</h2>
-					<p className="mb-4 text-sm text-neutral-600">
+					<p className="mb-4 text-sm text-muted-foreground">
 						The board couldn't be displayed. The position may be invalid.
 					</p>
 					<Button onClick={() => window.location.reload()}>
@@ -165,13 +165,13 @@ export function QueryErrorFallback({
 
 	return (
 		<div className="flex flex-col items-center justify-center p-8 text-center">
-			<div className="mb-4 flex size-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+			<div className="mb-4 flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
 				<AlertTriangle className="size-6" />
 			</div>
-			<h2 className="mb-2 text-lg font-semibold text-neutral-900">
+			<h2 className="mb-2 text-lg font-semibold text-foreground">
 				{isNetworkError ? "Connection error" : "Failed to load"}
 			</h2>
-			<p className="mb-4 max-w-md text-sm text-neutral-600">
+			<p className="mb-4 max-w-md text-sm text-muted-foreground">
 				{isNetworkError
 					? "Couldn't connect to the server. Please check your connection."
 					: error.message}

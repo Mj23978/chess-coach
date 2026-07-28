@@ -14,7 +14,7 @@ export function Skeleton({ className }: SkeletonProps) {
 	return (
 		<div
 			className={cn(
-				"animate-pulse rounded-md bg-neutral-200",
+				"animate-pulse rounded-md bg-muted",
 				className,
 			)}
 		/>
@@ -24,7 +24,7 @@ export function Skeleton({ className }: SkeletonProps) {
 /** Card-shaped skeleton for grid views (databases, files, engines). */
 export function CardSkeleton() {
 	return (
-		<div className="rounded-xl border border-neutral-200 bg-white p-4">
+		<div className="rounded-xl border border-border bg-background p-4">
 			<div className="mb-3 flex items-center gap-3">
 				<Skeleton className="size-11 rounded-lg" />
 				<div className="flex-1 space-y-2">
@@ -47,7 +47,7 @@ export function CardSkeleton() {
 /** List row skeleton for list views. */
 export function ListRowSkeleton() {
 	return (
-		<div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3">
+		<div className="flex items-center gap-3 rounded-lg border border-border bg-background px-4 py-3">
 			<Skeleton className="size-9 rounded-lg" />
 			<div className="flex-1 space-y-2">
 				<Skeleton className="h-4 w-1/3" />
@@ -64,7 +64,7 @@ export function ListRowSkeleton() {
 /** Table row skeleton for games table. */
 export function TableRowSkeleton() {
 	return (
-		<tr className="border-b border-neutral-100">
+		<tr className="border-b border-border/50">
 			{Array.from({ length: 8 }).map((_, i) => (
 				<td key={i} className="px-4 py-3">
 					<Skeleton className="h-4 w-full" />
@@ -103,7 +103,7 @@ export function GameReviewSkeleton() {
 					<Skeleton className="w-4 self-stretch rounded-sm" />
 					<Skeleton className="size-[480px] rounded" />
 				</div>
-				<div className="min-w-[280px] flex-1 space-y-2 rounded-lg border border-neutral-200 p-3">
+				<div className="min-w-[280px] flex-1 space-y-2 rounded-lg border border-border p-3">
 					<Skeleton className="h-8 w-full" />
 					{Array.from({ length: 12 }).map((_, i) => (
 						<div key={i} className="flex gap-4">

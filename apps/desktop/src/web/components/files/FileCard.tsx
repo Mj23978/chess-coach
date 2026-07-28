@@ -77,9 +77,9 @@ export function FileCard({
 						onOpen();
 					}
 				}}
-				className="flex cursor-pointer items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
+				className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 transition-colors hover:border-border hover:bg-muted/50"
 			>
-				<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
+				<div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
 					<Icon className="size-4" />
 				</div>
 				<div className="min-w-0 flex-1">
@@ -88,12 +88,12 @@ export function FileCard({
 						<TypeBadge type={file.type} />
 					</div>
 					{file.description && (
-						<p className="truncate text-xs text-neutral-500">
+						<p className="truncate text-xs text-muted-foreground">
 							{file.description}
 						</p>
 					)}
 				</div>
-				<div className="flex shrink-0 items-center gap-3 font-mono text-xs text-neutral-500">
+				<div className="flex shrink-0 items-center gap-3 font-mono text-xs text-muted-foreground">
 					<span>{file.gameCount} games</span>
 					<span>·</span>
 					<span>{formatBytes(file.storageBytes)}</span>
@@ -115,13 +115,13 @@ export function FileCard({
 					onOpen();
 				}
 			}}
-			className="group relative flex cursor-pointer flex-col rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-md"
+			className="group relative flex cursor-pointer flex-col rounded-xl border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:border-border hover:shadow-md"
 		>
 			<div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
 				<CardMenu onRename={onRename} onDelete={onDelete} onOpen={onOpen} />
 			</div>
 
-			<div className="mb-3 flex size-11 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
+			<div className="mb-3 flex size-11 items-center justify-center rounded-lg bg-muted text-muted-foreground">
 				<Icon className="size-5" />
 			</div>
 
@@ -130,20 +130,20 @@ export function FileCard({
 				<TypeBadge type={file.type} />
 			</div>
 
-			<p className="mb-3 line-clamp-2 min-h-[2.5rem] text-xs text-neutral-500">
+			<p className="mb-3 line-clamp-2 min-h-[2.5rem] text-xs text-muted-foreground">
 				{file.description || "No description"}
 			</p>
 
 			<div className="flex items-center gap-2 text-xs">
-				<span className="rounded-md bg-neutral-100 px-2 py-1 font-mono text-neutral-600">
+				<span className="rounded-md bg-muted px-2 py-1 font-mono text-muted-foreground">
 					{file.gameCount} games
 				</span>
-				<span className="rounded-md bg-neutral-100 px-2 py-1 font-mono text-neutral-600">
+				<span className="rounded-md bg-muted px-2 py-1 font-mono text-muted-foreground">
 					{formatBytes(file.storageBytes)}
 				</span>
 			</div>
 
-			<div className="mt-3 border-t border-neutral-100 pt-2 text-xs text-neutral-400">
+			<div className="mt-3 border-t border-border/50 pt-2 text-xs text-muted-foreground">
 				Updated {formatRelative(file.updatedAt)}
 			</div>
 		</div>
@@ -193,7 +193,7 @@ function CardMenu({
 				{onDelete && (
 					<DropdownMenuItem
 						onClick={onDelete}
-						className="text-red-600 focus:text-red-600"
+						className="text-destructive focus:text-destructive"
 					>
 						<Trash2 className="mr-2 size-3.5" />
 						Delete

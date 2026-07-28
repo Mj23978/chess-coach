@@ -50,11 +50,14 @@ export function AppShell({
 	});
 
 	return (
-		<div className="flex h-screen flex-col overflow-hidden">
+		<div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
 			{/* Window drag region — Electrobun provides native title bar controls.
 			    This thin strip lets the user drag the window by grabbing any part
 			    of the top area that isn't covered by interactive elements. */}
-			<div className="h-6 shrink-0 app-drag" />
+			{/* Window drag region — Electrobun provides native title bar controls.
+			    This thin strip lets the user drag the window by grabbing any part
+			    of the top area that isn't covered by interactive elements. */}
+			<div className="h-6 shrink-0 app-drag bg-background" />
 
 			{/* Main content area with sidebar */}
 			<SidebarProvider
@@ -91,31 +94,31 @@ function KeybindingsModal({ onClose }: { onClose: () => void }) {
 				<button
 					type="button"
 					onClick={onClose}
-					className="rounded bg-neutral-100 px-4 py-2 text-sm hover:bg-neutral-200"
+					className="rounded bg-muted px-4 py-2 text-sm hover:bg-muted/80"
 				>
 					Close
 				</button>
 			}
 		>
-			<p className="text-sm text-neutral-600">
+			<p className="text-sm text-muted-foreground">
 				Keybindings configuration will be implemented in Phase 8.
 			</p>
 			<div className="space-y-2 text-sm">
 				<div className="flex justify-between gap-8">
 					<span>Toggle Sidebar</span>
-					<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
+					<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
 						Ctrl+B
 					</kbd>
 				</div>
 				<div className="flex justify-between gap-8">
 					<span>Global Search</span>
-					<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
+					<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
 						Ctrl+F
 					</kbd>
 				</div>
 				<div className="flex justify-between gap-8">
 					<span>Flip Board</span>
-					<kbd className="rounded bg-neutral-100 px-2 py-0.5 font-mono text-xs">
+					<kbd className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
 						F
 					</kbd>
 				</div>

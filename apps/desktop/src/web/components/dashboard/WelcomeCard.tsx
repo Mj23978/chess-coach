@@ -31,15 +31,22 @@ export function WelcomeCard({ onImportPgn, greeting }: WelcomeCardProps) {
 	const navigate = useNavigate();
 
 	return (
-		<Card>
+		<Card className="border-chess-brown/10 bg-gradient-to-br from-chess-cream to-background">
 			<CardHeader>
-				<CardTitle className="text-2xl font-bold">
-					{greeting ?? "Welcome to Chess Coach"}
-				</CardTitle>
-				<p className="text-sm text-neutral-500">
-					Play a quick game, analyze your latest match, or import a PGN to find
-					your mistakes.
-				</p>
+				<div className="flex items-start gap-3">
+					<div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-chess-brown/10">
+						<span className="text-2xl">♚</span>
+					</div>
+					<div>
+						<CardTitle className="text-2xl font-bold tracking-tight">
+							{greeting ?? "Welcome to Chess Coach"}
+						</CardTitle>
+						<p className="mt-1 text-sm text-muted-foreground">
+							Play a quick game, analyze your latest match, or import a PGN to find
+							your mistakes.
+						</p>
+					</div>
+				</div>
 			</CardHeader>
 			<CardContent>
 				<div className="flex flex-wrap gap-2">

@@ -49,6 +49,7 @@ import {
 	userAcpl,
 	userSide,
 } from "../../lib/dashboard-stats";
+import { ErrorState } from "../ui";
 
 type SortKey = "opponent" | "result" | "accuracy" | "acpl" | "moves" | "date";
 type SortDir = "asc" | "desc";
@@ -104,19 +105,24 @@ function GamesSubTable({
 	}
 
 	if (isLoading) {
-		return <p className="px-4 py-8 text-sm text-neutral-500">Loading games…</p>;
+		return <p className="px-4 py-8 text-sm text-muted-foreground/500">Loading games…</p>;
 	}
 	if (error) {
 		return (
-			<p className="px-4 py-8 text-sm text-red-600">
-				Failed to load games: {String(error)}
-			</p>
+			<div className="px-4">
+				<ErrorState
+					title="Couldn't load games"
+					description="We had trouble loading your recent games. Please try again."
+					detail={String(error)}
+					onRetry={onRetry}
+				/>
+			</div>
 		);
 	}
 	if (games.length === 0) {
 		return (
-			<div className="rounded-md border border-dashed border-neutral-300 p-8 text-center">
-				<p className="text-sm text-neutral-500">{emptyMessage}</p>
+			<div className="rounded-md border border-dashed border-border p-8 text-center">
+				<p className="text-sm text-muted-foreground/500">{emptyMessage}</p>
 				{emptyAction === "connect" && (
 					<Button asChild variant="outline" size="sm" className="mt-3">
 						<Link to="/accounts">Sync from Accounts</Link>
@@ -131,7 +137,7 @@ function GamesSubTable({
 			{/* Filter bar (D2-008) */}
 			<div className="flex flex-wrap items-center gap-2 px-4 py-2">
 				<div className="relative max-w-xs flex-1">
-					<Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-neutral-400" />
+					<Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 					<Input
 						variant="minimal"
 						placeholder="Search opponent…"
@@ -214,7 +220,7 @@ function GamesSubTable({
 						return (
 							<TableRow
 								key={g.id}
-								className="cursor-pointer hover:bg-neutral-50"
+								className="cursor-pointer hover:bg-muted/50"
 							>
 								<TableCell className="max-w-[200px] truncate font-medium">
 									<Link to={`/games/${g.id}`} className="block truncate">
@@ -228,7 +234,7 @@ function GamesSubTable({
 									<span className={resultToneClass(result.tone)}>
 										{result.text}
 									</span>
-									<span className="ml-1.5 font-mono text-xs text-neutral-400">
+									<span className="ml-1.5 font-mono text-xs text-muted-foreground">
 										{g.result ?? "*"}
 									</span>
 								</TableCell>
@@ -238,10 +244,10 @@ function GamesSubTable({
 								<TableCell className="font-mono text-xs">
 									{acpl !== null ? acpl.toFixed(1) : "—"}
 								</TableCell>
-								<TableCell className="font-mono text-xs text-neutral-500">
+								<TableCell className="font-mono text-xs text-muted-foreground/500">
 									{moves !== null ? Math.ceil(moves / 2) : "—"}
 								</TableCell>
-								<TableCell className="text-xs text-neutral-500">
+								<TableCell className="text-xs text-muted-foreground/500">
 									{formatDate(g.createdAt)}
 								</TableCell>
 								<TableCell>
@@ -275,7 +281,7 @@ function GamesSubTable({
 			</Table>
 
 			{analyzeMut.isError && (
-				<p className="px-4 py-2 text-xs text-red-600">
+				<p className="px-4 py-2 text-xs text-destructive">
 					{analyzeMut.error instanceof Error
 						? analyzeMut.error.message
 						: "Analysis failed"}
@@ -326,10 +332,10 @@ function SortableHead({
 			<button
 				type="button"
 				onClick={onClick}
-				className="inline-flex items-center gap-1 text-left font-medium hover:text-neutral-900"
+				className="inline-flex items-center gap-1 text-left font-medium hover:text-foreground"
 			>
 				{label}
-				<Icon className="size-3 text-neutral-400" />
+				<Icon className="size-3 text-muted-foreground" />
 			</button>
 		</TableHead>
 	);
@@ -343,8 +349,8 @@ function ColorChip({ side }: { side: "white" | "black" }) {
 			title={side === "white" ? "Played White" : "Played Black"}
 			className={`inline-flex size-4 items-center justify-center rounded-full border text-[9px] font-bold ${
 				side === "white"
-					? "border-neutral-300 bg-white text-neutral-700"
-					: "border-neutral-700 bg-neutral-900 text-white"
+					? "border-border bg-background text-foreground"
+					: "border-border bg-foreground text-white"
 			}`}
 		>
 			{side === "white" ? "W" : "B"}
@@ -359,9 +365,9 @@ function resultToneClass(tone: "win" | "loss" | "draw" | "unknown"): string {
 		case "loss":
 			return "text-rose-600 font-medium";
 		case "draw":
-			return "text-neutral-500";
+			return "text-muted-foreground/500";
 		default:
-			return "text-neutral-400";
+			return "text-muted-foreground";
 	}
 }
 
@@ -414,6 +420,8 @@ export interface GamesTableProps {
 	error: unknown;
 	/** Active tab value; defaults to "local". */
 	defaultTab?: string;
+	/** Retry callback shown in the error state. */
+	onRetry?: () => void;
 }
 
 export function GamesTable({
@@ -421,6 +429,7 @@ export function GamesTable({
 	isLoading,
 	error,
 	defaultTab = "local",
+	onRetry,
 }: GamesTableProps) {
 	const local = games.filter((g) => (g.source ?? "local") === "local");
 	const chesscom = games.filter((g) => g.source === "chesscom");

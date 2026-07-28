@@ -90,7 +90,7 @@ export function CreateDatabaseModal({
     >
       <div className="space-y-4">
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             Name
           </Label>
           <Input
@@ -102,7 +102,7 @@ export function CreateDatabaseModal({
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             Type
           </Label>
           <Select
@@ -121,7 +121,7 @@ export function CreateDatabaseModal({
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             Description (optional)
           </Label>
           <Textarea
@@ -132,7 +132,7 @@ export function CreateDatabaseModal({
           />
         </div>
 
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
       </div>
     </ModalShell>
   );
@@ -235,7 +235,7 @@ export function AddGamesModal({
       }
     >
       {/* Tab switch */}
-      <div className="mb-4 flex gap-1 rounded-lg border border-neutral-200 p-1">
+      <div className="mb-4 flex gap-1 rounded-lg border border-border p-1">
         {(["paste", "existing"] as const).map((t) => (
           <button
             key={t}
@@ -243,8 +243,8 @@ export function AddGamesModal({
             onClick={() => setTab(t)}
             className={`flex-1 rounded px-3 py-1.5 text-sm ${
               tab === t
-                ? "bg-neutral-100 font-medium"
-                : "text-neutral-500 hover:bg-neutral-50"
+                ? "bg-muted font-medium"
+                : "text-muted-foreground/500 hover:bg-muted/50"
             }`}
           >
             {t === "paste" ? "Paste PGN" : "Existing games"}
@@ -254,7 +254,7 @@ export function AddGamesModal({
 
       {tab === "paste" ? (
         <div>
-          <Label className="mb-1 block text-xs font-medium text-neutral-600">
+          <Label className="mb-1 block text-xs font-medium text-muted-foreground">
             PGN (one or more games, separated by blank lines)
           </Label>
           <Textarea
@@ -267,15 +267,15 @@ export function AddGamesModal({
         </div>
       ) : (
         <div>
-          <p className="mb-2 text-xs text-neutral-500">
+          <p className="mb-2 text-xs text-muted-foreground/500">
             Pick from your imported games. {selected.size} selected.
           </p>
-          <div className="max-h-72 space-y-1 overflow-y-auto rounded-lg border border-neutral-200 p-1">
+          <div className="max-h-72 space-y-1 overflow-y-auto rounded-lg border border-border p-1">
             {isLoading && (
-              <p className="px-2 py-3 text-xs text-neutral-500">Loading…</p>
+              <p className="px-2 py-3 text-xs text-muted-foreground/500">Loading…</p>
             )}
             {allGames?.length === 0 && (
-              <p className="px-2 py-3 text-xs text-neutral-500">
+              <p className="px-2 py-3 text-xs text-muted-foreground/500">
                 No games imported yet. Use the "Paste PGN" tab instead.
               </p>
             )}
@@ -285,7 +285,7 @@ export function AddGamesModal({
                 <label
                   key={g.id}
                   className={`flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm ${
-                    checked ? "bg-blue-50" : "hover:bg-neutral-50"
+                    checked ? "bg-blue-50" : "hover:bg-muted/50"
                   }`}
                 >
                   <input
@@ -297,7 +297,7 @@ export function AddGamesModal({
                   <span className="min-w-0 flex-1 truncate">
                     {g.white || "?"} vs. {g.black || "?"}
                   </span>
-                  <span className="font-mono text-[10px] text-neutral-400">
+                  <span className="font-mono text-[10px] text-muted-foreground">
                     {g.result ?? "*"}
                   </span>
                 </label>
@@ -307,7 +307,7 @@ export function AddGamesModal({
         </div>
       )}
 
-      {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
     </ModalShell>
   );
 }

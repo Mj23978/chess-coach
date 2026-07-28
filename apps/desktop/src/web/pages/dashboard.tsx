@@ -30,9 +30,10 @@ import {
 	TimeControlGrid,
 	TrainingSuggestionsCard,
 	WelcomeCard,
+	FirstRunOnboarding,
 } from "../components/dashboard";
 import { PageContainer } from "../components/layout";
-import { fetchGames, type GameDTO } from "../lib/api";
+import { fetchGames, fetchAccounts, fetchEngines, type GameDTO } from "../lib/api";
 
 interface DashboardPageProps {
 	/** Open the app-level Import PGN modal. */
@@ -40,16 +41,43 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ onImportPgn }: DashboardPageProps) {
-	const { data, isLoading, error } = useQuery<GameDTO[]>({
+	const { data: games, isLoading, error, refetch: refetchGames } = useQuery<GameDTO[]>({
 		queryKey: ["games"],
 		queryFn: fetchGames,
 	});
 
-	const gamesCount = data?.length ?? 0;
+	const { data: accounts } = useQuery({
+		queryKey: ["accounts"],
+		queryFn: fetchAccounts,
+	});
+
+	const { data: engines } = useQuery({
+		queryKey: ["engines"],
+		queryFn: fetchEngines,
+	});
+
+	const gamesCount = games?.length ?? 0;
+	const hasGames = gamesCount > 0;
+	const hasAccounts = (accounts?.length ?? 0) > 0;
+	const hasEngine = (engines?.length ?? 0) > 0;
+	const isFirstRun = !hasGames && !hasAccounts && !hasEngine;
 
 	return (
 		<PageContainer className="space-y-4">
-			<WelcomeCard onImportPgn={() => onImportPgn?.()} />
+			{isFirstRun && (
+				<FirstRunOnboarding
+					onImportPgn={() => onImportPgn?.()}
+					completed={{
+						hasAccounts,
+						hasEngine,
+						hasGames,
+					}}
+				/>
+			)}
+
+			{!isFirstRun && (
+				<WelcomeCard onImportPgn={() => onImportPgn?.()} />
+			)}
 
 			<div className="grid gap-4 md:grid-cols-3">
 				<ConnectedAccountsCard />
@@ -58,7 +86,7 @@ export default function DashboardPage({ onImportPgn }: DashboardPageProps) {
 				</div>
 			</div>
 
-			<GamesTable games={data ?? []} isLoading={isLoading} error={error} />
+			<GamesTable games={games ?? []} isLoading={isLoading} error={error} onRetry={() => refetchGames()} />
 
 			<div className="grid gap-4 md:grid-cols-3">
 				<div className="md:col-span-2">

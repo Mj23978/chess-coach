@@ -45,14 +45,14 @@ export const CLASSIFICATION_STYLES: Record<Classification, ClassificationStyle> 
     best: {
       label: "Best",
       glyph: "★",
-      bg: "bg-neutral-500",
+      bg: "bg-muted/500",
       text: "text-white",
       bar: "#737373",
     },
     excellent: {
       label: "Excellent",
       glyph: "→",
-      bg: "bg-neutral-400",
+      bg: "bg-muted-foreground",
       text: "text-white",
       bar: "#a3a3a3",
     },
@@ -67,7 +67,7 @@ export const CLASSIFICATION_STYLES: Record<Classification, ClassificationStyle> 
       label: "Inaccuracy",
       glyph: "?!",
       bg: "bg-yellow-400",
-      text: "text-neutral-900",
+      text: "text-foreground",
       bar: "#facc15",
     },
     mistake: {

@@ -178,21 +178,21 @@ export function DatabaseTab({ fen, pgn, ply }: DatabaseTabProps) {
         {eco ? (
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-xs font-bold text-neutral-700">
+              <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs font-bold text-foreground">
                 {eco}
               </span>
               {openingName && (
-                <span className="text-sm text-neutral-700">{openingName}</span>
+                <span className="text-sm text-foreground">{openingName}</span>
               )}
             </div>
             {!openingName && (
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Opening name not in local database for ECO {eco}.
               </p>
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-2 text-neutral-500">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <BookOpen className="size-4" />
             <span className="text-xs">
               No ECO code available. Run analysis to identify the opening.
@@ -203,10 +203,10 @@ export function DatabaseTab({ fen, pgn, ply }: DatabaseTabProps) {
 
       {/* Current position FEN */}
       <Section title="Position">
-        <code className="block break-all rounded bg-neutral-50 px-2 py-1.5 font-mono text-[10px] text-neutral-600">
+        <code className="block break-all rounded bg-muted/50 px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
           {fen}
         </code>
-        <p className="mt-1 text-xs text-neutral-500">
+        <p className="mt-1 text-xs text-muted-foreground">
           Move {Math.ceil(ply / 2)}
           {ply % 2 === 0 ? " (black)" : " (white)"}
         </p>
@@ -219,23 +219,23 @@ export function DatabaseTab({ fen, pgn, ply }: DatabaseTabProps) {
             {matchingGames.map((g) => (
               <div
                 key={g.id}
-                className="flex items-center justify-between rounded-md border border-neutral-100 px-2 py-1.5 text-xs"
+                className="flex items-center justify-between rounded-md border border-border/50 px-2 py-1.5 text-xs"
               >
                 <div>
-                  <span className="font-medium text-neutral-700">
+                  <span className="font-medium text-foreground">
                     {g.white ?? "?"}
                   </span>
-                  <span className="mx-1 text-neutral-400">vs</span>
-                  <span className="font-medium text-neutral-700">
+                  <span className="mx-1 text-muted-foreground">vs</span>
+                  <span className="font-medium text-foreground">
                     {g.black ?? "?"}
                   </span>
                 </div>
-                <span className="text-neutral-400">{g.result ?? "*"}</span>
+                <span className="text-muted-foreground">{g.result ?? "*"}</span>
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex items-center gap-2 text-neutral-500">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <Search className="size-4" />
             <span className="text-xs">
               {eco
@@ -252,7 +252,7 @@ export function DatabaseTab({ fen, pgn, ply }: DatabaseTabProps) {
           href={`https://lichess.org/analysis#explorer/${fen.replace(/ /g, "_")}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
         >
           Open in Lichess Explorer
           <ExternalLink className="size-3" />
@@ -271,7 +271,7 @@ function Section({
 }) {
   return (
     <div>
-      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-neutral-400">
+      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
       {children}

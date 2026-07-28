@@ -85,7 +85,7 @@ export function TimeControlGrid() {
 		<Card className="h-full">
 			<CardHeader>
 				<CardTitle className="text-base">Quick Start</CardTitle>
-				<p className="text-xs text-neutral-500">
+				<p className="text-xs text-muted-foreground">
 					Pick a time control to start a new game.
 				</p>
 			</CardHeader>
@@ -102,16 +102,16 @@ export function TimeControlGrid() {
 										state: { timeControl: tc },
 									})
 								}
-								className="group flex flex-col items-start gap-2 rounded-lg border border-neutral-200 p-3 text-left transition-colors hover:border-neutral-400 hover:bg-neutral-50"
+								className="group flex flex-col items-start gap-2 rounded-lg border border-border p-3 text-left transition-colors hover:border-border hover:bg-muted/50"
 							>
 								<Icon className={`size-6 ${tc.accent}`} />
 								<div>
 									<p className="text-sm font-semibold">{tc.label}</p>
-									<p className="font-mono text-xs text-neutral-500">
+									<p className="font-mono text-xs text-muted-foreground">
 										{tc.time}
 									</p>
 								</div>
-								<p className="text-xs text-neutral-500">{tc.description}</p>
+								<p className="text-xs text-muted-foreground">{tc.description}</p>
 							</button>
 						);
 					})}

@@ -55,9 +55,9 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 				onKeyDown={(e) => e.key === "Escape" && onClose()}
 			/>
 			{/* Sheet */}
-			<div className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-lg flex-col border-l border-neutral-200 bg-white shadow-xl transition-transform">
+			<div className="fixed bottom-0 right-0 top-0 z-50 flex w-full max-w-lg flex-col border-l border-border bg-background shadow-xl transition-transform">
 				{/* Header */}
-				<div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
+				<div className="flex items-center justify-between border-b border-border px-6 py-4">
 					<div className="flex items-center gap-3 min-w-0">
 						{engine.image ? (
 							<img
@@ -66,7 +66,7 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 								className="size-10 shrink-0 rounded-lg object-contain"
 							/>
 						) : (
-							<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
+							<div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
 								<Cpu className="size-5" />
 							</div>
 						)}
@@ -74,7 +74,7 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 							<h2 className="truncate text-lg font-semibold">{engine.name}</h2>
 							<div className="flex items-center gap-2">
 								{engine.version && (
-									<span className="text-sm text-neutral-500">
+									<span className="text-sm text-muted-foreground/500">
 										v{engine.version}
 									</span>
 								)}
@@ -90,7 +90,7 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 					<button
 						type="button"
 						onClick={onClose}
-						className="rounded-md p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+						className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-muted-foreground"
 						aria-label="Close"
 					>
 						<X className="size-5" />
@@ -102,14 +102,14 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 					{/* Health Status */}
 					<Section title="Status">
 						{healthLoading ? (
-							<div className="flex items-center gap-2 text-sm text-neutral-500">
+							<div className="flex items-center gap-2 text-sm text-muted-foreground/500">
 								<Loader2 className="size-4 animate-spin" />
 								Checking engine…
 							</div>
 						) : health ? (
 							<HealthStatus health={health} />
 						) : (
-							<p className="text-sm text-neutral-500">Unknown</p>
+							<p className="text-sm text-muted-foreground/500">Unknown</p>
 						)}
 					</Section>
 
@@ -117,17 +117,17 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 					<Section title="Binary Path">
 						{engine.path ? (
 							<div className="flex items-start gap-2">
-								<FolderOpen className="mt-0.5 size-4 shrink-0 text-neutral-400" />
-								<code className="break-all font-mono text-xs text-neutral-700 bg-neutral-50 rounded px-2 py-1">
+								<FolderOpen className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+								<code className="break-all font-mono text-xs text-foreground bg-muted/50 rounded px-2 py-1">
 									{engine.path}
 								</code>
 							</div>
 						) : (
-							<p className="text-sm text-neutral-500">No path configured</p>
+							<p className="text-sm text-muted-foreground/500">No path configured</p>
 						)}
 						<div className="mt-2 flex items-center gap-2">
 							<Dot tone={engine.exists ? "ok" : "warn"} />
-							<span className="text-sm text-neutral-600">
+							<span className="text-sm text-muted-foreground">
 								{engine.exists ? "Binary found on disk" : "Binary NOT found on disk"}
 							</span>
 						</div>
@@ -159,12 +159,12 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 								{engine.options.map((opt) => (
 									<div
 										key={opt.name}
-										className="flex items-center justify-between rounded bg-neutral-50 px-2 py-1.5"
+										className="flex items-center justify-between rounded bg-muted/50 px-2 py-1.5"
 									>
-										<span className="text-xs font-medium text-neutral-700">
+										<span className="text-xs font-medium text-foreground">
 											{opt.name}
 										</span>
-										<span className="font-mono text-xs text-neutral-500">
+										<span className="font-mono text-xs text-muted-foreground/500">
 											{opt.type}
 											{opt.default != null && ` (default: ${opt.default})`}
 										</span>
@@ -172,7 +172,7 @@ export function EngineDetailSheet({ engine, onClose }: EngineDetailSheetProps) {
 								))}
 							</div>
 						) : (
-							<div className="flex items-center gap-2 text-sm text-neutral-500">
+							<div className="flex items-center gap-2 text-sm text-muted-foreground/500">
 								<Settings2 className="size-4" />
 								No options loaded. Options are fetched when the engine is validated.
 							</div>
@@ -197,7 +197,7 @@ function Section({
 }) {
 	return (
 		<div>
-			<h3 className="mb-2 text-sm font-medium text-neutral-900">{title}</h3>
+			<h3 className="mb-2 text-sm font-medium text-foreground">{title}</h3>
 			{children}
 		</div>
 	);
@@ -224,23 +224,23 @@ function HealthStatus({ health }: { health: EngineHealthDTO }) {
 			label: "No path configured",
 		},
 		missing: {
-			icon: <CircleX className="size-4 text-red-500" />,
-			tone: "text-red-700",
+			icon: <CircleX className="size-4 text-destructive" />,
+			tone: "text-destructive",
 			label: "Binary missing",
 		},
 		not_executable: {
-			icon: <CircleX className="size-4 text-red-500" />,
-			tone: "text-red-700",
+			icon: <CircleX className="size-4 text-destructive" />,
+			tone: "text-destructive",
 			label: "Not executable",
 		},
 		spawn_failed: {
-			icon: <CircleX className="size-4 text-red-500" />,
-			tone: "text-red-700",
+			icon: <CircleX className="size-4 text-destructive" />,
+			tone: "text-destructive",
 			label: "Failed to start",
 		},
 		error: {
-			icon: <CircleX className="size-4 text-red-500" />,
-			tone: "text-red-700",
+			icon: <CircleX className="size-4 text-destructive" />,
+			tone: "text-destructive",
 			label: "Error",
 		},
 	};
@@ -253,18 +253,18 @@ function HealthStatus({ health }: { health: EngineHealthDTO }) {
 				{config.icon}
 				{config.label}
 			</div>
-			<p className="text-xs text-neutral-500">{health.message}</p>
+			<p className="text-xs text-muted-foreground/500">{health.message}</p>
 		</div>
 	);
 }
 
 function DetailCard({ label, value }: { label: string; value: string }) {
 	return (
-		<div className="rounded-md bg-neutral-50 px-2.5 py-2">
-			<div className="text-[10px] uppercase tracking-wide text-neutral-400">
+		<div className="rounded-md bg-muted/50 px-2.5 py-2">
+			<div className="text-[10px] uppercase tracking-wide text-muted-foreground">
 				{label}
 			</div>
-			<div className="font-mono text-xs font-medium text-neutral-700">{value}</div>
+			<div className="font-mono text-xs font-medium text-foreground">{value}</div>
 		</div>
 	);
 }
@@ -273,7 +273,7 @@ function Dot({ tone }: { tone: "ok" | "warn" }) {
 	return (
 		<span
 			className={`inline-block size-2 rounded-full ${
-				tone === "ok" ? "bg-emerald-500" : "bg-red-500"
+				tone === "ok" ? "bg-emerald-500" : "bg-destructive"
 			}`}
 		/>
 	);

@@ -165,7 +165,7 @@ function DrawerBody({
 			<div className="flex-1 space-y-5 overflow-y-auto p-4">
 				{/* Description (editable) */}
 				<div>
-					<Label className="mb-1.5 block text-xs font-medium text-neutral-500">
+					<Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
 						Description
 					</Label>
 					{editing ? (
@@ -177,9 +177,9 @@ function DrawerBody({
 							rows={3}
 						/>
 					) : (
-						<p className="text-sm text-neutral-700">
+						<p className="text-sm text-foreground">
 							{file.description || (
-								<span className="italic text-neutral-400">No description</span>
+								<span className="italic text-muted-foreground">No description</span>
 							)}
 						</p>
 					)}
@@ -188,7 +188,7 @@ function DrawerBody({
 				{/* Type (editable) */}
 				{editing && (
 					<div>
-						<Label className="mb-1.5 block text-xs font-medium text-neutral-500">
+						<Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
 							Type
 						</Label>
 						<Select value={type} onValueChange={(v) => setType(v as FileType)}>
@@ -254,7 +254,7 @@ function DrawerBody({
 				{/* PGN preview */}
 				<div>
 					<div className="mb-1.5 flex items-center justify-between">
-						<Label className="text-xs font-medium text-neutral-500">
+						<Label className="text-xs font-medium text-muted-foreground">
 							PGN ({file.gameCount} game{file.gameCount === 1 ? "" : "s"})
 						</Label>
 						<div className="flex gap-1">
@@ -282,7 +282,7 @@ function DrawerBody({
 							</Button>
 						</div>
 					</div>
-					<pre className="max-h-64 overflow-auto rounded-lg border border-neutral-100 bg-neutral-50 p-2 font-mono text-[11px] leading-relaxed text-neutral-700">
+					<pre className="max-h-64 overflow-auto rounded-lg border border-border/50 bg-muted/50 p-2 font-mono text-[11px] leading-relaxed text-foreground">
 						{file.pgn || "— empty —"}
 					</pre>
 				</div>
@@ -290,7 +290,7 @@ function DrawerBody({
 				{/* Tags */}
 				{file.tags && file.tags.length > 0 && (
 					<div>
-						<Label className="mb-1.5 block text-xs font-medium text-neutral-500">
+						<Label className="mb-1.5 block text-xs font-medium text-muted-foreground">
 							Tags
 						</Label>
 						<div className="flex flex-wrap gap-1">
@@ -308,14 +308,14 @@ function DrawerBody({
 				)}
 
 				{/* Danger zone */}
-				<div className="space-y-2 border-t border-neutral-100 pt-4">
-					<h4 className="text-xs font-semibold uppercase tracking-wide text-red-500">
+				<div className="space-y-2 border-t border-border/50 pt-4">
+					<h4 className="text-xs font-semibold uppercase tracking-wide text-destructive/70">
 						Danger zone
 					</h4>
 					<Button
 						variant="outline"
 						size="sm"
-						className="w-full justify-start text-red-600 hover:bg-red-50"
+						className="w-full justify-start text-destructive hover:bg-destructive/10"
 						onClick={() => {
 							if (confirm(`Delete "${file.name}"? This cannot be undone.`)) {
 								deleteMut.mutate();
@@ -329,7 +329,7 @@ function DrawerBody({
 				</div>
 
 				{(updateMut.isError || deleteMut.isError) && (
-					<p className="text-xs text-red-600">
+					<p className="text-xs text-destructive">
 						{updateMut.error instanceof Error
 							? updateMut.error.message
 							: deleteMut.error instanceof Error
@@ -353,12 +353,12 @@ function StatBox({
 	value: string;
 }) {
 	return (
-		<div className="rounded-lg border border-neutral-200 bg-neutral-50 p-3">
-			<div className="mb-1 flex items-center gap-1.5 text-xs text-neutral-500">
+		<div className="rounded-lg border border-border bg-muted/50 p-3">
+			<div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
 				{icon}
 				{label}
 			</div>
-			<div className="font-mono text-sm font-semibold text-neutral-800">
+			<div className="font-mono text-sm font-semibold text-foreground">
 				{value}
 			</div>
 		</div>

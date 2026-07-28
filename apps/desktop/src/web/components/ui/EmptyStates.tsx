@@ -46,12 +46,12 @@ export function EmptyState({
 	return (
 		<div className="flex flex-col items-center justify-center py-12 text-center">
 			{icon && (
-				<div className="mb-4 flex size-16 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
+				<div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
 					{icon}
 				</div>
 			)}
-			<h3 className="mb-2 text-lg font-medium text-neutral-900">{title}</h3>
-			<p className="mb-6 max-w-sm text-sm text-neutral-500">{description}</p>
+			<h3 className="mb-2 text-lg font-medium text-foreground">{title}</h3>
+			<p className="mb-6 max-w-sm text-sm text-muted-foreground/500">{description}</p>
 			<div className="flex gap-2">
 				{action && (
 					<Button onClick={action.onClick}>
@@ -79,13 +79,13 @@ export function NoSearchResults({
 }) {
 	return (
 		<div className="flex flex-col items-center justify-center py-12 text-center">
-			<div className="mb-4 flex size-16 items-center justify-center rounded-full bg-neutral-100 text-neutral-400">
+			<div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted text-muted-foreground">
 				<Search className="size-8" />
 			</div>
-			<h3 className="mb-2 text-lg font-medium text-neutral-900">
+			<h3 className="mb-2 text-lg font-medium text-foreground">
 				No results found
 			</h3>
-			<p className="mb-4 text-sm text-neutral-500">
+			<p className="mb-4 text-sm text-muted-foreground/500">
 				No items match "{query}". Try a different search term.
 			</p>
 			<Button variant="outline" onClick={onClear}>

@@ -75,7 +75,7 @@ export function InfoTab({ pgn, fen, ply, totalPlies }: InfoTabProps) {
       <Section title="Current Position">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <code className="flex-1 break-all rounded bg-neutral-50 px-2 py-1.5 font-mono text-[10px] text-neutral-600">
+            <code className="flex-1 break-all rounded bg-muted/50 px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
               {fen}
             </code>
             <Button
@@ -92,7 +92,7 @@ export function InfoTab({ pgn, fen, ply, totalPlies }: InfoTabProps) {
               <Copy className="size-3" />
             </Button>
           </div>
-          <div className="flex items-center gap-3 text-xs text-neutral-500">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span>
               Move {moveNumber}
               {isBlackTurn ? " (black)" : " (white)"}
@@ -107,7 +107,7 @@ export function InfoTab({ pgn, fen, ply, totalPlies }: InfoTabProps) {
 
       {/* Full PGN */}
       <Section title="PGN">
-        <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap rounded bg-neutral-50 p-2 font-mono text-[10px] leading-relaxed text-neutral-600">
+        <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap rounded bg-muted/50 p-2 font-mono text-[10px] leading-relaxed text-muted-foreground">
           {pgn}
         </pre>
       </Section>
@@ -126,10 +126,10 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-baseline justify-between gap-2">
-      <span className="shrink-0 text-xs text-neutral-500">{label}</span>
+      <span className="shrink-0 text-xs text-muted-foreground">{label}</span>
       <span
         className={`truncate text-right text-xs ${
-          bold ? "font-medium text-neutral-800" : "text-neutral-600"
+          bold ? "font-medium text-foreground" : "text-muted-foreground"
         }`}
       >
         {value}
@@ -147,7 +147,7 @@ function Section({
 }) {
   return (
     <div>
-      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-neutral-400">
+      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
       {children}

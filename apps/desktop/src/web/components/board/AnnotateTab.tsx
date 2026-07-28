@@ -153,7 +153,7 @@ export function AnnotateTab({ pgn, ply, onAnnotationChange }: AnnotateTabProps) 
           </Button>
         </div>
         {mark && (
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="mt-1 text-xs text-muted-foreground">
             Current mark:{" "}
             <span className="font-medium capitalize">{mark}</span>
           </p>
@@ -176,7 +176,7 @@ export function AnnotateTab({ pgn, ply, onAnnotationChange }: AnnotateTabProps) 
             className="min-h-[80px] text-xs"
           />
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-neutral-400">
+            <span className="text-[10px] text-muted-foreground">
               ⌘/Ctrl+Enter to save
             </span>
             {current?.comment && (
@@ -184,7 +184,7 @@ export function AnnotateTab({ pgn, ply, onAnnotationChange }: AnnotateTabProps) 
                 variant="ghost"
                 size="sm"
                 onClick={() => update({ comment: undefined })}
-                className="h-6 px-2 text-[10px] text-neutral-500"
+                className="h-6 px-2 text-[10px] text-muted-foreground"
               >
                 <Trash2 className="mr-1 size-3" />
                 Clear
@@ -206,7 +206,7 @@ function AnnotationSummary({ annotations }: { annotations: Annotations }) {
   const entries = Object.entries(annotations);
   if (entries.length === 0) {
     return (
-      <p className="text-xs text-neutral-500">
+      <p className="text-xs text-muted-foreground">
         No annotations yet. Bookmark moves, mark critical positions, or add
         comments to build your analysis.
       </p>
@@ -219,7 +219,7 @@ function AnnotationSummary({ annotations }: { annotations: Annotations }) {
   const interesting = entries.filter(([, a]) => a.mark === "interesting").length;
 
   return (
-    <div className="flex flex-wrap gap-3 text-xs text-neutral-600">
+    <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
       {bookmarked > 0 && (
         <span className="flex items-center gap-1">
           <Bookmark className="size-3" />
@@ -257,7 +257,7 @@ function Section({
 }) {
   return (
     <div>
-      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-neutral-400">
+      <h3 className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
       {children}

@@ -14,13 +14,14 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@repo/ui/components/button";
-import { Plus } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import {
 	AccountCard,
 	AddAccountModal,
 	PlayerDatabaseDrawer,
 } from "../components/accounts";
-import { PageContainer } from "../components/layout";
+import { PageContainer, PageHeader } from "../components/layout";
+import { ErrorState } from "../components/ui";
 import { fetchAccounts, type AccountDTO } from "../lib/api";
 
 export default function AccountsPage() {
@@ -28,7 +29,7 @@ export default function AccountsPage() {
 	const [drawerAccount, setDrawerAccount] = useState<AccountDTO | null>(null);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
-	const { data: accounts, isLoading, error } = useQuery({
+	const { data: accounts, isLoading, error, refetch } = useQuery({
 		queryKey: ["accounts"],
 		queryFn: fetchAccounts,
 	});
@@ -41,35 +42,36 @@ export default function AccountsPage() {
 
 	return (
 		<PageContainer>
-			<header className="mb-6 flex items-start justify-between">
-				<div>
-					<Link to="/" className="text-xs text-blue-600">
-						← Dashboard
-					</Link>
-					<h1 className="mt-1 text-2xl font-bold">Accounts</h1>
-					<p className="text-sm text-neutral-500">
-						Connect your Chess.com and Lichess accounts to sync games.
-					</p>
-				</div>
-				<Button size="sm" onClick={() => setAddOpen(true)}>
-					<Plus className="mr-1.5 size-4" />
-					Add Account
-				</Button>
-			</header>
+			<PageHeader
+				title="Accounts"
+				subtitle="Connect your Chess.com and Lichess accounts to sync games."
+				icon={<User className="size-5" />}
+				backTo="/"
+				backLabel="Dashboard"
+				actions={
+					<Button size="sm" onClick={() => setAddOpen(true)}>
+						<Plus className="mr-1.5 size-4" />
+						Add Account
+					</Button>
+				}
+			/>
 
 			{isLoading && (
-				<p className="py-8 text-sm text-neutral-500">Loading accounts…</p>
+				<p className="py-8 text-sm text-muted-foreground">Loading accounts…</p>
 			)}
 			{error && (
-				<p className="py-8 text-sm text-rose-600">
-					Failed to load accounts: {String(error)}
-				</p>
+				<ErrorState
+					title="Couldn't load accounts"
+					description="We had trouble reading your connected accounts. Please try again."
+					detail={String(error)}
+					onRetry={() => refetch()}
+				/>
 			)}
 
 			{!isLoading && accounts?.length === 0 && (
-				<div className="rounded-lg border border-dashed border-neutral-300 p-10 text-center">
+				<div className="rounded-lg border border-dashed border-border p-10 text-center">
 					<p className="font-medium">No accounts connected yet</p>
-					<p className="mt-1 text-sm text-neutral-500">
+					<p className="mt-1 text-sm text-muted-foreground">
 						Connect Chess.com or Lichess to automatically download your games.
 					</p>
 					<Button className="mt-4" onClick={() => setAddOpen(true)}>

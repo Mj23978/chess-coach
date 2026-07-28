@@ -71,18 +71,18 @@ function GoalBar({
 			<div className="mb-1 flex items-baseline justify-between">
 				<span className="text-sm font-medium">{label}</span>
 				<span
-					className={`text-xs ${done ? "text-emerald-600" : "text-neutral-500"}`}
+					className={`text-xs ${done ? "text-emerald-600" : "text-muted-foreground/500"}`}
 				>
 					{current}/{target}
 				</span>
 			</div>
-			<div className="h-2 w-full overflow-hidden rounded-full bg-neutral-200">
+			<div className="h-2 w-full overflow-hidden rounded-full bg-muted">
 				<div
 					className="h-full rounded-full transition-[width] duration-300"
 					style={{ width: `${pct}%`, backgroundColor: color }}
 				/>
 			</div>
-			{note && <p className="mt-1 text-xs text-neutral-400">{note}</p>}
+			{note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
 		</div>
 	);
 }

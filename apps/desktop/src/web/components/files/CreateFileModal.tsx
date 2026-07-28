@@ -131,7 +131,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
 						className="min-h-32 font-mono text-xs"
 						rows={6}
 					/>
-					<p className="mt-1 text-xs text-neutral-500">
+					<p className="mt-1 text-xs text-muted-foreground">
 						You can paste multiple games; game count and size are computed
 						automatically.
 					</p>
@@ -149,7 +149,7 @@ export function CreateFileModal({ onClose, onCreated }: CreateFileModalProps) {
 				</div>
 
 				{createMut.isError && (
-					<p className="text-sm text-red-600">
+					<p className="text-sm text-destructive">
 						{createMut.error instanceof Error
 							? createMut.error.message
 							: "Failed to import file"}

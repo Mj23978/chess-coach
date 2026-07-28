@@ -89,7 +89,7 @@ export function AccountCard({ account, onOpenDatabase }: AccountCardProps) {
 				<div className="flex min-w-0 items-center gap-4">
 					<div
 						className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-white ${
-							isChessCom ? "bg-emerald-500" : "bg-neutral-800"
+							isChessCom ? "bg-emerald-500" : "bg-foreground"
 						}`}
 					>
 						<span className="text-2xl">♟</span>
@@ -103,7 +103,7 @@ export function AccountCard({ account, onOpenDatabase }: AccountCardProps) {
 								{isChessCom ? "Chess.com" : "Lichess"}
 							</Badge>
 						</div>
-						<div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-neutral-500">
+						<div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground/500">
 							<span>{account.gamesCount} games synced</span>
 							<span>·</span>
 							<span>Last sync {formatDate(account.lastSyncedAt)}</span>
@@ -285,7 +285,7 @@ function ConfirmModal({
 			title={title}
 			className="max-w-sm"
 		>
-			<p className="text-sm text-neutral-600">{body}</p>
+			<p className="text-sm text-muted-foreground">{body}</p>
 			<div className="flex justify-end gap-2">
 				<Button variant="outline" onClick={onCancel}>
 					Cancel
