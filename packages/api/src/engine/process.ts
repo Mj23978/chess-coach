@@ -30,38 +30,58 @@ const CREATE_NO_WINDOW = 0x08000000;
 export class UciEngine {
   private proc: Subprocess<"pipe", "pipe", "pipe">;
   private stdin: import("node:stream").Writable;
-  private stdout: import("node:stream").Readable;
   /** Buffered stdout lines waiting to be read by a consumer. */
   private lineQueue: string[] = [];
   private lineWaiters: Array<(line: string | null) => void> = [];
   private terminated = false;
   private readonly knownOptions = new Set<string>();
+  private stdoutLineCount = 0;
 
   private constructor(
     proc: Subprocess<"pipe", "pipe", "pipe">,
     stdin: import("node:stream").Writable,
-    stdout: import("node:stream").Readable,
   ) {
     this.proc = proc;
     this.stdin = stdin;
-    this.stdout = stdout;
-    // Wire stdout into a line-buffered async reader. Each full line resolves
-    // the next waiter in FIFO order; null signals EOF (process exited).
+    // Drive stdout with Bun's NATIVE Web ReadableStream reader rather than
+    // wrapping it through Readable.fromWeb(). We pull bytes directly via
+    // getReader().read() in a background pump, line-buffer them, and dispatch
+    // one line per pending waiter (FIFO); null signals EOF. This avoids
+    // Node-stream-bridge quirks where flowing-mode `data` events can stall
+    // when the Web source needs backpressure pulls — which produced exactly
+    // the symptom of the handshake (a small burst) succeeding but the search
+    // (a continuous stream) receiving no lines until the 60s timeout.
+    const reader = (
+      proc.stdout as unknown as import("node:stream/web").ReadableStream<Uint8Array>
+    ).getReader();
     let buf = "";
-    this.stdout.on("data", (chunk: Buffer) => {
-      buf += chunk.toString("utf-8");
-      let idx: number;
-      while ((idx = buf.indexOf("\n")) >= 0) {
-        const line = buf.slice(0, idx).replace(/\r$/, "");
-        buf = buf.slice(idx + 1);
-        this.dispatchLine(line);
+    const decoder = new TextDecoder("utf-8");
+    (async () => {
+      try {
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          let idx: number;
+          while ((idx = buf.indexOf("\n")) >= 0) {
+            const line = buf.slice(0, idx).replace(/\r$/, "");
+            buf = buf.slice(idx + 1);
+            this.stdoutLineCount++;
+            if (this.stdoutLineCount <= 40) {
+              console.log(`[engine:stdout #${this.stdoutLineCount}] ${line}`);
+            }
+            this.dispatchLine(line);
+          }
+        }
+        console.log(`[engine:stdout] EOF after ${this.stdoutLineCount} total lines`);
+        if (buf.length) this.dispatchLine(buf);
+        while (this.lineWaiters.length) this.lineWaiters.shift()!(null);
+      } catch (err) {
+        console.error("[engine:stdout] pump error:", err);
+        while (this.lineWaiters.length) this.lineWaiters.shift()!(null);
       }
-    });
-    this.stdout.on("end", () => {
-      if (buf.length) this.dispatchLine(buf);
-      // Wake all waiters with EOF.
-      while (this.lineWaiters.length) this.lineWaiters.shift()!(null);
-    });
+    })();
   }
 
   /** Dispatch one parsed line to the next waiting reader. */
@@ -111,10 +131,26 @@ export class UciEngine {
    * delivery.
    */
   private async send(cmd: string): Promise<void> {
-    this.stdin.write(`${cmd}\n`);
-    const flush = (this.stdin as { flush?: () => unknown }).flush;
-    if (typeof flush === "function") {
-      await flush.call(this.stdin);
+    console.log(`[engine:stdin >>>] ${cmd}`);
+    // Bun.spawn's stdin is a FileSink: write() is sync but buffers; flush()
+    // pushes to the pipe. Guard for both Bun (FileSink) and Node (Writable)
+    // shapes, and log once which shape we're driving so a missing flush is
+    // visible in diagnostics.
+    const stdinAny = this.stdin as {
+      flush?: () => unknown;
+      write?: (data: string, cb?: (err?: Error) => void) => unknown;
+    };
+    const writeRes = stdinAny.write ? stdinAny.write(`${cmd}\n`) : undefined;
+    if (typeof stdinAny.flush === "function") {
+      await stdinAny.flush.call(this.stdin);
+    } else {
+      // Node-style Writable: write is async; if it returned a promise-like,
+      // await it; otherwise yield a tick to let it drain.
+      if (writeRes && typeof (writeRes as { then?: (f: (v: unknown) => void) => void }).then === "function") {
+        await writeRes;
+      } else {
+        await new Promise((r) => setTimeout(r, 0));
+      }
     }
   }
 
@@ -137,26 +173,18 @@ export class UciEngine {
       // Keep the engine attached to this process so it dies with the app.
       onExit: () => {},
     });
-    // Bun.spawn returns .stdin/.stdout as Web ReadableStream / WritableStream,
-    // not Node.js streams. Convert them so we can use the Node.js
-    // EventEmitter API (.on("data"), .on("end")) in the constructor.
-    //
-    // Readable.fromWeb() wraps a Web ReadableStream into a Node.js Readable,
-    // and process.stdin-style .write() works on the Web WritableStream directly
-    // (Bun's WritableStream implements the Node.js .write() interface).
+    // Bun.spawn returns .stdin as a FileSink and .stdout/.stderr as Web
+    // ReadableStreams. We read stdout NATIVELY via getReader() inside the
+    // constructor (see UciEngine ctor), and drain stderr here through
+    // Readable.fromWeb() — stderr is fire-and-forget, so the Node bridge is
+    // fine there.
     const stdin = proc.stdin as unknown as import("node:stream").Writable;
-    const stdout = Readable.fromWeb(
-      proc.stdout as unknown as import("node:stream/web").ReadableStream<Uint8Array>,
-    );
     // CRITICAL: drain stderr continuously. Stockfish (and other UCI engines)
     // write diagnostics to stderr — e.g. Stockfish 18 prints a sizable
     // `INFO: ... NNUE evaluation ...` block at startup and may emit more during
     // search. The OS pipe buffer is small (~4KB on Windows); if nobody reads
     // stderr, it fills and the engine BLOCKS on its next stderr write, which
-    // also stalls its stdout output. The observable symptom is exactly the
-    // handshake succeeding (the initial stderr burst fits in the buffer) but
-    // the first `go` producing no `info`/`bestmove` lines until the 60s
-    // analyze timeout fires. Draining stderr prevents this deadlock.
+    // also stalls its stdout output. Draining stderr prevents this deadlock.
     const stderr = Readable.fromWeb(
       proc.stderr as unknown as import("node:stream/web").ReadableStream<Uint8Array>,
     );
@@ -174,7 +202,16 @@ export class UciEngine {
       if (stderrBuf.trim()) console.log(`[engine:stderr] ${stderrBuf.trim()}`);
     });
 
-    const eng = new UciEngine(proc, stdin, stdout);
+    const eng = new UciEngine(proc, stdin);
+
+    // Diagnostics: record the exact shape of the Bun-provided stdin so we can
+    // confirm flush()/write() semantics. FileSink has flush(); a plain Node
+    // Writable does not.
+    console.log(
+      `[engine] stdio shapes — stdin: ${stdin.constructor?.name ?? typeof stdin} ` +
+        `(hasFlush=${typeof (stdin as { flush?: unknown }).flush === "function"}), ` +
+        `pid=${(proc as { pid?: number }).pid}`
+    );
 
     try {
       await eng.send("uci");
@@ -232,6 +269,15 @@ export class UciEngine {
    */
   async analyze(fen: string, opts: AnalyzeOptions = {}): Promise<PositionEval> {
     const { depth = 18, movetime, multiPv = 1 } = opts;
+    // Diagnostics: confirm the child is still alive before issuing the search.
+    // If it exited after the handshake, the pending read would hang until the
+    // 60s timeout with no other clue.
+    const pid = (this.proc as { pid?: number }).pid;
+    const exited = (this.proc as { exited?: unknown }).exited;
+    console.log(
+      `[engine] analyze() begin — pid=${pid}, multiPv=${multiPv}, depth=${depth}, ` +
+        `hasExitedSignal=${exited !== undefined}, terminated=${this.terminated}`
+    );
     // Configure MultiPV before each search — engines apply it at the next go.
     await this.setOption("MultiPV", multiPv);
     await this.send(`position fen ${fen}`);
@@ -240,6 +286,7 @@ export class UciEngine {
         ? `go movetime ${movetime}`
         : `go depth ${depth}`;
     await this.send(goCmd);
+    console.log("[engine] search started — waiting for info/bestmove lines...");
 
     // Collect the deepest line per MultiPV index. Each new `info` line at the
     // same/greater depth overwrites the previous for that index; the final
