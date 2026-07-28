@@ -96,9 +96,26 @@ export class UciEngine {
     });
   }
 
-  /** Send a raw UCI command (newline appended). */
-  private send(cmd: string): void {
+  /**
+   * Send a raw UCI command (newline appended) and flush.
+   *
+   * IMPORTANT: Bun's spawned-process stdin is a `FileSink`, whose `.write()`
+   * is SYNCHRONOUS but only writes to an internal buffer — it does NOT push to
+   * the underlying pipe until you call `.flush()`. Without the flush, commands
+   * (e.g. `position ...` + `go`) sit in the buffer and the engine never
+   * receives them. The UCI handshake happened to survive because Bun's first
+   * sink write triggers an initial drain, but rapid follow-up writes (`go`
+   * right after `position`) coalesce in the buffer and never reach the engine,
+   * which then produces zero `info`/`bestmove` lines and the analyze loop
+   * times out at 60s. `await flush()` is the documented way to guarantee
+   * delivery.
+   */
+  private async send(cmd: string): Promise<void> {
     this.stdin.write(`${cmd}\n`);
+    const flush = (this.stdin as { flush?: () => unknown }).flush;
+    if (typeof flush === "function") {
+      await flush.call(this.stdin);
+    }
   }
 
   /**
@@ -160,10 +177,10 @@ export class UciEngine {
     const eng = new UciEngine(proc, stdin, stdout);
 
     try {
-      eng.send("uci");
+      await eng.send("uci");
       // Wait for uciok (10s).
       await eng.waitFor("uciok", 10_000);
-      eng.send("isready");
+      await eng.send("isready");
       await eng.waitFor("readyok", 5_000);
     } catch (err) {
       await eng.terminate();
@@ -201,7 +218,7 @@ export class UciEngine {
     // sent to avoid redundant repeats (pawn-appetite does the same).
     const key = `${name}=${value}`;
     if (this.knownOptions.has(key)) return;
-    this.send(`setoption name ${name} value ${value}`);
+    await this.send(`setoption name ${name} value ${value}`);
     this.knownOptions.add(key);
   }
 
@@ -217,12 +234,12 @@ export class UciEngine {
     const { depth = 18, movetime, multiPv = 1 } = opts;
     // Configure MultiPV before each search — engines apply it at the next go.
     await this.setOption("MultiPV", multiPv);
-    this.send(`position fen ${fen}`);
+    await this.send(`position fen ${fen}`);
     const goCmd =
       movetime != null
         ? `go movetime ${movetime}`
         : `go depth ${depth}`;
-    this.send(goCmd);
+    await this.send(goCmd);
 
     // Collect the deepest line per MultiPV index. Each new `info` line at the
     // same/greater depth overwrites the previous for that index; the final
@@ -296,7 +313,7 @@ export class UciEngine {
     if (this.terminated) return;
     this.terminated = true;
     try {
-      this.send("quit");
+      await this.send("quit");
     } catch {
       // ignore — stdin may already be closed
     }
